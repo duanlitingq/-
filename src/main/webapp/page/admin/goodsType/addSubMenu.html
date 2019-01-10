@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="/page/style/css/pintuer.css">
+    <link rel="stylesheet" href="/page/style/css/admin.css">
+    <script src="/page/style/scripts/jquery/jquery-1.11.2.js"></script>
+    <script src="/page/style/scripts/jquery/ajaxfileupload.js"></script>
+    <script src="/page/style/scripts/js/global.js"></script>
+    <script src="/page/style/scripts/js/common.js"></script>
+    <script src="/page/style/scripts/layer/layer.js"></script>
+<body>
+
+<div class="panel-head"><strong><span class="icon-pencil-square-o"></span> 添加子菜单 </strong></div>
+<div class="body-content">
+    <form class="form-x">
+        <div class="form-group">
+            <div class="label">
+                <label>上级菜单：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="parentName" name="parentName" class="input w50" readonly="true"/>
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--名称-->
+        <div class="form-group">
+            <div class="label">
+                <label>子菜单名称：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="name" name="name" class="input w50" maxlength="20" value="" data-validate="required:请输入菜单名称"/>
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--是否展示-->
+        <div class="form-group">
+            <div class="label">
+                <label>展示状态：</label>
+            </div>
+            <div class="field">
+                <select name="status" id="status" class="input"
+                        style="width:60px; line-height:17px; display:inline-block">
+                    <option value="">选择</option>
+                    <option value="1">是</option>
+                    <option value="0">否</option>
+                </select>
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>排序：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="priority" name="priority" class="input w50" value="" name="title" data-validate="required:排序" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--提交-->
+        <div class="form-group">
+            <div class="label">
+                <label></label>
+            </div>
+            <div class="field">
+                <button id="refer" class="button bg-main icon-check-square-o" type="button" onclick="doAddSubMenu()">
+                    提交
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+<script>
+    var parentId = getUrlParam("parentId");
+    $(function () {
+        loadParentMenuData();
+    })
+
+    //获取父菜单
+    function loadParentMenuData() {
+        $.post("/page/admin/supplierGoodsType/getSupplierGoodsType",
+                {
+                    id:parentId
+                },function (data) {
+            console.log(data,"--------------")
+                    $("#parentName").val(data.data[1].name);
+                },'json')
+    }
+    function doAddSubMenu() {
+        var name = $("#name").val();//菜单名称
+        var status = $("#status").val();//状态
+        var priority = $("#priority").val();
+        if(isEmpty(name)){
+            failMsg("菜单名称不能为空");
+            return;
+        }
+        if(isEmpty(status)){
+            failMsg("状态不能为空");
+            return;
+        }
+        if(isEmpty(priority)){
+            failMsg("排序不能为空");
+            return;
+        }
+        var params = {
+            name:$("#name").val(),
+            status:$("#status").val(),
+            priority:$("#priority").val(),
+            parentId:parentId,
+            hierarchy:2
+        }
+        $.post("/page/admin/supplierGoodsType/doAdd", params, function (data) {
+            //   alert(data.message);
+            if (data.success) {
+                goToAfterShowMsg(data.message, "/page/admin/goodsType/list.html");
+            } else {
+                failMsg(data.message)
+            }
+        }, 'json');
+    }
+</script>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="renderer" content="webkit">
+  <title></title>
+  <link href="/page/style/css/pintuer.css" rel="stylesheet" >
+  <link href="/page/style/css/admin.css" rel="stylesheet" >
+  <script src="/page/style/scripts/jquery/jquery-1.8.2.js" ></script>
+  <script  src="/page/style/scripts/layer/layer.js" ></script>
+  <script src="/page/style/scripts/js/common.js"></script>
+  <script src="/page/style/scripts/js/pintuer.js"></script>
+  <script src="/page/style/scripts/js/global.js"></script>
+
+  <script>
+      $(function () {
+          //获取Location对象的search属性值
+          var searchStr = location.search;
+          //由于searchStr属性值包括“?”，所以除去该字符
+          searchStr = searchStr.substr(1);
+          //将searchStr字符串分割成数组，数组中的每一个元素为一个参数和参数值
+          var searchs = searchStr.split("&");
+          //获得第一个参数和值
+          var id = searchs[0].split("=");
+          selectIdUserAdmin(id[1]);
+      });
+      //查找角色显示
+      function selectIdUserAdmin(id) {
+          $.ajax({
+              url:"/page/admin/sysUser/getById",
+              type:"GET",
+              data:{"id":id},
+              dataType:"json",
+              success:function (result) {
+                  var userId = result.id;
+                  var roleId = result.roleId;
+                  //将信息设置到指定位置
+                  $("#id").val(userId);
+              //    $("#roleId").val(roleId);
+                 // $("#showOption1 ").attr("value",roleId);
+                  $.ajax({
+                      url:"/page/admin/sysRole/getList",
+                      type:"GET",
+                      data:{},
+                      dataType:"json",
+                      success:function (result) {
+                          var str='';
+                          for(var  i=0;i<result.length;i++){
+                              var id = result[i].id;
+                              var name = result[i].name;
+                              str+='<option value="'+id+'"';
+                              if(roleId==id){
+                                  str+='   selected';
+                              }
+                              str+='>'+name+'</option>';
+                              //console.log(str);
+                          }
+                          $("#showOption2").append(str);
+                      }
+                  });
+              }
+          });
+      };
+
+      //更新按钮处理
+      function updateAdmin_user() {
+          //获取表的参数
+          var id = $("#id").val();
+          var sel = document.getElementById("showOption2");
+         // console.log(sel);
+          var index = sel.selectedIndex;//选中索引
+         // console.log(index); // 索引值
+          // value值
+          roleId = $("#showOption2 option")[index].value;
+          //console.log(roleId);
+          //console.log(id);
+          var addUser_check = true;//表示表单通过检查
+          if(roleId=="" || roleId == 0 ){
+              $("#roleId_error").html("角色不能为空");
+              addUser_check = false;
+          }
+          if(addUser_check) {
+              $.ajax({
+                  url: "/page/admin/sysUser/doAdminUpdate",
+                  type: "POST",
+                  data: {"id": id, "roleId": roleId},
+                  dataType: "json",
+                  success: function (result) {
+                      if (result.success) {
+                          successMsg(result.message);
+                          setTimeout(function () {
+                              window.location.href = "/page/admin/sysUser/user_list.html";
+                          }, 1000);
+                      } else {
+                          failMsg(result.message);
+                          setTimeout(function () {
+                              window.location.reload();
+                          }, 1000);
+                      }
+                  }
+              });
+          }
+      };
+
+  </script>
+</head>
+<body>
+<div class="panel admin-panel">
+  <div class="panel-head" ><strong><span class="icon-pencil-square-o"></span>更新角色</strong></div>
+  <div class="body-content">
+    <form method="post" class="form-x" action="javascript:void(0);">
+      <input type="hidden" id="id" value="">
+
+      <!--修改角色-->
+      <div class="form-group">
+        <div class="label">
+          <label>修改角色：</label>
+        </div>
+        <div class="field Menu" id="selectMenu2">
+          <select name="s_isvouch" class="input"  id="showOption2" name="roleId2"  style="width:90px; line-height:17px;display:inline-block">
+            <option value="0">请选择</option>
+          </select>
+          <div class="tips"></div>
+        </div>
+        <span id="roleId_error"></span>
+      </div>
+
+      <!-- <button class="btn  btn-primary btn-lg active" > 添加</button>    onchange="updateAdmin_user()" -->
+      <div class="form-group">
+        <div class="label">
+          <label></label>
+        </div>
+        <div class="field">
+          <input  type="button" class="button bg-main icon-check-square-o"  onclick="updateAdmin_user()" value="更新"> </input>
+          <a class="button bg-main icon-check-square-o" href="/page/admin/sysUser/user_list.html">取消</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.HshActivityOrderGetLogMapper">
+    <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.HshActivityOrderGetLog">
+        <id column="log_id" property="logId" jdbcType="BIGINT"/>
+        <result column="order_id" property="orderId" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+        <result column="end_time" property="endTime" jdbcType="DATE"/>
+    </resultMap>
+
+    <resultMap id="RespResultMap" type="com.yunchao.hsh.dto.resp.OrderGetLogResp" extends="BaseResultMap"/>
+
+    <sql id="Base_Column_list">
+        log_id,order_id,status,end_time
+    </sql>
+
+
+    <insert id="inserBatchOrderGetLog" parameterType="java.util.List">
+        INSERT INTO hsh_activity_order_get_log (
+        log_id,
+        order_id,
+        status,
+        end_time
+        )
+        VALUES
+        <foreach collection="list" item="getLog" index="index" separator=",">
+            (
+            #{getLog.logId,jdbcType=BIGINT},
+            #{getLog.orderId,jdbcType=VARCHAR},
+            #{getLog.status,jdbcType=TINYINT},
+            #{getLog.endTime,jdbcType=DATE}
+            )
+        </foreach>
+    </insert>
+
+    <select id="findByEndTimeEqules" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_list"/>
+        from
+        hsh_activity_order_get_log
+    </select>
+
+    <select id="selectByOrderId" resultMap="RespResultMap" parameterType="String">
+        select
+        <include refid="Base_Column_list"/>
+        from
+        hsh_activity_order_get_log
+        where order_id = #{orderId,jdbcType=VARCHAR}
+    </select>
+
+
+    <select id="findByOrderIdGroupBy" resultType="java.lang.String">
+        SELECT order_id FROM hsh_activity_order_get_log GROUP BY order_id
+    </select>
+
+
+    <select id="sumByOrderIdStatus" parameterType="string" resultType="byte">
+        SELECT SUM(`status`) FROM hsh_activity_order_get_log WHERE order_id = #{orderId,jdbcType=VARCHAR} GROUP BY order_id
+    </select>
+
+    <!--修改订单状态-->
+    <update id="updateByOrderIdStatus" parameterType="com.yunchao.hsh.model.HshActivityOrderGetLog">
+        update hsh_activity_order_get_log
+        <set>
+            <if test="orderId != null">
+                order_id = #{orderId,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime,jdbcType=DATE},
+            </if>
+        </set>
+        where log_id = #{logId,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateByLogIdStatus" parameterType="com.yunchao.hsh.model.HshActivityOrderGetLog">
+        update hsh_activity_order_get_log
+        <set>
+            <if test="orderId != null">
+                order_id = #{orderId,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime,jdbcType=DATE},
+            </if>
+        </set>
+        where log_id = #{logId,jdbcType=BIGINT}
+    </update>
+</mapper>

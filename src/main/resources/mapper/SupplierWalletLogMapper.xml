@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.SupplierWalletLogMapper" >
+  <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.SupplierWalletLog" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="SUPPLIER_ID" property="supplierId" jdbcType="BIGINT" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="CHANGE_MONEY" property="changeMoney" jdbcType="DOUBLE" />
+    <result column="FRONT_USER_ID" property="frontUserId" jdbcType="BIGINT" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="ORDER_ID" property="orderId" jdbcType="BIGINT" />
+    <result column="IN_OR_OUT" property="inOrOut" jdbcType="INTEGER" />
+    <result column="COLUMN_1" property="column1" jdbcType="VARCHAR" />
+    <result column="COLUMN_2" property="column2" jdbcType="INTEGER" />
+    <result column="COLUMN_3" property="column3" jdbcType="BIGINT" />
+  </resultMap>
+<resultMap id="respLog" type="com.yunchao.hsh.dto.resp.SupplierWalletLogResp" extends="BaseResultMap">
+  <result column="NICKNAME" property="nickName"></result>
+  <result column="ORDER_NO" property="orderNo"></result>
+</resultMap>
+
+  <sql id="Base_Column_List" >
+    ID,SUPPLIER_ID,CREATE_TIME,CHANGE_MONEY,FRONT_USER_ID,REMARK,ORDER_ID,IN_OR_OUT,COLUMN_1,COLUMN_2,COLUMN_3
+  </sql>
+
+  <sql id="Base_Column_List_s" >
+    s.ID,s.SUPPLIER_ID,s.CREATE_TIME,s.CHANGE_MONEY,s.FRONT_USER_ID,s.REMARK,s.ORDER_ID,s.IN_OR_OUT,s.COLUMN_1,s.COLUMN_2,s.COLUMN_3
+  </sql>
+
+  <select id="findById" resultMap="respLog" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from hsh_supplier_wallet_log
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+
+
+  <select id="findList" resultMap="respLog" parameterType="java.lang.Long">
+    select
+    <include refid="Base_Column_List_s" />,o.ORDER_NO,u.NICKNAME
+    from hsh_supplier_wallet_log s
+    left join hsh_supplier_order o on o.ID = s.ORDER_ID
+    left join customer u on u.ID = s.FRONT_USER_ID
+    <where>
+      1=1
+      <if test="@Ognl@isNotEmpty(supplierId)">
+       and  s.SUPPLIER_ID = #{supplierId}
+      </if>
+    </where>
+  </select>
+
+  <select id="findPage" resultMap="respLog" parameterType="java.util.Map">
+    select
+    <include refid="Base_Column_List_s" />,o.ORDER_NO,u.NICKNAME
+    from hsh_supplier_wallet_log s
+    left join hsh_supplier_order o on o.ID = s.ORDER_ID
+    left join customer u on u.ID = s.FRONT_USER_ID
+    <where>
+        1=1
+      <if test="@Ognl@isNotEmpty(id)">
+        and s.ID = #{id}
+      </if>
+      <if test="@Ognl@isNotEmpty(supplierId)">
+        and  s.SUPPLIER_ID = #{supplierId}
+      </if>
+    </where>
+  </select>
+  <select id="getById"  resultMap="respLog" parameterType="java.lang.Long">
+    select
+    <include refid="Base_Column_List_s" />,o.ORDER_NO,u.NICKNAME
+    from hsh_supplier_wallet_log s
+    left join hsh_supplier_order o on o.ID = s.ORDER_ID
+    left join customer u on u.ID = s.FRONT_USER_ID
+    where s.ID = #{id}
+  </select>
+
+  <insert id="insert" parameterType="com.yunchao.hsh.model.SupplierWalletLog" >
+    insert into hsh_supplier_wallet_log (ID,SUPPLIER_ID,CREATE_TIME,CHANGE_MONEY,FRONT_USER_ID,REMARK,ORDER_ID,IN_OR_OUT,COLUMN_1,COLUMN_2,COLUMN_3)
+    values (
+      #{id,jdbcType=BIGINT},
+      #{supplierId,jdbcType=BIGINT},
+      #{createTime,jdbcType=TIMESTAMP},
+      #{changeMoney,jdbcType=DOUBLE},
+      #{frontUserId,jdbcType=BIGINT},
+      #{remark,jdbcType=VARCHAR},
+      #{orderId,jdbcType=BIGINT},
+      #{inOrOut,jdbcType=INTEGER},
+      #{column1,jdbcType=VARCHAR},
+      #{column2,jdbcType=INTEGER},
+      #{column3,jdbcType=BIGINT}
+      )
+  </insert>
+
+</mapper>

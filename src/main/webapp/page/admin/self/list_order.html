@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="/page/style/css/pintuer.css">
+    <link rel="stylesheet" href="/page/style/css/admin.css">
+    <script src="/page/style/scripts/js/jquery.js"></script>
+    <script src="/page/style/scripts/js/global.js"></script>
+    <script src="/page/style/scripts/js/common.js"></script>
+    <script src="/page/style/scripts/layer/layer.js"></script>
+    <style>
+        #table tr td:nth-child(6) {
+            width: 226px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        #table tr td:nth-child(6):hover {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div class="panel admin-panel">
+    <div class="panel-head"><strong class="icon-reorder"> 自营订单管理</strong></div>
+    <table id="table" class="table table-hover text-center">
+        <tr>
+            <th></th>
+            <th>订单ID</th>
+            <th>订单金额(元)</th>
+            <th>商品名称</th>
+            <th>支付积分</th>
+            <th>创建时间</th>
+            <th>支付时间</th>
+            <th>支付类型</th>
+            <th>订单状态</th>
+            <th>收货地址</th>
+            <th>收货人</th>
+            <th>联系方式</th>
+            <th>操作</th>
+        </tr>
+        <tr id="pageBar">
+
+        </tr>
+    </table>
+</div>
+
+</body>
+<script>
+    var colspan = 3;
+    $(function () {
+        loadAll();
+    })
+
+    function loadAll() {
+        $.post("/page/admin/self/order/list", {}, function (data) {
+            console.log(data);
+            if (data.success) {
+                for (var i = 0; i < data.data.list.length; i++) {
+                    $("#pageBar").before('<tr class="content">' +
+                        '<input type="checkbox" class="button border-red" name="all" id="checkall"  value="全选" onclick="checkAll()"/>' +
+                        '<td><input type="checkbox" name="checkname[]" value="' + data.data.list[i].orderId + '"  /></td>' +
+                        '<td>' + data.data.list[i].orderId + '</td>' +
+                        '<td>' + data.data.list[i].itemRebate + '</td>' +
+                        '<td>' + data.data.list[i].itemName + '</td>' +
+                        '<td>' + data.data.list[i].itemRebate + '</td>' +
+                        '<td>' + data.data.list[i].createTime + '</td>' +
+                        '<td>' + data.data.list[i].paymentTime + '</td>' +
+                        '<td>' + fmtType(data.data.list[i].paymentType) + '</td>' +
+                        '<td>' + fmtStr(data.data.list[i].status) + '</td>' +
+                        '<td>' + data.data.list[i].receiverAddress + '</td>' +
+                        '<td>' + data.data.list[i].receiverName + '</td>' +
+                        '<td>' + data.data.list[i].receiverMobile + '</td>' +
+                        '<td><div class="button-group">' +
+                        '<a class="button border-main" href="javascript:void(0)" onclick="updatePre(\'' + data.data.list[i].orderId + '\',\'' + 4 + '\')"><span class=""></span> 发货</a>&nbsp;'+
+                        '<a class="button border-main" href="javascript:void(0)" onclick="updatePre(\'' + data.data.list[i].orderId + '\',\'' + 6 + '\')"><span class=""></span> 交易完成</a>&nbsp;'+
+                    '</div></td>' +
+                    '</tr>'
+                )
+                }
+                $("#pageBar").html(
+                    '<td style="text-align:center;padding-left: 30px">' +
+                    '<input type="checkbox" class="button border-red" name="all" id="checkall"  value="全选" onclick="checkAll()"/>全选' +
+                    '</td>' +
+                    '<td colspan="' + colspan + '" class="colspan" style="text-align:left;padding-left:20px;">' +
+                    '</td>' +
+                    '<td colspan="' + colspan + '"  class="colspan" style="text-align:center;">' +
+                    '<div class="pagelist"> <a  href="#">上一页</a>' +
+                    '<a href="#"  class="current">' + 1 + '</a>' +
+                    '<a href="javascript:void(0)" class="disableds disableds2" onclick="changesearch(2,' + data.data.pageSize + ')">2</a>' +
+                    '<a href="javascript:void(0)" class="disableds disableds3" onclick="changesearch(3,' + data.data.pageSize + ')">3</a>' +
+                    '<a href="javascript:void(0)" class="disableds disabledsNext" onclick="changesearch(' + (data.data.pageNum + 1) + ',' + data.data.pageSize + ')">下一页</a>' +
+                    '<a href="javascript:void(0)" class="disableds" onclick="changesearch(' + (data.data.firstPage) + ',' + data.data.pageSize + ')">首页</a> ' +
+                    '<a href="javascript:void(0)" class="disableds" onclick="changesearch(' + (data.data.lastPage) + ',' + data.data.pageSize + ')">尾页</a> </div>' +
+                    '<span>共' + data.data.total + '条数据</span>' +
+                    '</td>')
+                if (data.data.lastPage == 1) {
+                    $(".disableds").removeAttr("onclick");
+                    $(".disableds3,.disableds2").hide();
+                } else if (data.data.lastPage < 3) {
+                    $(".disableds3").hide();
+                }
+            } else {
+                failMsg("查询列表异常")
+            }
+        }, 'json')
+    }
+
+    //条件搜索
+    function changesearch(pageNum, pageSize) {/**/
+        $.post("/page/admin/self/order/list", {
+            "pageNum": pageNum,
+            "pageSize": pageSize
+        }, function (data) {
+            $(".content").html('');
+            for (var i = 0; i < data.data.list.length; i++) {
+                $("#pageBar").before('<tr class="content">' +
+                    '<td><input type="checkbox" name="checkname[]" value="' + data.data.list[i].orderId + '"  /></td>' +
+                    '<td>' + data.data.list[i].orderId + '</td>' +
+                    '<td>' + data.data.list[i].itemRebate + '</td>' +
+                    '<td>' + data.data.list[i].itemName + '</td>' +
+                    '<td>' + data.data.list[i].itemRebate + '</td>' +
+                    '<td>' + data.data.list[i].createTime + '</td>' +
+                    '<td>' + data.data.list[i].paymentTime + '</td>' +
+                    '<td>' + fmtType(data.data.list[i].paymentType) + '</td>' +
+                    '<td>' + fmtStr(data.data.list[i].status) + '</td>' +
+                    '<td>' + data.data.list[i].receiverAddress + '</td>' +
+                    '<td>' + data.data.list[i].receiverName + '</td>' +
+                    '<td>' + data.data.list[i].receiverMobile + '</td>' +
+                    '<td><div class="button-group">' +
+                    '<a class="button border-main" href="javascript:void(0)" onclick="updatePre(\'' + data.data.list[i].orderId + '\',\'' + 4 + '\')"><span class=""></span> 发货</a>&nbsp;' +
+                    '<a class="button border-main" href="javascript:void(0)" onclick="updatePre(\'' + data.data.list[i].orderId + '\',\'' + 6 + '\')"><span class=""></span> 交易完成</a>&nbsp;' +
+                    '</div></td>' +
+                    '</tr>')
+            }
+            //此处调用分页插件
+            var html = "";
+            var falg = false;
+            var boo = false;
+            if (data.data.pageNum != 1 && data.data.pageNum != data.data.lastPage) {
+                html = '<a href="javascript:void(0)" id="onePrevPage" >' + (data.data.pageNum - 1) + '</a>' +
+                    '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >' + data.data.pageNum + '</a>' +
+                    '<a href="javascript:void(0)"  id="threePrevPage" >' + (data.data.pageNum + 1) + '</a>';
+            } else {
+                html = '<a href="javascript:void(0)" id="onePrevPage" >' + data.data.pageNum + '</a>' +
+                    '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >' + (data.data.pageNum + 1) + '</a>' +
+                    '<a href="javascript:void(0)"  id="threePrevPage"  >' + (data.data.pageNum + 2) + '</a>';
+                falg = true;
+            }
+            if (data.data.pageNum == data.data.lastPage) {
+                html = '<a href="javascript:void(0)" id="onePrevPage" >' + (data.data.pageNum - 2) + '</a>' +
+                    '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >' + (data.data.pageNum - 1) + '</a>' +
+                    '<a href="javascript:void(0)"  id="threePrevPage"  >' + data.data.pageNum + '</a>';
+                boo = true;
+            }
+            $("#pageBar").html('<td style="text-align:center;padding-left: 30px">' +
+                '<input type="checkbox" class="button border-red" name="all" id="checkall"  value="全选" onclick="checkAll()"/>全选' +
+                '</td>' +
+                '<td colspan="' + colspan + '"  class="colspan" style="text-align:left;padding-left:20px;">' +
+                '</td>' +
+                '<td colspan="' + colspan + '"  class="colspan" style="text-align:center;">' +
+                '<div class="pagelist"> <a id="prevPage" href="#">上一页</a>' +
+                html +
+                '<a id="nextPage" href="#" >下一页</a>' +
+                '<a href="javascript:void(0)" onclick="changesearch(' + (data.data.firstPage) + ',' + data.data.pageSize + ')">首页</a>' +
+                '<a href="javascript:void(0)" onclick="changesearch(' + (data.data.lastPage) + ',' + data.data.pageSize + ')">尾页</a> </div>' +
+                '<span>共' + data.data.total + '条数据</span>' +
+                '</td>');
+
+            if ($("#onePrevPage").html() < 1) {
+                $("#onePrevPage").hide();
+            }
+            if ($("#twoPrevPage").html() < 1) {
+                $("#twoPrevPage").hide();
+            }
+            if ($("#threePrevPage").html() < 1) {
+                $("#threePrevPage").hide();
+            }
+            if ($("#threePrevPage").html() > data.data.lastPage) {
+                $("#threePrevPage").hide();
+            }
+            if (falg) {
+                $("#onePrevPage").addClass("current");
+                $("#onePrevPage").siblings().removeClass("current");
+            }
+            if (boo) {
+                $("#threePrevPage").addClass("current");
+                $("#threePrevPage").siblings().removeClass("current");
+            }
+            if (data.data.lastPage == 1) {
+                $("#prevPage").unbind("click");
+                $("#nextPage").unbind("click");
+            } else if (data.data.lastPage == 0) {
+                $("#onePrevPage,#twoPrevPage,#threePrevPage").hide();
+                $("#pageBar").before('<tr class="content"><td colspan="6" style="color:red"> 没有搜索到数据!</td></tr>')
+            } else {
+                $("#onePrevPage,#twoPrevPage,#threePrevPage").click(function () {
+                    changesearch($(this).html(), data.data.pageSize);
+                })
+            }
+
+            if (data.data.pageNum > data.data.firstPage) {
+                $("#prevPage").click(function () {
+                    changesearch(data.data.pageNum - 1, data.data.pageSize);
+                })
+            }
+            if (data.data.pageNum < data.data.lastPage) {
+                $("#nextPage").click(function () {
+                    changesearch(data.data.pageNum + 1, data.data.pageSize);
+                })
+            }
+        }, 'json')
+    }
+
+    function updatePre(orderId, status) {
+        console.log(orderId, status);
+        $.get("/page/admin/self/order/updateStatus", {"orderId": orderId, "status": status},
+            function (data) {
+                if (data.success) {
+                    successMsg(data.message)
+                    window.location.href = "/page/admin/self/list_order.html"
+                } else {
+                    failMsg(data.message)
+                }
+            }
+        );
+    }
+
+    //时间戳转成yyyy-mm-dd
+    function fmtDate(obj) {
+        var date = new Date(obj);
+        var y = 1900 + date.getYear();
+        var m = "0" + (date.getMonth() + 1);
+        var d = "0" + date.getDate();
+        return y + "-" + m.substring(m.length - 2, m.length) + "-" + d.substring(d.length - 2, d.length);
+    }
+
+    function fmtStr(obj) {
+        if (obj === 3) {
+            return "待发货"
+        } else if (obj === 4) {
+            return '待提货';
+        } else if (obj === 6) {
+            return '交易完成'
+        } else if (obj === 1) {
+            return '待付款'
+        } else {
+            return '--'
+        }
+    }
+
+    function fmtType(obj) {
+        //1、积分、2、余额、3、微信 、4积分余额混合支付、5积分微信混合支付',
+        if (obj === 1) {
+            return '积分';
+        } else if (obj === 2) {
+            return '余额';
+        } else if (obj === 3) {
+            return '微信';
+        } else if (obj === 4) {
+            return '积分/余额';
+        } else if (obj === 5) {
+            return '微信';
+        }
+    }
+</script>
+</html>

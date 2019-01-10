@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link href="/page/style/css/pintuer.css" rel="stylesheet">
+    <link href="/page/style/css/admin.css" rel="stylesheet">
+    <script src="/page/style/scripts/jquery/jquery-1.8.2.js"></script>
+    <script src="/page/style/scripts/layer/layer.js"></script>
+    <script src="/page/style/scripts/js/common.js"></script>
+    <script src="/page/style/scripts/js/pintuer.js"></script>
+    <script src="/page/style/scripts/js/global.js"></script>
+
+    <script>
+        function addRole_form() {
+            $("#realName_error").html("");
+            //获取输入的值
+            var name = $("#realName").val();
+            var addRole_check = true;//表示表单通过检查
+            if (name == "") {
+                $("#realName_error").html("角色名不能为空");
+                var addRole_check = false;
+            }
+            var ids = [];
+            var index = 0;
+            $("input[name='checkname[]'][level='1']").each(function(i,o){
+                if (this.checked==true) {
+                    var obj = {};
+                    var pid = o.value;
+                    var cids = new Array();
+                    $(this).next().find("input[name='checkname[]'][level='2']").each(function(i,ob){
+                        if (ob.checked==true) {
+                            var cid = ob.value;
+                            cids.push(cid);
+                        }
+                    })
+                    obj.first_id = pid;
+                    obj.childs = cids.join(",");
+                    ids[index] = obj;
+                    index++;
+                }
+            });
+            if (ids.length == 0){
+                $("#menu_ids").html("请选择菜单数据");
+                var addRole_check = false;
+            }
+
+            if (addRole_check) {
+                //console.log(name);
+                $.ajax({
+                    url: "/page/admin/sysRole/doAdd",
+                    type: "post",
+                    data: {"name": name,"ids":JSON.stringify(ids)},
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.success) {
+                            successMsg(result.message);
+                            setTimeout(function () {
+                                window.location.href = "/page/admin/sysRole/sysRole_list.html";
+                            }, 900);
+                        } else {
+                            failMsg(result.message);
+                        }
+                    }
+                });
+            }
+        };
+    </script>
+</head>
+<body>
+<!-- /page/admin/sysUser/user_add.html -->
+<div class="panel admin-panel">
+    <div class="panel-head" id="add"><strong><span class="icon-pencil-square-o"></span>增加角色</strong></div>
+
+
+    <div class="body-content">
+        <form method="post" class="form-x" action="javascript:void(0);">
+
+            <!--姓名:角色名-->
+            <div class="form-group">
+                <div class="label">
+                    <label>角色名：</label>
+                </div>
+                <div class="field">
+                    <input type="text" name="realName" id="realName" class="input w50" value="" placeholder="请输入名称"/>
+                    <p style="display:inline-block;line-height: 22px; color: red;margin-left: 6px;margin-top: 10px">
+                        *</p>
+                    <div class="tips" id="realName_error" style="color: red;"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="label">
+                    <label>菜单：</label>
+                </div>
+                <!--<div class="field" id="menu_data">-->
+                    <ul class="field" id="menu_data">
+
+                    </ul>
+                    <!--<p style="display:inline-block;line-height: 22px; color: red;margin-left: 6px;margin-top: 10px">-->
+                    <!--*</p>-->
+                    <!--<div class="tips" id="menu_ids" style="color: red;"></div>-->
+                </div>
+            <!--</div>-->
+
+            <div class="form-group">
+                <div class="label">
+                    <label></label>
+                </div>
+                <div class="field field1">
+                    <a class="button bg-main icon-check-square-o" href="###" onclick="addRole_form()">保存</a>
+                    <a class="button bg-main icon-check-square-o" href="/page/admin/sysRole/sysRole_list.html">取消</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    $(function () {
+        loadFirst();
+
+       $("#menu_data").on('click','input', function() {
+
+//            $(".selcon li input:checkbox").prop("checked", $(this).prop('checked'));
+            $(this).next('ul').children().children().prop("checked", $(this).prop('checked'));
+        });
+
+        var html = '';
+
+        function loadFirst() {
+            $.ajax({
+                url: '/page/admin/menu/getList',
+                type: 'get',
+                data: {
+                    parentId: 0
+                },
+                dataType: 'json',
+                success: function (data) {
+                    var len = data.length;
+                    if (len > 0) {
+                        for (var i = 0; i < len; i++) {
+                            var name = data[i].name;
+                            var firstId = data[i].id;
+                            html += '<li class="sel"><input type="checkbox" name="checkname[]" value="' + firstId + '" class="sel li-tree" level="1"/>' + name;
+                            loadSecond(firstId);
+                        }
+                        $("#menu_data").append(html);
+                    }
+                }
+            });
+        }
+
+        function loadSecond(firstId) {
+            $.ajax({
+                url: '/page/admin/menu/getList',
+                type: 'get',
+                data: {
+                    parentId: firstId
+                },
+                async: false,
+                dataType: 'json',
+                success: function (resp) {
+                    var len = resp.length;
+                    if (len > 0) {
+                        html+='<ul class="sel_con">';
+                        for (var i = 0; i < len; i++) {
+                            var name = resp[i].name;
+                            var id = resp[i].id;
+                            html += '<li><input type="checkbox" name="checkname[]" value="' + id + '" class="li-tree" level="2"/>' + name+'</li>';
+                        }
+                        html+="</ul></li>";
+                    }
+                }
+            });
+        }
+
+    })
+
+
+
+</script>
+</body>
+</html>

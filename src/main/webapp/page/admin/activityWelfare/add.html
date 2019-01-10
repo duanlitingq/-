@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="/page/style/css/pintuer.css">
+    <link rel="stylesheet" href="/page/style/css/admin.css">
+
+    <link rel="stylesheet" type="text/css" href="/page/style/upload/css/webuploader.css"/>
+    <link rel="stylesheet" type="text/css" href="/page/style/upload/css/style.css"/>
+
+    <script src="/page/style/scripts/jquery/jquery-1.11.2.js"></script>
+    <script src="/page/style/scripts/jquery/ajaxfileupload.js"></script>
+
+    <!--uploadjs-->
+    <script type="text/javascript" src="/page/style/upload/js/jquery.js"></script>
+    <script type="text/javascript" src="/page/style/upload/js/webuploader.js"></script>
+    <script type="text/javascript" src="/page/style/upload/js/activityWelfareAdd.js"></script>
+    <!--uploadend-->
+
+    <script src="/page/style/scripts/js/global.js"></script>
+    <script src="/page/style/scripts/js/common.js"></script>
+    <script src="/page/style/scripts/layer/layer.js"></script>
+    <style>
+        .addImgs li{
+            display: inline-block;
+            margin: 20px;
+        }
+
+    </style>
+<body>
+
+<div class="panel-head"><strong><span class="icon-pencil-square-o"></span> 添加活动福利</strong></div>
+<div class="body-content">
+    <form method="post" class="form-x" action="/page/admin/welfare/doAdd"  onsubmit="return checkData()" enctype="multipart/form-data">
+        <!--名称-->
+        <div class="form-group">
+            <div class="label">
+                <label>名称：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="title" name="welfareTitle" maxlength="127" class="input w50" value=""  data-validate="required:请输入标题" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--图片-->
+        <div class="form-group">
+            <div class="label">
+                <label>图片：</label>
+            </div>
+
+            <div class="field">
+                <div id="wrapper">
+                    <div id="container">
+                        <!--头部，相册选择和格式选择-->
+                        <div id="uploader">
+                            <div class="queueList">
+                                <div id="dndArea" class="placeholder">
+                                    <div id="filePicker"></div>
+                                    <p>或将照片拖到这里，单次最多可选300张</p>
+                                </div>
+                            </div>
+                            <div class="statusBar" style="display:none;">
+                                <div class="progress">
+                                    <span class="text">0%</span>
+                                    <span class="percentage"></span>
+                                </div>
+                                <div class="info"></div>
+                                <div class="btns">
+                                    <div id="filePicker2"></div>
+                                    <div class="uploadBtn">开始上传</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input  type="hidden" id="welfareImg" name="welfareImg"  value=""/>
+
+        </div>
+
+        <!--是否展示-->
+        <div class="form-group">
+            <div class="label">
+                <label>展示状态：</label>
+            </div>
+            <div class="field">
+                <select name="welfareStatus"  id="status" class="input" style="width:25%; line-height:17px; display:inline-block">
+                    <option value="">选择</option>
+                    <option value="1">是</option>
+                    <option value="2">否</option>
+                </select>
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--简介-->
+        <div class="form-group">
+            <div class="label">
+                <label>标签：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="welfareTag" name="welfareTag" maxlength="127" class="input w50" value=""  data-validate="required:请输入标题" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--提交-->
+        <div class="form-group">
+            <div class="label">
+                <label></label>
+            </div>
+            <div class="field">
+                <button id="refer" class="button bg-main icon-check-square-o" type="submit"> 提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+</body>
+<script>
+    $(".del").remove();
+    //表单提交时校验
+    function checkData() {
+        // var title = $("#title").val();
+        // var link = $("#link").val();
+        // var file=   $(":file");//file类型
+        // var status = $("#status").val();
+        // var info = $("#info").val();
+        // var sort = $("#sort").val();
+        // if(isEmpty(title)){
+        //     failMsg("名称不能为空");
+        //     return false;
+        // }
+        // if(isEmpty(sort)){
+        //     failMsg("排序数字不能为空");
+        //     return false;
+        // }else if(isIntNum(sort)){
+        //     failMsg("请输入数字");
+        //     return false;
+        // }
+        // if(isEmpty(link)){
+        //     failMsg("链接不能为空");
+        //     return false;
+        // }
+        // if(file.length<2){
+        //     //只有一个图片上传的按钮
+        //     failMsg("请上传图片");
+        //     return false;
+        // }
+        // if(isEmpty(status)){
+        //     failMsg("请选择展示状态");
+        //     return false;
+        // }
+        // if(isEmpty(info)){
+        //     failMsg("请输入简介信息");
+        //     return false;
+        // }
+        return true;
+    }
+    function setImg1(obj){//用于进行图片上传，返回地址
+        var f=$(obj).val();
+        if(f == null || f ==undefined || f == ''){
+            return false;
+        }
+        if(!/\.(?:png|jpg|bmp|gif|PNG|JPG|BMP|GIF)$/.test(f))
+        {
+            alert("类型必须是图片(.png|jpg|bmp|gif|PNG|JPG|BMP|GIF)");
+            $(obj).val('');
+            return false;
+        }
+        var data = new FormData();
+        $.each($(obj)[0].files,function(i,file){
+            data.append('file', file);
+        });
+    }
+    //上传图片js
+    function doAdd(){//用于进行图片上传，返回地址
+        var file = new FormData();
+        var data = {
+            name:$("#name").val(),
+            link:$("#link").val(),
+            status:$("#status").val(),
+            info:$("#info").val(),
+            sort:$("#sort").val(),
+            file: file
+        };
+        $.ajax({
+            type: "POST",
+            url: "/page/admin/ad/doAdd",
+            data: data,
+            cache: false,
+            contentType: false,    //不可缺
+            processData: false,    //不可缺
+            dataType:"json",
+            success: function(data) {
+                alert(123)
+                if(data.success == "true"){
+                    window.location.href="/page/admin/ad/list.html";
+                }else{
+                    alert(data.message);
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("上传失败，请检查网络后重试");
+                $("#url").val("");
+                $(obj).val('');
+            }
+        });
+    }
+</script>
+</html>

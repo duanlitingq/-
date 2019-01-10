@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="/page/style/css/pintuer.css">
+    <link rel="stylesheet" href="/page/style/css/admin.css">
+    <script src="/page/style/scripts/jquery/jquery-1.11.2.js"></script>
+    <script src="/page/style/scripts/jquery/ajaxfileupload.js"></script>
+    <script src="/page/style/scripts/js/global.js"></script>
+    <script src="/page/style/scripts/js/common.js"></script>
+    <script src="/page/style/scripts/layer/layer.js"></script>
+<body>
+
+<div class="panel-head"><strong><span class="icon-pencil-square-o"></span>修改规则</strong></div>
+<div class="body-content">
+    <form class="form-x">
+        <input name="id" id="id" value="1" type="hidden">
+        <!--名称-->
+        <div class="form-group">
+            <div class="label">
+                <label>规则名称：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="integralName" name="integralName" class="input w50" value="" name="title" data-validate="required:请输入菜单名称" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--是否展示-->
+        <div class="form-group">
+            <div class="label">
+                <label>积分规则：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="integral" name="integral" class="input w50" value="" name="title" data-validate="required:请输入菜单名称" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>简介：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="introduction" name="introduction" class="input w50" value="" name="title" data-validate="required:菜单链接" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--提交-->
+        <div class="form-group">
+            <div class="label">
+                <label></label>
+            </div>
+            <div class="field">
+                <button id="refer" class="button bg-main icon-check-square-o" type="button" onclick="checkData()"> 提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+<script>
+    $(function () {
+        loadData();
+    })
+    function loadData() {
+        var id = getUrlParam("id");
+        $.post("/page/admin/integralRules/getOneIntegralRules",
+            {
+                id: id
+            }, function (data) {
+                console.log(data);
+                $("#id").val(data.data.id);
+                $("#integralName").val(data.data.integralName);
+                $("#integral").val(data.data.integral);
+                $("#introduction").val(data.data.introduction);
+            }, 'json')
+    }    //表单提交时校验
+    function checkData() {
+        var data = {
+            id:$("#id").val(),
+            integralName:$("#integralName").val(),
+            integral:$("#integral").val(),
+            Introduction:$("#introduction").val(),
+        }
+        $.ajax({
+            type: "POST",
+            url: "/page/admin/integralRules/uplIntegralRules",
+            data: data,
+            dataType:"json",
+            success: function(data) {
+                goToAfterShowMsg(data.message,"/page/admin/IntegralRules/IntegralRules.html");
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("修改失败");
+            }
+        });
+    }
+</script>
+</html>

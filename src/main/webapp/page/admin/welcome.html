@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="/page/style/css/pintuer.css">
+    <link rel="stylesheet" href="/page/style/css/admin.css">
+    <script src="/page/style/scripts/js/jquery.js"></script>
+    <script src="/page/style/scripts/js/global.js"></script>
+    <script src="/page/style/scripts/js/common.js"></script>
+    <script src="/page/style/scripts/layer/layer.js"></script>
+    <style>
+        #table tr td:nth-child(6){
+            width:226px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: inline-block;
+        }
+        #table tr td:nth-child(6):hover{
+            width:100%;
+        }
+    </style>
+</head>
+<body>
+<div class="panel admin-panel">
+    <div class="panel-head"><strong class="icon-reorder" id="supplier_center">店铺中心</strong></div>
+    <table id="table" class="table table-hover text-center">
+        <tr id="pageBar">
+            <th >店铺名称</th>
+            <th >店铺类别</th>
+            <th >店铺余额</th>
+            <th >联系人</th>
+            <th >联系电话</th>
+            <th >是否展示</th>
+            <th >更新时间</th>
+            <th>排序</th>
+            <th>查看订单</th>
+        </tr>
+
+    </table>
+</div>
+
+</body>
+<script>
+    // var userId = getUrlParam("userId");
+    var userId = sessionStorage.getItem("id");
+    var userName = sessionStorage.getItem("userName");
+    $("#supplier_center").text(userName+"的店铺");
+    $(function () {
+        loadSupplier();
+    })
+    function loadSupplier() {
+        $.post("/page/admin/supplier/findUserSupplier",{userId:userId},function (data) {
+            var arr = data.list;
+            if(arr.length > 0){
+                var html = "";
+                for (var i = 0; i < arr.length; i++) {
+                    var id = arr[i].id;
+                    var name = arr[i].name;
+                    var typeName = arr[i].typeName;
+                    var linkman = arr[i].linkman;
+                    var mobile = arr[i].mobile;
+                    var statusName = arr[i].statusName;
+                    var updateTime = arr[i].updateTime;
+                    var priority = arr[i].priority;
+                    var totalMoney = arr[i].totalMoney;
+                    html+= '<tr class="content">' +
+                        '<td><a href="#" onclick="loadWallet('+id+')">'+name+'</a></td>' +
+                        '<td>'+typeName+'</td>'+
+                        '<td>'+totalMoney+'</td>'+
+                        '<td>'+linkman+'</td>' +
+                        '<td>'+mobile+'</td>' +
+                        '<td>'+statusName+'</td>' +
+                        '<td>'+updateTime+'</td>' +
+                        '<td>'+priority+'</td>' +
+                        '<td><div class="button-group">' +
+                        '<a class="button border-main" href="javascript:void(0)" onclick="lookOrder('+data.list[i].id+')"><span class=""></span>查看订单</a>&nbsp;' +
+                        '</div></td>'+
+                        '</tr>'
+                }
+                $("#pageBar").after(html);
+            }
+        });
+    }
+    function loadWallet(supplierId) {
+        window.location.href='/page/admin/supplierwallet/list.html?supplierId='+supplierId;
+    }
+
+    function lookOrder(id){
+        window.location.href='/page/admin/supplierorder/list.html?id='+id;
+    }
+</script>
+</html>

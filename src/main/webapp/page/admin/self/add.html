@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="/page/style/css/pintuer.css">
+    <link rel="stylesheet" href="/page/style/css/admin.css">
+    <link rel="stylesheet" type="text/css" href="/page/style/self/css/webuploader.css"/>
+    <link rel="stylesheet" type="text/css" href="/page/style/self/css/style.css"/>
+    <script src="/page/style/scripts/jquery/jquery-1.11.2.js"></script>
+    <script src="/page/style/scripts/jquery/ajaxfileupload.js"></script>
+    <script src="/page/style/scripts/js/global.js"></script>
+    <script src="/page/style/scripts/js/common.js"></script>
+    <script src="/page/style/scripts/layer/layer.js"></script>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        body, button, input, select, textarea {
+            font: 12px/16px Verdana, Helvetica, Arial, sans-serif;
+        }
+    </style>
+<body>
+
+<div class="panel-head"><strong><span class="icon-pencil-square-o"></span> 添加商品</strong></div>
+<div class="body-content">
+    <form method="post" class="form-x" action="/page/admin/self/item/save" onsubmit="return checkData()"
+          enctype="multipart/form-data">
+        <!--名称-->
+        <div class="form-group">
+            <div class="label">
+                <label>商品名称：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="name" name="itemName" maxlength="127" class="input w50" value=""
+                       data-validate="required:请输入商品名称"/>
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>商品简介：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="sellPoint" name="sellPoint" maxlength="127" class="input w50" value=""
+                       data-validate="required:请输入商品简介"/>
+                <div class="tips"></div>
+            </div>
+        </div>
+<!--        <div class="form-group">
+            <div class="label">
+                <label>商品价格：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="itemPrice" name="itemPrice" maxlength="127" class="input w50" value=""
+                       data-validate="required:请输入商品价格" disabled/>
+                <div class="tips"></div>
+            </div>
+        </div>-->
+        <!--链接-->
+        <div class="form-group">
+            <div class="label">
+                <label>积分：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="itemIntegral" name="itemIntegral" class="input w50" maxlength="127" value="0"
+                       data-validate="required:商品购买积分" placeholder="商品购买积分,默认为0不需要积分购买"/>
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--图片-->
+        <div class="form-group">
+            <div class="label">
+                <label>商品图片：</label>
+            </div>
+
+            <div id="wrapper">
+                <div id="container">
+                    <!--头部，相册选择和格式选择-->
+                    <div id="uploader">
+                        <div class="queueList">
+                            <div id="dndArea" class="placeholder">
+                                <div id="filePicker"></div>
+                                <p>将照片拖到这里，单次最多可选5张</p>
+                            </div>
+                        </div>
+                        <div class="statusBar" style="display:none;">
+                            <div class="progress">
+                                <span class="text">0%</span>
+                                <span class="percentage"></span>
+                            </div>
+                            <div class="info"></div>
+                            <div class="btns">
+                                <div id="filePicker2"></div>
+                                <div class="uploadBtn">开始上传</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input id="itemImg" name="itemImg" value="" style="display: none"/>
+
+
+            <!--<div class="field">
+                <ul class="addImgs">
+                    &lt;!&ndash;上传的图片&ndash;&gt;
+                    <li style="position: relative">
+                        <label>
+                            <img src="" id="show" width="200">
+                            <a class="button bg-blue input-file" href="javascript:void(0);">+ 图片上传
+                                <input name="file" data-validate="required:" type="file" onchange="changepic(this)"/>
+                            </a>
+                        </label>
+                    </li>
+                </ul>
+            </div>-->
+        </div>
+
+<!--        <div class="form-group">
+            <div class="label">
+                <label>商品单位：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="itemUnit" name="itemUnit" class="input w50" maxlength="127" value=""
+                       data-validate="required:商品单位"/>
+                <div class="tips"></div>
+            </div>
+        </div>-->
+
+        <div class="form-group">
+            <div class="label">
+                <label>库存：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="itemNum" name="itemNum" class="input w50" maxlength="127" value="0"
+                       data-validate="required:库存"/>
+                <div class="tips"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="label">
+                <label>是否推荐：</label>
+            </div>
+            <div class="field">
+                <li>
+                    <select id="cusNum1" name="cusNum1" class="input"
+                            style="width:60px; line-height:17px; display:inline-block">
+                        <option value="">选择</option>
+                        <option value="1">是</option>
+                        <option value="0">否</option>
+                    </select>
+                </li>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>邮费：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="postFee" name="postFee" class="input w50" placeholder="默认包邮" maxlength="127" value="0" data-validate="required:邮费"/>
+                <div class="tips"></div>
+            </div>
+        </div>
+
+        <!--简介-->
+        <div class="form-group">
+            <div class="label">
+                <label>商品描述：</label>
+            </div>
+            <div class="field">
+                <textarea name="desc" id="desc" style="margin: 0px;width: 900px;height: 300px;"></textarea>
+            </div>
+        </div>
+
+        <!--提交-->
+        <div class="form-group">
+            <div class="label">
+                <label></label>
+            </div>
+            <div class="field">
+                <button id="refer" class="button bg-main icon-check-square-o" type="submit"> 提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+</body>
+<script>
+    $(".del").remove();
+
+    //表单提交时校验
+    function checkData() {
+        var name = $("#name").val();
+/*        var itemPrice = $("#itemPrice").val();*/
+        var file = $(":file");//file类型
+        var itemIntegral = $("#itemIntegral").val();
+/*        var itemUnit = $("#itemUnit").val();*/
+        var cusNum1 = $("#cusNum1").val();
+        var postFee = $("#postFee").val();
+        if (isEmpty(name)) {
+            failMsg("商品名称不能为空");
+            return false;
+        }
+/*        if (isEmpty(itemPrice)) {
+            failMsg("商品单价不能为空");
+            return false;
+        }*/
+        if (file.length < 0) {
+            //只有一个图片上传的按钮
+            failMsg("未上传图片");
+            return false;
+        }
+        if (isEmpty(itemIntegral)) {
+            failMsg("积分不能为空");
+            return false;
+        }
+/*        if (isEmpty(itemUnit)) {
+            failMsg("商品单位不能为空");
+            return false;
+        }*/
+        if (isEmpty(cusNum1)) {
+            failMsg("推荐必选");
+            return false;
+        }
+        return true;
+    }
+
+    function setImg1(obj) {//用于进行图片上传，返回地址
+        var f = $(obj).val();
+        if (f == null || f == undefined || f == '') {
+            return false;
+        }
+//        alert(f) ;
+        if (!/\.(?:png|jpg|bmp|gif|PNG|JPG|BMP|GIF)$/.test(f)) {
+            alert("类型必须是图片(.png|jpg|bmp|gif|PNG|JPG|BMP|GIF)");
+            $(obj).val('');
+            return false;
+        }
+        var data = new FormData();
+        $.each($(obj)[0].files, function (i, file) {
+            data.append('file', file);
+        });
+    }
+
+    //上传图片js
+    function doAdd() {//用于进行图片上传，返回地址
+        var file = new FormData();
+        var data = {
+            name: $("#name").val(),
+            featurs: $("#featurs").val(),
+            preAvg: $("#preAvg").val(),
+            address: $("#address").val(),
+            longitude: $("#longitude").val(),
+            latitude: $("#latitude").val(),
+            file: file
+        };
+        $.ajax({
+            type: "POST",
+            url: "/page/admin/station/insert",
+            data: data,
+            cache: false,
+            contentType: false,    //不可缺
+            processData: false,    //不可缺
+            dataType: "json",
+            success: function (data) {
+                alert(data.message)
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("上传失败，请检查网络后重试");
+                $("#url").val("");
+                $(obj).val('');
+            }
+        });
+    }
+</script>
+<script type="text/javascript" src="/page/style/upload/js/webuploader.js"></script>
+<script type="text/javascript" src="/page/style/self/js/upload.js"></script>
+</html>

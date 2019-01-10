@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.HshStationMapper">
+    <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.HshStation">
+        <id column="station_id" property="stationId" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="featurs" property="featurs" jdbcType="VARCHAR"/>
+        <result column="popularity" property="popularity" jdbcType="INTEGER"/>
+        <result column="pre_avg" property="preAvg" jdbcType="INTEGER"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="longitude" property="longitude" jdbcType="DOUBLE"/>
+        <result column="latitude" property="latitude" jdbcType="DOUBLE"/>
+        <result column="is_del" property="isDel" jdbcType="TINYINT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="offline_time" property="offlineTime" jdbcType="TIMESTAMP"/>
+        <result column="online_time" property="onlineTime" jdbcType="TIMESTAMP"/>
+        <result column="station_img" property="stationImg" jdbcType="VARCHAR"/>
+        <result column="station_license" property="stationLicense" jdbcType="VARCHAR"/>
+        <result column="station_quality" property="stationQuality" jdbcType="VARCHAR"/>
+        <result column="cus_num_one" property="cusNumOne" jdbcType="VARCHAR"/>
+        <result column="cus_num_two" property="cusNumTwo" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="Base_Station_Map" type="com.yunchao.hsh.dto.resp.StationResp" extends="BaseResultMap"/>
+
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        <if test="fields == null">
+            station_id, name, featurs, popularity, pre_avg, address, longitude, latitude, is_del,
+            create_time, update_time, offline_time, online_time, station_img, station_license,
+            station_quality, cus_num_one, cus_num_two
+        </if>
+        <if test="fields != null">
+            ${fields}
+        </if>
+    </sql>
+    <sql id="listStation">
+        station_id, name, featurs, popularity, pre_avg, address, longitude, latitude, is_del,
+            create_time, update_time, offline_time, online_time, station_img, station_license,
+            station_quality, cus_num_one, cus_num_two
+    </sql>
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.yunchao.hsh.model.HshStationExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from hsh_station
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+        <if test="startRow != null">
+            limit #{startRow} , #{pageSize}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select 
+    station_id,name,featurs,popularity,pre_avg,address,longitude,latitude,is_del,create_time,update_time,offline_time,online_time,station_img,station_license,station_quality,cus_num_one,cus_num_two
+    from hsh_station
+    where station_id = #{stationId,jdbcType=BIGINT}
+  </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from hsh_station
+    where station_id = #{stationId,jdbcType=BIGINT}
+  </delete>
+    <delete id="deleteByExample" parameterType="com.yunchao.hsh.model.HshStationExample">
+        delete from hsh_station
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.yunchao.hsh.model.HshStation">
+    insert into hsh_station (station_id, name, featurs, 
+      popularity, pre_avg, address, 
+      latitude,longitude, is_del,
+      create_time, update_time, offline_time, 
+      online_time, station_img, station_license, 
+      station_quality, cus_num_one, cus_num_two
+      )
+    values (#{stationId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{featurs,jdbcType=VARCHAR}, 
+      #{popularity,jdbcType=INTEGER}, #{preAvg,jdbcType=INTEGER}, #{address,jdbcType=VARCHAR}, 
+      #{latitude,jdbcType=DOUBLE}, #{longitude,jdbcType=DOUBLE}, #{isDel,jdbcType=TINYINT},
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{offlineTime,jdbcType=TIMESTAMP}, 
+      #{onlineTime,jdbcType=TIMESTAMP}, #{stationImg,jdbcType=VARCHAR}, #{stationLicense,jdbcType=VARCHAR}, 
+      #{stationQuality,jdbcType=VARCHAR}, #{cusNumOne,jdbcType=VARCHAR}, #{cusNumTwo,jdbcType=VARCHAR}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.yunchao.hsh.model.HshStation">
+        insert into hsh_station
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="stationId != null">
+                station_id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="featurs != null">
+                featurs,
+            </if>
+            <if test="popularity != null">
+                popularity,
+            </if>
+            <if test="preAvg != null">
+                pre_avg,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="latitude != null">
+                latitude,
+            </if>
+            <if test="longitude != null">
+                longitude,
+            </if>
+            <if test="isDel != null">
+                is_del,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="offlineTime != null">
+                offline_time,
+            </if>
+            <if test="onlineTime != null">
+                online_time,
+            </if>
+            <if test="stationImg != null">
+                station_img,
+            </if>
+            <if test="stationLicense != null">
+                station_license,
+            </if>
+            <if test="stationQuality != null">
+                station_quality,
+            </if>
+            <if test="cusNumOne != null">
+                cus_num_one,
+            </if>
+            <if test="cusNumTwo != null">
+                cus_num_two,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="stationId != null">
+                #{stationId,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="featurs != null">
+                #{featurs,jdbcType=VARCHAR},
+            </if>
+            <if test="popularity != null">
+                #{popularity,jdbcType=INTEGER},
+            </if>
+            <if test="preAvg != null">
+                #{preAvg,jdbcType=INTEGER},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="latitude != null">
+                #{latitude,jdbcType=DOUBLE},
+            </if>
+            <if test="longitude != null">
+                #{longitude,jdbcType=DOUBLE},
+            </if>
+            <if test="isDel != null">
+                #{isDel,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="offlineTime != null">
+                #{offlineTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="onlineTime != null">
+                #{onlineTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="stationImg != null">
+                #{stationImg,jdbcType=VARCHAR},
+            </if>
+            <if test="stationLicense != null">
+                #{stationLicense,jdbcType=VARCHAR},
+            </if>
+            <if test="stationQuality != null">
+                #{stationQuality,jdbcType=VARCHAR},
+            </if>
+            <if test="cusNumOne != null">
+                #{cusNumOne,jdbcType=VARCHAR},
+            </if>
+            <if test="cusNumTwo != null">
+                #{cusNumTwo,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.yunchao.hsh.model.HshStationExample" resultType="java.lang.Integer">
+        select count(*) from hsh_station
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <!--获取现有驿站列表-->
+    <select id="getStationList" resultMap="Base_Station_Map" parameterType="long">
+        SELECT
+          <include refid="Base_Column_List"/>
+        FROM
+          hsh_station
+        WHERE
+          is_del = 1
+    </select>
+    <!-- 条件模糊查询 -->
+    <select id="getCondition" resultMap="Base_Station_Map" parameterType="java.lang.String">
+        SELECT
+        <include refid="listStation"/>
+        FROM
+        hsh_station
+        <where>
+            1=1  AND is_del=1
+            <if test="@Ognl@isNotEmpty(name)">
+                and name LIKE '%${name}%'
+            </if>
+        </where>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update hsh_station
+        <set>
+            <if test="record.stationId != null">
+                station_id = #{record.stationId,jdbcType=BIGINT},
+            </if>
+            <if test="record.name != null">
+                name = #{record.name,jdbcType=VARCHAR},
+            </if>
+            <if test="record.featurs != null">
+                featurs = #{record.featurs,jdbcType=VARCHAR},
+            </if>
+            <if test="record.popularity != null">
+                popularity = #{record.popularity,jdbcType=INTEGER},
+            </if>
+            <if test="record.preAvg != null">
+                pre_avg = #{record.preAvg,jdbcType=INTEGER},
+            </if>
+            <if test="record.address != null">
+                address = #{record.address,jdbcType=VARCHAR},
+            </if>
+            <if test="record.longitude != null">
+                longitude = #{record.longitude,jdbcType=DOUBLE},
+            </if>
+            <if test="record.latitude != null">
+                latitude = #{record.latitude,jdbcType=VARCHAR},
+            </if>
+            <if test="record.isDel != null">
+                is_del = #{record.isDel,jdbcType=TINYINT},
+            </if>
+            <if test="record.createTime != null">
+                create_time = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.updateTime != null">
+                update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.offlineTime != null">
+                offline_time = #{record.offlineTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.onlineTime != null">
+                online_time = #{record.onlineTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.stationImg != null">
+                station_img = #{record.stationImg,jdbcType=VARCHAR},
+            </if>
+            <if test="record.stationLicense != null">
+                station_license = #{record.stationLicense,jdbcType=VARCHAR},
+            </if>
+            <if test="record.stationQuality != null">
+                station_quality = #{record.stationQuality,jdbcType=VARCHAR},
+            </if>
+            <if test="record.cusNumOne != null">
+                cus_num_one = #{record.cusNumOne,jdbcType=VARCHAR},
+            </if>
+            <if test="record.cusNumTwo != null">
+                cus_num_two = #{record.cusNumTwo,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update hsh_station
+        set station_id = #{record.stationId,jdbcType=BIGINT},
+        name = #{record.name,jdbcType=VARCHAR},
+        featurs = #{record.featurs,jdbcType=VARCHAR},
+        popularity = #{record.popularity,jdbcType=INTEGER},
+        pre_avg = #{record.preAvg,jdbcType=INTEGER},
+        address = #{record.address,jdbcType=VARCHAR},
+        longitude = #{record.longitude,jdbcType=DOUBLE},
+        latitude = #{record.latitude,jdbcType=DOUBLE},
+        is_del = #{record.isDel,jdbcType=TINYINT},
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+        offline_time = #{record.offlineTime,jdbcType=TIMESTAMP},
+        online_time = #{record.onlineTime,jdbcType=TIMESTAMP},
+        station_img = #{record.stationImg,jdbcType=VARCHAR},
+        station_license = #{record.stationLicense,jdbcType=VARCHAR},
+        station_quality = #{record.stationQuality,jdbcType=VARCHAR},
+        cus_num_one = #{record.cusNumOne,jdbcType=VARCHAR},
+        cus_num_two = #{record.cusNumTwo,jdbcType=VARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.yunchao.hsh.model.HshStation">
+        update hsh_station
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="featurs != null">
+                featurs = #{featurs,jdbcType=VARCHAR},
+            </if>
+            <if test="popularity != null">
+                popularity = #{popularity,jdbcType=INTEGER},
+            </if>
+            <if test="preAvg != null">
+                pre_avg = #{preAvg,jdbcType=INTEGER},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="longitude != null">
+                longitude = #{longitude,jdbcType=DOUBLE},
+            </if>
+            <if test="latitude != null">
+                latitude = #{latitude,jdbcType=VARCHAR},
+            </if>
+            <if test="isDel != null">
+                is_del = #{isDel,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="offlineTime != null">
+                offline_time = #{offlineTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="onlineTime != null">
+                online_time = #{onlineTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="stationImg != null">
+                station_img = #{stationImg,jdbcType=VARCHAR},
+            </if>
+            <if test="stationLicense != null">
+                station_license = #{stationLicense,jdbcType=VARCHAR},
+            </if>
+            <if test="stationQuality != null">
+                station_quality = #{stationQuality,jdbcType=VARCHAR},
+            </if>
+            <if test="cusNumOne != null">
+                cus_num_one = #{cusNumOne,jdbcType=VARCHAR},
+            </if>
+            <if test="cusNumTwo != null">
+                cus_num_two = #{cusNumTwo,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where station_id = #{stationId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.yunchao.hsh.model.HshStation">
+    update hsh_station
+    set name = #{name,jdbcType=VARCHAR},
+      featurs = #{featurs,jdbcType=VARCHAR},
+      popularity = #{popularity,jdbcType=INTEGER},
+      pre_avg = #{preAvg,jdbcType=INTEGER},
+      address = #{address,jdbcType=VARCHAR},
+      longitude = #{longitude,jdbcType=DOUBLE},
+      latitude = #{latitude,jdbcType=DOUBLE},
+      is_del = #{isDel,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      offline_time = #{offlineTime,jdbcType=TIMESTAMP},
+      online_time = #{onlineTime,jdbcType=TIMESTAMP},
+      station_img = #{stationImg,jdbcType=VARCHAR},
+      station_license = #{stationLicense,jdbcType=VARCHAR},
+      station_quality = #{stationQuality,jdbcType=VARCHAR},
+      cus_num_one = #{cusNumOne,jdbcType=VARCHAR},
+      cus_num_two = #{cusNumTwo,jdbcType=VARCHAR}
+    where station_id = #{stationId,jdbcType=BIGINT}
+  </update>
+</mapper>

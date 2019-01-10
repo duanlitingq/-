@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="/page/style/css/pintuer.css">
+    <link rel="stylesheet" href="/page/style/css/admin.css">
+
+    <link rel="stylesheet" type="text/css" href="/page/style/upload/css/webuploader.css"/>
+    <link rel="stylesheet" type="text/css" href="/page/style/upload/css/style.css"/>
+
+    <script src="/page/style/scripts/jquery/jquery-1.11.2.js"></script>
+    <script src="/page/style/scripts/jquery/ajaxfileupload.js"></script>
+
+<!--uploadjs-->
+    <script type="text/javascript" src="/page/style/upload/js/jquery.js"></script>
+    <script type="text/javascript" src="/page/style/upload/js/webuploader.js"></script>
+    <script type="text/javascript" src="/page/style/upload/js/stationUpdate.js"></script>
+    <!--end-->
+    <script src="/page/style/scripts/js/global.js"></script>
+    <script src="/page/style/scripts/js/common.js"></script>
+    <script src="/page/style/scripts/layer/layer.js"></script>
+    <script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=SXPBZ-TJLWX-Q5N4U-7C27V-FZL6V-X2B3Y"></script>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        body, button, input, select, textarea {
+            font: 12px/16px Verdana, Helvetica, Arial, sans-serif;
+        }
+
+        #map {
+            min-width: 10px;
+            min-height: 500px;
+        }
+
+        .addImgs li {
+            display: inline-block;
+            margin: 20px;
+        }
+    </style>
+<body onload="init()">
+
+<div class="panel-head"><strong><span class="icon-pencil-square-o"></span> 修改驿站 </strong></div>
+<div class="body-content">
+    <form class="form-x" method="post" action="/page/admin/station/doUpdate" onsubmit=" return checkData()"
+          enctype="multipart/form-data">
+        <input name="stationId" id="stationId" type="hidden">
+        <!--名称-->
+        <div class="form-group">
+            <div class="label">
+                <label>驿站名称：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="name" name="name" maxlength="127" class="input w50" value=""
+                       data-validate="required:请输入驿站名称"/>
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>主打特色：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="featurs" name="featurs" class="input w50" maxlength="127" value=""
+                       data-validate="required:主打特色"/>
+                <div class="tips"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="label">
+                <label>人均：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="preAvg" name="preAvg" class="input w50" maxlength="127" value=""
+                       data-validate="required:人均消费"/>元
+                <div class="tips"></div>
+            </div>
+        </div>
+
+        <!--图片-->
+        <div class="form-group">
+            <div class="label">
+                <label>图片：</label>
+            </div>
+            <div class="field">
+                <ui  id="beforeImg"  style="margin-left:3px;margin-top: 5px"></ui>
+               <div id="wrapper">
+               <div id="container">
+                <!--头部，相册选择和格式选择-->
+                <div id="uploader">
+                    <div class="queueList">
+                        <div id="dndArea" class="placeholder">
+                            <div id="filePicker"></div>
+                            <p>或将照片拖到这里，单次最多可选300张</p>
+                        </div>
+                    </div>
+                    <div class="statusBar" style="display:none;">
+                        <div class="progress">
+                            <span class="text">0%</span>
+                            <span class="percentage"></span>
+                        </div>
+                        <div class="info"></div>
+                        <div class="btns">
+                            <div id="filePicker2"></div>
+                            <div class="uploadBtn">开始上传</div>
+                </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+            </div>
+          <div  id="img_Str"   name="img_Str"   value="">
+
+          </div>
+            <input  type="hidden" id="imgsStr" name="stationsImg"  value=""/>
+        </div>
+
+
+        <div class="form-group">
+            <div class="label">
+                <label>地址：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="address" name="address" class="input w50" maxlength="127" value=""
+                       data-validate="required:地址"/>
+                <div class="tips"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="label">
+                <label>联系方式：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="phone" name="phone" class="input w50" maxlength="127" value=""
+                       data-validate="required:联系方式"/>
+                <div class="tips"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="label">
+                <label>经度：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="longitude" name="longitude" class="input w50" maxlength="127" value=""
+                       data-validate="required:经度"/>
+                <span> 范围 -180 ~ 180</span>
+                <div class="tips"></div>
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="label">
+                <label>纬度：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="latitude" name="latitude" class="input w50" maxlength="127" value=""
+                       data-validate="required:纬度"/>
+                <span>范围 -90 ~ 90</span>
+                <div class="tips"></div>
+            </div>
+
+        </div>
+
+
+        <div class="form-group">
+            <div class="label">
+                <label>地图搜索：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="searchContent" class="input w50" maxlength="127" value=""/>
+                <button type="button" id="searchBut">搜索</button>
+                <div class="tips"></div>
+            </div>
+        </div>
+
+        <!--        腾讯地图-->
+        <div id="map" style="height: 100px;"></div>
+        <p id=" info" style="margin-top:10px;"></p>
+        <!--提交-->
+        <div class="form-group">
+            <div class="label">
+                <label></label>
+            </div>
+            <div class="field">
+                <button id="refer" class="button bg-main icon-check-square-o" type="submit"> 提交
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+<script>
+    $(function () {
+        loadData();
+
+    });
+
+    function loadData() {
+        var id = getUrlParam("id");
+        $.post("/page/admin/station/findById",
+            {
+                stationId: id
+            }, function (data) {
+                console.log(data)
+                $("#stationId").val(data.data.stationId);
+                $("#name").val(data.data.name);
+                $("#featurs").val(data.data.featurs);
+                $("#preAvg").val(data.data.preAvg);
+                $("#address").val(data.data.address);
+                //经度 范围 -180 ~ 180
+                $("#longitude").val(data.data.longitude);
+                //纬度 范围 -90 ~ 90
+                $("#latitude").val(data.data.latitude);
+                $("#phone").val(data.data.cusNumOne);
+                var imgs = data.data.stationImg;
+                var beforeImgUrl="http://other.yueyongyueyou.com:8888/";
+                var imgArr = imgs.split(";");;
+                var li = ''
+                for (var i = 0; i < imgArr.length - 1; i++) {
+                    var imgStr = imgArr[i].replace(/\\/g, "/");//将\替换为/,g为全字匹配
+                    li += '<li >' +
+                        '<label>' +
+                        '<input type="hidden"  id="stationImg" name="stationsImg"  value="' +beforeImgUrl+ imgArr[i] + '"/><img style="margin-top: 2px;margin-left: 2px" id="img' + i + '"  src="' +beforeImgUrl+ imgArr[i] + '" width="200" ><i class="icon-trash-o del"onclick="removePic(\'' + imgStr + '\',' + i + ');"></i>' + /**/
+                        '</label>' +
+                        '</li>';
+                }
+                /*li += '<li style="position: relative">' +
+                    '<label>' +
+                    '<img src="" width="200"> ' +
+                    '<a class="button bg-blue input-file" href="javascript:void(0);">+ 图片上传' +
+                    '<input id="file" name="file" data-validate="required:" type="file" onchange="changepic(this)"/></a>' +
+                    '</label>' +
+                    '</li>';
+                li += '<input type="hidden" name="imgsStr" id="imgsStr" value="' + data.data.stationImg + '">';*/
+                $("#beforeImg").append(li);
+            }, 'json')
+    }
+
+    //表单提交时校验
+    function checkData() {
+        var name = $("#name").val();
+        var featurs = $("#featurs").val();
+        var file = $(":file");//file类型
+        //人均消费水平
+        var preAvg = $("#preAvg").val();
+        var address = $("#address").val();
+        var longitude = $("#longitude").val();
+        var latitude = $("#latitude").val();
+        if (isEmpty(name)) {
+            failMsg("驿站名称不能为空");
+            return false;
+        }
+        if (isEmpty(featurs)) {
+            failMsg("主打特色不能为空");
+            return false;
+        }
+        if (file.length < 0) {
+            //只有一个图片上传的按钮
+            failMsg("未上传图片");
+            return false;
+        }
+        if (isEmpty(preAvg)) {
+            failMsg("人均消费不能为空");
+            return false;
+        }
+        if (isEmpty(address)) {
+            failMsg("详情地址不能为空");
+            return false;
+        }
+        if (isEmpty(longitude)) {
+            failMsg("经度不能为空");
+            return false;
+        }
+        if (isEmpty(latitude)) {
+            failMsg("纬度不能为空");
+            return false;
+        }
+        return true;
+    }
+
+
+    var geocoder, map, markers = null;
+    var init = function () {
+        //初始化平度市的的经纬度
+        var center = new qq.maps.LatLng(36.78, 119.95);
+
+        //调用地图检索
+        map = new qq.maps.Map(document.getElementById("map"), {
+            //默认显示的坐标
+            center: center,
+            zoom: 14
+        });
+        geocoder = new qq.maps.Geocoder({
+            //设置服务请求成功的回调函数
+            complete: function (result) {
+                map.setCenter(result.detail.location);
+                markers = new qq.maps.Marker({
+                    position: result.detail.location,
+                    draggable: true,
+                    map: map
+                });
+                $("#latitude").val(markers.getPosition().getLat());
+                $("#longitude").val(markers.getPosition().getLng());
+                //设置Marker停止拖动事件
+                qq.maps.event.addListener(markers, 'dragend', function () {
+                    $("#latitude").val(markers.getPosition().getLat());
+                    $("#longitude").val(markers.getPosition().getLng());
+                });
+            },
+            error: function () {
+                alert("该地址，查询不到");
+            }
+
+        });
+    }
+
+    //地图解析
+    $("#searchBut").click(function () {
+        var address = $('#searchContent').val();
+        geocoder.getLocation(address);
+    })
+
+    var i = 0;
+
+    function removePic(obj, imgId) {//obj是当前图片的路径
+        if (confirm("确认删除吗")) {
+            //移除图片,更新
+            //js转义:将\转为/,g为全字匹配
+            var imgsStr = $("#imgsStr").val().replace(/\\/g, "/");
+            var imgsStrArr = imgsStr.split(";");
+            if (i != 0) {
+                imgsStrArr = imgsStr.split(",");
+            }
+            i += 1;
+            //在数组中删除元素,通过obj找到在数组中的索引位置,删除
+            imgsStrArr.splice($.inArray(obj, imgsStrArr), 1);
+            $("#imgsStr").val(imgsStrArr);
+            $("#img" + imgId).parent().parent().remove();//移除li
+        } else {
+            return;
+        }
+    }
+</script>
+</html>

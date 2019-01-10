@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="renderer" content="webkit">
+  <title></title>
+  <link href="/page/style/css/pintuer.css" rel="stylesheet" >
+  <link href="/page/style/css/admin.css" rel="stylesheet" >
+  <script src="/page/style/scripts/jquery/jquery-1.8.2.js" ></script>
+  <script  src="/page/style/scripts/layer/layer.js"></script>
+  <script src="/page/style/scripts/js/common.js"></script>
+  <script src="/page/style/scripts/js/pintuer.js"></script>
+  <script src="/page/style/scripts/js/global.js"></script>
+
+  <script>
+      $(function () {
+          //获取Location对象的search属性值
+          var searchStr = location.search;
+          //由于searchStr属性值包括“?”，所以除去该字符
+          searchStr = searchStr.substr(1);
+          //将searchStr字符串分割成数组，数组中的每一个元素为一个参数和参数值
+          var searchs = searchStr.split("&");
+          //获得第一个参数和值
+          var id = searchs[0].split("=");
+          selectIdUser(id[1]);
+      });
+
+      //查找用户显示
+      function selectIdUser(id) {
+          $.ajax({
+              url:"/page/admin/sysUser/getById/",
+              type:"GET",
+              data:{"id":id},
+              dataType:"json",
+              success:function (result) {
+                  var id = result.id;
+                  var roleId = result.roleId;
+                  var userName = result.userName;
+                  var password = result.password;
+                  var realName = result.realName;
+                  var phone = result.phone;
+                  var createDate = result.createDteStr;
+                  var lastLoginDate = result.lastLonginDteStr;
+                  //将信息设置到指定位置
+                  $("#id").val(id);
+                  $("#userName").val(userName);
+                  $("#phone").val(phone);
+              }
+          });
+      };
+      //更新按钮处理
+      function update_user(){
+          $("#userName_error").html("");
+          $("#phone_error").html("");
+          //获取表的参数
+          var id = $("#id").val();
+          var userName =  $("#userName").val();
+          var phone = $("#phone").val();
+
+          if(userName==""){
+              $("#userName_error").html("用户名不能为空");
+              return;
+          }
+          if(phone==""){
+              $("#phone_error").html("手机号不能为空");
+              return;
+          }
+          $.ajax({
+              url:"/page/admin/sysUser/doUpdate",
+              type:"POST",
+              data:{"id":id,"userName":userName,"phone":phone},
+              dataType:"JSON",
+              success:function (result) {
+                  if(result.success){
+                      successMsg(result.message);
+                      setTimeout(function () {
+                          window.location.href="/page/admin/sysUser/user_list.html";
+                      },950);
+                  }else{
+                      failMsg(result.message);
+                  }
+              }
+          });
+
+      };
+  </script>
+</head>
+<body>
+  <div class="panel admin-panel">
+    <div class="panel-head" ><strong><span class="icon-pencil-square-o"></span>更新用户信息</strong></div>
+    <div class="body-content">
+      <form method="post" class="form-x" action="javascript:void(0);">
+        <input type="hidden" id="id" value="">
+        <div class="form-group">
+          <div class="label">
+            <label>用户名：</label>
+          </div>
+          <div class="field">
+            <input type="text" name="userName" id="userName" class="input w50" value=""   placeholder="请输入名称" disabled="true"/><p style="display:inline-block;line-height: 22px; color: red;margin-left: 6px;margin-top: 10px"></p>
+            <div class="tips"  id="userName_error" style="color: red"></div>
+          </div>
+        </div>
+        <!--手机-->
+        <div class="form-group">
+          <div class="label">
+            <label>手机：</label>
+          </div>
+          <div class="field">
+            <input type="text"  name="phone" id="phone" class="input w50" value=""   placeholder="请输入手机号码"><p style="display:inline-block;line-height: 22px; color: red;margin-left: 6px;margin-top: 10px"></p>
+            <div class="tips" id="phone_error" style="color: red"></div>
+          </div>
+        </div>
+        <!-- <button class="btn  btn-primary btn-lg active" > 添加</button>-->
+        <div class="form-group">
+        <div class="label">
+          <label></label>
+        </div>
+        <div class="field">
+          <a class="button bg-main icon-check-square-o"  onclick="update_user()" > 更新</a>
+          <a class="button bg-main icon-check-square-o" href="/page/admin/sysUser/user_list.html">取消</a>
+        </div>
+      </div>
+      </form>
+    </div>
+  </div>
+</body>
+
+
+</html>

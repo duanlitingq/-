@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.SysRoleMapper" >
+  <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.SysRole" >
+    <result column="ID" property="id"  />
+    <result column="NAME" property="name" />
+  </resultMap>
+
+  <resultMap id="SysRoleResp" type="com.yunchao.hsh.dto.resp.SysRoleResp" extends="BaseResultMap">
+
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    ID, NAME
+  </sql>
+    <!-- 分页的实现-->
+    <select id="findPage" resultMap="SysRoleResp" parameterType="java.util.Map">
+      SELECT
+      <include refid="Base_Column_List"/>
+        FROM  SYS_ROLE S
+        <where>
+            1=1
+            <if test="@Ognl@isNotEmpty(id)">
+               AND S.ID =#{id}
+            </if>
+            <if test="@Ognl@isNotEmpty(name)">
+                AND S.NAME  LIKE CONCAT('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+
+  <select id="findById" resultMap="SysRoleResp" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from sys_role
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+    <!-- 根据角色名查询角色信息-->
+    <select id="findByName" resultMap="SysRoleResp" parameterType="java.util.Map">
+      select
+        <include refid="Base_Column_List" />
+        from  sys_role
+        <where>
+            1=1
+            <if test="@Ognl@isNotEmpty(id)">
+                AND ID !=  #{id}
+            </if>
+            <if test="@Ognl@isNotEmpty(name)">
+                AND NAME = #{name}
+            </if>
+        </where>
+    </select>
+
+<!-- 查询角色的集合ORDER by id DESC-->
+ <select id="findList" resultMap="SysRoleResp" >
+    select
+    <include refid="Base_Column_List" />
+    from sys_role
+  </select>
+
+  <delete id="deleteById" parameterType="java.lang.Long" >
+    delete from sys_role
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert"  parameterType="com.yunchao.hsh.model.SysRole" keyProperty="id" useGeneratedKeys="true">
+    insert into sys_role(id,name)
+    values(#{id,jdbcType=BIGINT},#{name,jdbcType=VARCHAR})
+  </insert>
+
+  <update id="update" parameterType="com.yunchao.hsh.model.SysRole" >
+    update sys_role set
+     NAME = #{name,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+</mapper>

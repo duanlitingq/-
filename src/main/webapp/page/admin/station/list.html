@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="/page/style/css/pintuer.css">
+    <link rel="stylesheet" href="/page/style/css/admin.css">
+    <script src="/page/style/scripts/js/jquery.js"></script>
+    <script src="/page/style/scripts/js/global.js"></script>
+    <script src="/page/style/scripts/js/common.js"></script>
+    <script src="/page/style/scripts/layer/layer.js"></script>
+    <style>
+        #table tr td:nth-child(6) {
+            width: 226px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        #table tr td:nth-child(6):hover {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div class="panel admin-panel">
+    <div class="panel-head"><strong class="icon-reorder"> 驿站管理</strong></div>
+    <div class="padding border-bottom">
+        <ul class="search" style="padding-left:10px;">
+            <li><a class="button border-main icon-plus-square-o" href="/page/admin/station/add.html"> 添加驿站</a></li>
+            <li>搜索：
+                <input type="text" id="name" name="name" placeholder="请输驿站名称" class="input"
+                       style="width:250px; line-height:17px;display:inline-block"/>
+            </li>
+            <li>上线状态：
+                <select id="status" name="status" class="input"
+                        style="width:60px; line-height:17px; display:inline-block">
+                    <option value="">选择</option>
+                    <option value="0">下线</option>
+                    <option value="1">上线</option>
+                </select>
+            </li>
+            <li>
+                <a href="javascript:void(0)" class="button border-main icon-search" onclick="changesearch()"> 搜索</a>
+            </li>
+        </ul>
+
+    </div>
+    <table id="table" class="table table-hover text-center">
+        <tr>
+            <th>选择</th>
+            <th>ID</th>
+            <th>驿站名称</th>
+            <th>主打特色</th>
+            <th>人均(元)</th>
+            <th>地址</th>
+            <th>联系方式</th>
+            <th>创建时间</th>
+            <th>状态</th>
+            <th>操作</th>
+        </tr>
+        <tr id="pageBar">
+
+        </tr>
+    </table>
+</div>
+
+</body>
+<script>
+    var colspan = 3;
+    $(function () {
+        loadAll();
+    })
+
+    function loadAll() {
+        $.post("/page/admin/station/getPage", {}, function (data) {
+            for (var i = 0; i < data.data.list.length; i++) {
+                $("#pageBar").before('<tr class="content">' +
+                    '<td><input type="checkbox" name="checkname[]" value="' + data.data.list[i].id + '"  /></td>' +
+                    '<td>' + data.data.list[i].stationId + '</td>' +
+                    '<td>' + data.data.list[i].name + '</td>' +
+                    '<td>' + data.data.list[i].featurs + '</td>' +
+                    '<td>' + data.data.list[i].preAvg + '</td>' +
+                    '<td>' + data.data.list[i].address + '</td>' +
+                    '<td>' + isNull(data.data.list[i].cusNumOne) + '</td>' +
+                    '<td>' + fmtDate(data.data.list[i].createTime) + '</td>' +
+                    '<td>' + fmtStr(data.data.list[i].isDel) + '</td>' +
+                    '<td><div class="button-group">' +
+                    '<a class="button border-main" href="javascript:void(0)" onclick="updatePre(' + data.data.list[i].stationId + ')"><span class=""></span> 修改</a>&nbsp;' +
+                    '<a class="button border-main" href="javascript:void(0)" onclick="delStation(' + data.data.list[i].stationId + ')"><span class=""></span> 下架</a>&nbsp;' +
+                    '<a class="button border-main" href="javascript:void(0)" onclick="upStation(' + data.data.list[i].stationId + ')"><span class=""></span> 上架</a>&nbsp;' +
+                    '</div></td>' +
+                    '</tr>')
+            }
+            $("#pageBar").html(
+                '<td style="text-align:center;padding-left: 30px">' +
+                '<input type="checkbox" class="button border-red" name="all" id="checkall"  value="全选" onclick="checkAll()"/>全选' +
+                '</td>' +
+                '<td colspan="' + colspan + '" class="colspan" style="text-align:left;padding-left:20px;">' +
+                '</td>' +
+                '<td colspan="' + colspan + '"  class="colspan" style="text-align:center;">' +
+                '<div class="pagelist"> <a  href="#">上一页</a>' +
+                '<a href="#"  class="current">' + 1 + '</a>' +
+                '<a href="javascript:void(0)" class="disableds disableds2" onclick="changesearch(2,' + data.data.pageSize + ')">2</a>' +
+                '<a href="javascript:void(0)" class="disableds disableds3" onclick="changesearch(3,' + data.data.pageSize + ')">3</a>' +
+                '<a href="javascript:void(0)" class="disableds disabledsNext" onclick="changesearch(' + (data.data.pageNum + 1) + ',' + data.data.pageSize + ')">下一页</a>' +
+                '<a href="javascript:void(0)" class="disableds" onclick="changesearch(' + (data.data.firstPage) + ',' + data.data.pageSize + ')">首页</a> ' +
+                '<a href="javascript:void(0)" class="disableds" onclick="changesearch(' + (data.data.lastPage) + ',' + data.data.pageSize + ')">尾页</a> </div>' +
+                '<span>共' + data.data.total + '条数据</span>' +
+                '</td>')
+            if (data.data.lastPage == 1) {
+                $(".disableds").removeAttr("onclick");
+                $(".disableds3,.disableds2").hide();
+            } else if (data.data.lastPage < 3) {
+                $(".disableds3").hide();
+            }
+
+        }, 'json')
+    }
+
+    //条件搜索
+    function changesearch(pageNum, pageSize) {/**/
+        var name = $("#name").val();
+        var status = $("#status").val();
+        $.post("/page/admin/station/getPage", {
+            "name": name,
+            "isDel": status,
+            "pageNum": pageNum,
+            "pageSize": pageSize
+        }, function (data) {
+            console.log(data)
+            $(".content").html('');
+            for (var i = 0; i < data.data.list.length; i++) {
+                $("#pageBar").before('<tr class="content">' +
+                    '<td><input type="checkbox" name="checkname[]" value="' + data.data.list[i].id + '"  /></td>' +
+                    '<td>' + data.data.list[i].stationId + '</td>' +
+                    '<td>' + data.data.list[i].name + '</td>' +
+                    '<td>' + data.data.list[i].featurs + '</td>' +
+                    '<td>' + data.data.list[i].preAvg + '</td>' +
+                    '<td>' + data.data.list[i].address + '</td>' +
+                    '<td>' + isNull(data.data.list[i].cusNumOne) + '</td>' +
+                    '<td>' + fmtDate(data.data.list[i].createTime) + '</td>' +
+                    '<td>' + fmtStr(data.data.list[i].isDel) + '</td>' +
+                    '<td><div class="button-group">' +
+                    '<a class="button border-main" href="javascript:void(0)" onclick="updatePre(' + data.data.list[i].stationId + ')"><span class=""></span> 修改</a>&nbsp;' +
+                    '<a class="button border-main" href="javascript:void(0)" onclick="delStation(' + data.data.list[i].stationId + ')"><span class=""></span> 下架</a>&nbsp;' +
+                    '<a class="button border-main" href="javascript:void(0)" onclick="upStation(' + data.data.list[i].stationId + ')"><span class=""></span> 上架</a>&nbsp;' +
+                    '</div></td>' +
+                    '</tr>')
+            }
+            //此处调用分页插件
+            var html = "";
+            var falg = false;
+            var boo = false;
+            if (data.data.pageNum != 1 && data.data.pageNum != data.data.lastPage) {
+                html = '<a href="javascript:void(0)" id="onePrevPage" >' + (data.data.pageNum - 1) + '</a>' +
+                    '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >' + data.data.pageNum + '</a>' +
+                    '<a href="javascript:void(0)"  id="threePrevPage" >' + (data.data.pageNum + 1) + '</a>';
+            } else {
+                html = '<a href="javascript:void(0)" id="onePrevPage" >' + data.data.pageNum + '</a>' +
+                    '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >' + (data.data.pageNum + 1) + '</a>' +
+                    '<a href="javascript:void(0)"  id="threePrevPage"  >' + (data.data.pageNum + 2) + '</a>';
+                falg = true;
+            }
+            if (data.data.pageNum == data.data.lastPage) {
+                html = '<a href="javascript:void(0)" id="onePrevPage" >' + (data.data.pageNum - 2) + '</a>' +
+                    '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >' + (data.data.pageNum - 1) + '</a>' +
+                    '<a href="javascript:void(0)"  id="threePrevPage"  >' + data.data.pageNum + '</a>';
+                boo = true;
+            }
+            $("#pageBar").html('<td style="text-align:center;padding-left: 30px">' +
+                '<input type="checkbox" class="button border-red" name="all" id="checkall"  value="全选" onclick="checkAll()"/>全选' +
+                '</td>' +
+                '<td colspan="' + colspan + '"  class="colspan" style="text-align:left;padding-left:20px;">' +
+                '</td>' +
+                '<td colspan="' + colspan + '"  class="colspan" style="text-align:center;">' +
+                '<div class="pagelist"> <a id="prevPage" href="#">上一页</a>' +
+                html +
+                '<a id="nextPage" href="#" >下一页</a>' +
+                '<a href="javascript:void(0)" onclick="changesearch(' + (data.data.firstPage) + ',' + data.data.pageSize + ')">首页</a>' +
+                '<a href="javascript:void(0)" onclick="changesearch(' + (data.data.lastPage) + ',' + data.data.pageSize + ')">尾页</a> </div>' +
+                '<span>共' + data.data.total + '条数据</span>' +
+                '</td>');
+
+            if ($("#onePrevPage").html() < 1) {
+                $("#onePrevPage").hide();
+            }
+            if ($("#twoPrevPage").html() < 1) {
+                $("#twoPrevPage").hide();
+            }
+            if ($("#threePrevPage").html() < 1) {
+                $("#threePrevPage").hide();
+            }
+            if ($("#threePrevPage").html() > data.data.lastPage) {
+                $("#threePrevPage").hide();
+            }
+            if (falg) {
+                $("#onePrevPage").addClass("current");
+                $("#onePrevPage").siblings().removeClass("current");
+            }
+            if (boo) {
+                $("#threePrevPage").addClass("current");
+                $("#threePrevPage").siblings().removeClass("current");
+            }
+            if (data.data.lastPage == 1) {
+                $("#prevPage").unbind("click");
+                $("#nextPage").unbind("click");
+            } else if (data.data.lastPage == 0) {
+                $("#onePrevPage,#twoPrevPage,#threePrevPage").hide();
+                $("#pageBar").before('<tr class="content"><td colspan="6" style="color:red"> 没有搜索到数据!</td></tr>')
+            } else {
+                $("#onePrevPage,#twoPrevPage,#threePrevPage").click(function () {
+                    changesearch($(this).html(), data.data.pageSize);
+                })
+            }
+
+
+            if (data.data.pageNum > data.data.firstPage) {
+                $("#prevPage").click(function () {
+                    changesearch(data.data.pageNum - 1, data.data.pageSize);
+                })
+            }
+            if (data.data.pageNum < data.data.lastPage) {
+                $("#nextPage").click(function () {
+                    changesearch(data.data.pageNum + 1, data.data.pageSize);
+                })
+            }
+        }, 'json')
+    }
+
+    //下架驿站
+    function delStation(statiodId) {
+        $.get("/page/admin/station/del", {"stationId": statiodId},
+            function (data) {
+                if (data.success == true) {
+                    successMsg(data.message);
+                    window.location.href = "/page/admin/station/list.html"
+                }
+            });
+    }
+    //上架驿站
+    function upStation(statiodId) {
+        $.get("/page/admin/station/upStation", {"stationId": statiodId},
+            function (data) {
+                if (data.success == true) {
+                    successMsg(data.message);
+                    window.location.href = "/page/admin/station/list.html"
+                }
+            });
+    }
+
+    function updatePre(stationId) {
+        window.location.href = "/page/admin/station/update.html?id=" + stationId;
+    }
+
+    //时间戳转成yyyy-mm-dd
+    function fmtDate(obj) {
+        var date = new Date(obj);
+        var y = 1900 + date.getYear();
+        var m = "0" + (date.getMonth() + 1);
+        var d = "0" + date.getDate();
+        return y + "-" + m.substring(m.length - 2, m.length) + "-" + d.substring(d.length - 2, d.length);
+    }
+
+    function fmtStr(obj) {
+        if (obj == 1) {
+            return "上线"
+        } else {
+            return '下线';
+        }
+    }
+
+    function isNull(obj) {
+        if (obj === null){
+            return '--';
+        }else{
+            return obj;
+        }
+    }
+</script>
+</html>

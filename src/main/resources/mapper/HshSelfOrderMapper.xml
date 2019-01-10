@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.HshSelfOrderMapper">
+    <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.HshSelfOrder">
+        <id column="order_id" property="orderId" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="shipping_code" property="shippingCode" jdbcType="VARCHAR"/>
+        <result column="shipping_name" property="shippingName" jdbcType="VARCHAR"/>
+        <result column="payment" property="payment" jdbcType="DECIMAL"/>
+        <result column="payment_type" property="paymentType" jdbcType="TINYINT"/>
+        <result column="post_fee" property="postFee" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="payment_time" property="paymentTime" jdbcType="TIMESTAMP"/>
+        <result column="close_time" property="closeTime" jdbcType="TIMESTAMP"/>
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP"/>
+        <result column="consign_time" property="consignTime" jdbcType="TIMESTAMP"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+        <result column="buyer_message" property="buyerMessage" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="Base_Result_Type" type="com.yunchao.hsh.dto.resp.SelfOrderResp"/>
+
+
+
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <resultMap id="BaseMap" type="com.yunchao.hsh.dto.resp.OrderItemListResp">
+        <result column="order_id" property="orderId" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="payment" property="payment" jdbcType="DECIMAL"/>
+        <result column="payment_type" property="paymentType" jdbcType="TINYINT"/>
+        <result column="post_fee" property="postFee" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="payment_time" property="paymentTime" jdbcType="TIMESTAMP"/>
+        <result column="close_time" property="closeTime" jdbcType="TIMESTAMP"/>
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP"/>
+        <result column="consign_time" property="consignTime" jdbcType="TIMESTAMP"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+        <result column="receiver_name" property="receiverName" jdbcType="VARCHAR"/>
+        <result column="receiver_mobile" property="receiverMobile" jdbcType="VARCHAR"/>
+        <result column="receiver_address" property="receiverAddress" jdbcType="VARCHAR"/>
+        <result column="item_price" property="itemPrice" jdbcType="DECIMAL" />
+        <result column="total_count" property="totalCount" jdbcType="DECIMAL" />
+        <result column="item_rebate" property="itemRebate" jdbcType="BIGINT" />
+        <result column="total_rebate" property="totalRebate" jdbcType="BIGINT" />
+        <result column="item_name" property="itemName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="BaseOrderMap" type="com.yunchao.hsh.dto.resp.SelfOrderDetailResp">
+        <result column="order_id" property="orderId" jdbcType="VARCHAR"/>
+        <result column="user_id" property="customerId" jdbcType="BIGINT"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+        <result column="item_id" property="itemId" jdbcType="VARCHAR"/>
+        <result column="item_img" property="itemImg" jdbcType="VARCHAR"/>
+        <result column="item_name" property="itemName" jdbcType="VARCHAR"/>
+        <result column="item_rebate" property="itemPrice" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="findPage" resultMap="BaseMap" parameterType="com.yunchao.hsh.model.HshSelfOrderExample">
+        SELECT
+            l.order_id,
+            l.user_id,
+            l.payment,
+            l.payment_type,
+            l.post_fee,
+            l.create_time,
+            l.payment_time,
+            l.consign_time,
+            l.status,
+            s.receiver_mobile,
+            s.receiver_name,
+            s.receiver_address,
+            d.item_price,
+            d.total_count,
+            d.item_rebate,
+            d.total_rebate,
+            d.item_name
+        FROM
+          hsh_self_order l
+        LEFT JOIN hsh_order_shipping s ON l.order_id = s.order_id
+        LEFT JOIN hsh_self_order_detail d ON l.order_id = d.order_id
+        order by l.create_time desc
+    </select>
+
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        <if test="fields == null">
+            order_id, user_id, shipping_code, shipping_name, payment, payment_type, post_fee,
+            create_time, payment_time, close_time, end_time, consign_time, status, buyer_message
+        </if>
+        <if test="fields != null">
+            ${fields}
+        </if>
+    </sql>
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.yunchao.hsh.model.HshSelfOrderExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from hsh_self_order
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+        <if test="startRow != null">
+            limit #{startRow} , #{pageSize}
+        </if>
+    </select>
+
+
+    <select id="selectByPage" resultMap="BaseOrderMap" parameterType="com.yunchao.hsh.model.HshSelfOrderExample">
+        SELECT
+            s.create_time,
+            s.order_id,
+            s.user_id,
+            d.item_id,
+            d.item_name,
+            d.item_rebate,
+            d.item_img,
+            s.`status`
+        FROM
+            hsh_self_order s
+        LEFT JOIN hsh_self_order_detail d ON s.order_id = d.order_id
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        ORDER BY
+            create_time DESC
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select 
+    order_id,user_id,shipping_code,shipping_name,payment,payment_type,post_fee,create_time,payment_time,close_time,end_time,consign_time,status,buyer_message
+    from hsh_self_order
+    where order_id = #{orderId,jdbcType=VARCHAR}
+  </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from hsh_self_order
+    where order_id = #{orderId,jdbcType=VARCHAR}
+  </delete>
+    <delete id="deleteByExample" parameterType="com.yunchao.hsh.model.HshSelfOrderExample">
+        delete from hsh_self_order
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.yunchao.hsh.model.HshSelfOrder">
+    insert into hsh_self_order (order_id, user_id, shipping_code, 
+      shipping_name, payment, payment_type, 
+      post_fee, create_time, payment_time, 
+      close_time, end_time, consign_time, 
+      status, buyer_message)
+    values (#{orderId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{shippingCode,jdbcType=VARCHAR},
+      #{shippingName,jdbcType=VARCHAR}, #{payment,jdbcType=DECIMAL}, #{paymentType,jdbcType=TINYINT}, 
+      #{postFee,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{paymentTime,jdbcType=TIMESTAMP}, 
+      #{closeTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{consignTime,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=TINYINT}, #{buyerMessage,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.yunchao.hsh.model.HshSelfOrder">
+        insert into hsh_self_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">
+                order_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="shippingCode != null">
+                shipping_code,
+            </if>
+            <if test="shippingName != null">
+                shipping_name,
+            </if>
+            <if test="payment != null">
+                payment,
+            </if>
+            <if test="paymentType != null">
+                payment_type,
+            </if>
+            <if test="postFee != null">
+                post_fee,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="paymentTime != null">
+                payment_time,
+            </if>
+            <if test="closeTime != null">
+                close_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="consignTime != null">
+                consign_time,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="buyerMessage != null">
+                buyer_message,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">
+                #{orderId,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingCode != null">
+                #{shippingCode,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingName != null">
+                #{shippingName,jdbcType=VARCHAR},
+            </if>
+            <if test="payment != null">
+                #{payment,jdbcType=DECIMAL},
+            </if>
+            <if test="paymentType != null">
+                #{paymentType,jdbcType=TINYINT},
+            </if>
+            <if test="postFee != null">
+                #{postFee,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="paymentTime != null">
+                #{paymentTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="closeTime != null">
+                #{closeTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="consignTime != null">
+                #{consignTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="buyerMessage != null">
+                #{buyerMessage,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.yunchao.hsh.model.HshSelfOrderExample"
+            resultType="java.lang.Integer">
+        select count(*) from hsh_self_order
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+
+    <update id="updateByExampleSelective" parameterType="map">
+        update hsh_self_order
+        <set>
+            <if test="record.orderId != null">
+                order_id = #{record.orderId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.userId != null">
+                user_id = #{record.userId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.shippingCode != null">
+                shipping_code = #{record.shippingCode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.shippingName != null">
+                shipping_name = #{record.shippingName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.payment != null">
+                payment = #{record.payment,jdbcType=DECIMAL},
+            </if>
+            <if test="record.paymentType != null">
+                payment_type = #{record.paymentType,jdbcType=TINYINT},
+            </if>
+            <if test="record.postFee != null">
+                post_fee = #{record.postFee,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createTime != null">
+                create_time = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.paymentTime != null">
+                payment_time = #{record.paymentTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.closeTime != null">
+                close_time = #{record.closeTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.endTime != null">
+                end_time = #{record.endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.consignTime != null">
+                consign_time = #{record.consignTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.status != null">
+                status = #{record.status,jdbcType=TINYINT},
+            </if>
+            <if test="record.buyerMessage != null">
+                buyer_message = #{record.buyerMessage,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update hsh_self_order
+        set order_id = #{record.orderId,jdbcType=VARCHAR},
+        user_id = #{record.userId,jdbcType=VARCHAR},
+        shipping_code = #{record.shippingCode,jdbcType=VARCHAR},
+        shipping_name = #{record.shippingName,jdbcType=VARCHAR},
+        payment = #{record.payment,jdbcType=DECIMAL},
+        payment_type = #{record.paymentType,jdbcType=TINYINT},
+        post_fee = #{record.postFee,jdbcType=VARCHAR},
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+        payment_time = #{record.paymentTime,jdbcType=TIMESTAMP},
+        close_time = #{record.closeTime,jdbcType=TIMESTAMP},
+        end_time = #{record.endTime,jdbcType=TIMESTAMP},
+        consign_time = #{record.consignTime,jdbcType=TIMESTAMP},
+        status = #{record.status,jdbcType=TINYINT},
+        buyer_message = #{record.buyerMessage,jdbcType=VARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.yunchao.hsh.model.HshSelfOrder">
+        update hsh_self_order
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingCode != null">
+                shipping_code = #{shippingCode,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingName != null">
+                shipping_name = #{shippingName,jdbcType=VARCHAR},
+            </if>
+            <if test="payment != null">
+                payment = #{payment,jdbcType=DECIMAL},
+            </if>
+            <if test="paymentType != null">
+                payment_type = #{paymentType,jdbcType=TINYINT},
+            </if>
+            <if test="postFee != null">
+                post_fee = #{postFee,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="paymentTime != null">
+                payment_time = #{paymentTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="closeTime != null">
+                close_time = #{closeTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="consignTime != null">
+                consign_time = #{consignTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="buyerMessage != null">
+                buyer_message = #{buyerMessage,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where order_id = #{orderId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.yunchao.hsh.model.HshSelfOrder">
+    update hsh_self_order
+    set user_id = #{userId,jdbcType=VARCHAR},
+      shipping_code = #{shippingCode,jdbcType=VARCHAR},
+      shipping_name = #{shippingName,jdbcType=VARCHAR},
+      payment = #{payment,jdbcType=DECIMAL},
+      payment_type = #{paymentType,jdbcType=TINYINT},
+      post_fee = #{postFee,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      payment_time = #{paymentTime,jdbcType=TIMESTAMP},
+      close_time = #{closeTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      consign_time = #{consignTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=TINYINT},
+      buyer_message = #{buyerMessage,jdbcType=VARCHAR}
+    where order_id = #{orderId,jdbcType=VARCHAR}
+  </update>
+</mapper>

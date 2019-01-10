@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.HshLogisticsMapper">
+    <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.HshLogistics">
+        <id column="ID" property="id" jdbcType="BIGINT"/>
+        <result column="CUSTOMER_ID" property="customerId" jdbcType="BIGINT"/>
+        <result column="REAL_NAME" property="realName" jdbcType="VARCHAR"/>
+        <result column="PHONE" property="phone" jdbcType="VARCHAR"/>
+        <result column="ADDRESS" property="address" jdbcType="VARCHAR"/>
+        <result column="POST_CODE" property="postCode" jdbcType="VARCHAR"/>
+        <result column="IS_DEFAULT" property="isDefault" jdbcType="INTEGER"/>
+        <result column="STATION_ID" property="stationId" jdbcType="BIGINT"/>
+        <result column="CUS_NUM_1" property="cusNum1" jdbcType="VARCHAR"/>
+        <result column="STATION_IMG" property="stationImg" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+    ID, CUSTOMER_ID, REAL_NAME, PHONE, ADDRESS, POST_CODE, IS_DEFAULT,STATION_ID,CUS_NUM_1,STATION_IMG
+  </sql>
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.yunchao.hsh.model.HshLogisticsExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from hsh_logistics
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectAllLogistics" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from hsh_logistics
+        where CUSTOMER_ID = #{customerId,jdbcType=BIGINT}
+    </select>
+    <select id="getDefault" resultMap="BaseResultMap" parameterType="com.yunchao.hsh.model.HshLogistics">
+        select
+        <include refid="Base_Column_List"/>
+        from hsh_logistics
+        where CUSTOMER_ID = #{customerId,jdbcType=BIGINT} and IS_DEFAULT=#{isDefault,jdbcType=INTEGER}
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from hsh_logistics
+        where ID = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="selectBycustomer" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from hsh_logistics
+        where CUSTOMER_ID = #{customerId,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from hsh_logistics
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+    <delete id="deleteByExample" parameterType="com.yunchao.hsh.model.HshLogisticsExample">
+        delete from hsh_logistics
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.yunchao.hsh.model.HshLogistics">
+    insert into hsh_logistics (ID, CUSTOMER_ID, REAL_NAME, 
+      PHONE, ADDRESS, POST_CODE, 
+      IS_DEFAULT,STATION_ID,CUS_NUM_1,STATION_IMG)
+    values (#{id,jdbcType=BIGINT}, #{customerId,jdbcType=BIGINT}, #{realName,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{postCode,jdbcType=VARCHAR}, 
+      #{isDefault,jdbcType=INTEGER}),#{stationId,jdbcType=BIGINT},#{cusNum1,jdbcType=VARCHAR},
+      #{stationImg,jdbcType=VARCHAR}
+  </insert>
+    <insert id="insertSelective" parameterType="com.yunchao.hsh.model.HshLogistics">
+        insert into hsh_logistics
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="customerId != null">
+                CUSTOMER_ID,
+            </if>
+            <if test="realName != null">
+                REAL_NAME,
+            </if>
+            <if test="phone != null">
+                PHONE,
+            </if>
+            <if test="address != null">
+                ADDRESS,
+            </if>
+            <if test="postCode != null">
+                POST_CODE,
+            </if>
+            <if test="isDefault != null">
+                IS_DEFAULT,
+            </if>
+            <if test="stationId != null">
+                STATION_ID,
+            </if>
+            <if test="cusNum1 != null">
+                CUS_NUM_1,
+            </if>
+            <if test="stationImg != null">
+                STATION_IMG,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="customerId != null">
+                #{customerId,jdbcType=BIGINT},
+            </if>
+            <if test="realName != null">
+                #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="postCode != null">
+                #{postCode,jdbcType=VARCHAR},
+            </if>
+            <if test="isDefault != null">
+                #{isDefault,jdbcType=INTEGER},
+            </if>
+            <if test="stationId != null">
+                #{stationId,jdbcType=BIGINT},
+            </if>
+            <if test="cusNum1 != null">
+                #{cusNum1,jdbcType=VARCHAR},
+            </if>
+            <if test="stationImg != null">
+                #{stationImg,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.yunchao.hsh.model.HshLogisticsExample"
+            resultType="java.lang.Integer">
+        select count(*) from hsh_logistics
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update hsh_logistics
+        <set>
+            <if test="record.id != null">
+                ID = #{record.id,jdbcType=BIGINT},
+            </if>
+            <if test="record.customerId != null">
+                CUSTOMER_ID = #{record.customerId,jdbcType=BIGINT},
+            </if>
+            <if test="record.realName != null">
+                REAL_NAME = #{record.realName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.phone != null">
+                PHONE = #{record.phone,jdbcType=VARCHAR},
+            </if>
+            <if test="record.address != null">
+                ADDRESS = #{record.address,jdbcType=VARCHAR},
+            </if>
+            <if test="record.postCode != null">
+                POST_CODE = #{record.postCode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.isDefault != null">
+                IS_DEFAULT = #{record.isDefault,jdbcType=INTEGER},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update hsh_logistics
+        set ID = #{record.id,jdbcType=BIGINT},
+        CUSTOMER_ID = #{record.customerId,jdbcType=BIGINT},
+        REAL_NAME = #{record.realName,jdbcType=VARCHAR},
+        PHONE = #{record.phone,jdbcType=VARCHAR},
+        ADDRESS = #{record.address,jdbcType=VARCHAR},
+        POST_CODE = #{record.postCode,jdbcType=VARCHAR},
+        IS_DEFAULT = #{record.isDefault,jdbcType=INTEGER}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.yunchao.hsh.model.HshLogistics">
+        update hsh_logistics
+        <set>
+            <if test="customerId != null">
+                CUSTOMER_ID = #{customerId,jdbcType=BIGINT},
+            </if>
+            <if test="realName != null">
+                REAL_NAME = #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                PHONE = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                ADDRESS = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="postCode != null">
+                POST_CODE = #{postCode,jdbcType=VARCHAR},
+            </if>
+            <if test="isDefault != null">
+                IS_DEFAULT = #{isDefault,jdbcType=INTEGER},
+            </if>
+            <if test="stationId != null">
+                STATION_ID = #{stationId,jdbcType=INTEGER},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.yunchao.hsh.model.HshLogistics">
+    update hsh_logistics
+    set CUSTOMER_ID = #{customerId,jdbcType=BIGINT},
+      REAL_NAME = #{realName,jdbcType=VARCHAR},
+      PHONE = #{phone,jdbcType=VARCHAR},
+      ADDRESS = #{address,jdbcType=VARCHAR},
+      POST_CODE = #{postCode,jdbcType=VARCHAR},
+      IS_DEFAULT = #{isDefault,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

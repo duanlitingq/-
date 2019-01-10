@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="/page/style/css/pintuer.css">
+    <link rel="stylesheet" href="/page/style/css/admin.css">
+    <script src="/page/style/scripts/js/jquery.js"></script>
+    <script src="/page/style/scripts/js/global.js"></script>
+    <script src="/page/style/scripts/js/common.js"></script>
+    <script src="/page/style/scripts/layer/layer.js"></script>
+    <style>
+        #table tr td:nth-child(6){
+            width:226px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: inline-block;
+        }
+        #table tr td:nth-child(6):hover{
+            width:100%;
+        }
+    </style>
+</head>
+<body>
+<div class="panel admin-panel">
+    <div class="panel-head"><strong class="icon-reorder">消息管理</strong></div>
+   <!-- <div class="padding border-bottom">
+        &lt;!&ndash;添加广告&ndash;&gt;
+        <ul class="search" style="padding-left:10px;">
+            &lt;!&ndash; <li> <a class="button border-main icon-plus-square-o" href="/page/admin/menu/add.html"> 添加一级菜单</a> </li>&ndash;&gt;
+            <li>搜索：
+                <input type="text" id="nickname" name="nickname" placeholder="请输入用户昵称" class="input" style="width:250px; line-height:17px;display:inline-block" />
+            </li>
+            <li>手机号：
+                <input type="text" id="phone" name="phone" placeholder="请输入手机号码" class="input" style="width:250px; line-height:17px;display:inline-block" />
+            </li>
+            <li>
+                <a href="javascript:void(0)" class="button border-main icon-search"  onclick="changesearch()" > 搜索</a></li>
+        </ul>
+
+    </div>-->
+    <table id="table" class="table table-hover text-center">
+        <tr>
+            <th >标题</th>
+            <th >接收方</th>
+            <th >内容</th>
+            <th>创建时间</th>
+        </tr>
+        <tr id="pageBar">
+
+        </tr>
+    </table>
+</div>
+
+</body>
+<script>
+    var colspan=3;
+    $(function () {
+        loadAll();
+    })
+    function loadAll() {
+        $.post("/page/admin/message/getPage",{},function (data) {
+            var html="";
+            for (var i = 0 ; i < data.list.length; i++){
+                if(data.list[i].level == 1){
+                    html+='<tr class="content">' +
+                        '<input type="hidden">'+data.list[i].id+'</>' +
+                        '<td>'+data.list[i].title+'</td>' +
+                        '<td>'+data.list[i].customeName+'</td>' +
+                        '<td>'+data.list[i].content+'</td>' +
+                        '<td>'+data.list[i].sendTime+'</td>' +
+                        '</tr>';
+                }else {
+                    html+='<tr class="content">' +
+                        '<input type="hidden">'+data.list[i].id+'</>' +
+                        '<td>'+data.list[i].title+'</td>' +
+                        '<td>'+data.list[i].customeName+'</td>' +
+                        '<td>'+data.list[i].content+'</td>' +
+                        '<td>'+data.list[i].sendTime+'</td>' +
+                        '</tr>'
+                }
+            }
+            $("#pageBar").before(html);
+            $("#pageBar").html('<td style="text-align:center;padding-left: 30px">' +
+                '<td colspan="'+colspan+'"  class="colspan" style="text-align:center;">' +
+                '<div class="pagelist"> <a  href="#">上一页</a>' +
+                '<a href="#"  class="current">'+1+'</a>' +
+                '<a href="javascript:void(0)" class="disableds disableds2" onclick="changesearch(2,'+data.pageSize+')">2</a>' +
+                '<a href="javascript:void(0)" class="disableds disableds3" onclick="changesearch(3,'+data.pageSize+')">3</a>' +
+                '<a href="javascript:void(0)" class="disableds disabledsNext" onclick="changesearch('+(data.pageNum +1)+','+data.pageSize+')">下一页</a>' +
+                '<a href="javascript:void(0)" class="disableds" onclick="changesearch('+(data.firstPage)+','+data.pageSize+')">首页</a> ' +
+                '<a href="javascript:void(0)" class="disableds" onclick="changesearch('+(data.lastPage)+','+data.pageSize+')">尾页</a> </div>' +
+                '<span>共'+data.total+'条数据</span>' +
+                '</td>')
+            if(data.lastPage == 1){
+                $(".disableds").removeAttr("onclick");
+                $(".disableds3,.disableds2").hide();
+            }else if(data.lastPage < 3){
+                $(".disableds3").hide();
+            }
+
+        },'json')
+    }
+
+    //条件搜索
+    function changesearch(pageNum,pageSize) {/**/
+        $.post("/page/admin/message/getPage",{
+            "pageNum":pageNum,
+            "pageSize":pageSize
+        },function (data) {
+            var html="";
+            $(".content").html('');
+            for (var i = 0 ; i < data.list.length ; i++){
+                if(data.list[i].level == 1 ){
+                    html+='<tr class="content">' +
+                        '<input type="hidden">'+data.list[i].id+'</>' +
+                        '<td>'+data.list[i].title+'</td>' +
+                        '<td>'+data.list[i].customeName+'</td>' +
+                        '<td>'+data.list[i].content+'</td>' +
+                        '<td>'+data.list[i].sendTime+'</td>' +
+                        '</tr>'
+                }else{
+                    html+='<tr class="content">' +
+                        '<input type="hidden">'+data.list[i].id+'</>' +
+                        '<td>'+data.list[i].title+'</td>' +
+                        '<td>'+data.list[i].customeName+'</td>' +
+                        '<td>'+data.list[i].content+'</td>' +
+                        '<td>'+data.list[i].sendTime+'</td>' +
+                        '</tr>'
+                }
+            }
+            $("#pageBar").before(html);
+            //此处调用分页插件
+            var html = "";
+            var falg = false;
+            var boo = false;
+            if(data.pageNum!=1 &&  data.pageNum != data.lastPage){
+                html = '<a href="javascript:void(0)" id="onePrevPage" >'+(data.pageNum - 1)+'</a>'+
+                    '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >'+data.pageNum+'</a>' +
+                    '<a href="javascript:void(0)"  id="threePrevPage" >'+(data.pageNum + 1)+'</a>';
+            }else{
+                html = '<a href="javascript:void(0)" id="onePrevPage" >'+data.pageNum+'</a>'+
+                    '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >'+(data.pageNum + 1)+'</a>' +
+                    '<a href="javascript:void(0)"  id="threePrevPage"  >'+(data.pageNum + 2)+'</a>';
+                falg = true;
+            }
+            if(data.pageNum == data.lastPage){
+                html = '<a href="javascript:void(0)" id="onePrevPage" >'+(data.pageNum - 2)+'</a>'+
+                    '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >'+(data.pageNum  - 1)+'</a>' +
+                    '<a href="javascript:void(0)"  id="threePrevPage"  >'+data.pageNum +'</a>';
+                boo = true;
+            }
+            $("#pageBar").html('<td style="text-align:center;padding-left: 30px">' +
+                /*'<input type="checkbox" class="button border-red" name="all" id="checkall"  value="全选" onclick="checkAll()"/>全选' +
+                '</td>' +
+                '<td colspan="'+colspan+'"  class="colspan" style="text-align:left;padding-left:20px;">' +
+                '<a href="javascript:void(0)" class="button border-red " style="padding:5px 15px;" onclick="batchUpdateState(1)"> 批量展示</a> ' +
+                '<a href="javascript:void(0)" style="padding:5px 15px; margin:0 10px;" class="button border-blue" onclick="batchUpdateState(0)"> 批量隐藏</a>' +
+                '</td>' +*/
+                '<td colspan="'+colspan+'"  class="colspan" style="text-align:center;">' +
+                '<div class="pagelist"> <a id="prevPage" href="#">上一页</a>' +
+                html +
+                '<a id="nextPage" href="#" >下一页</a>' +
+                '<a href="javascript:void(0)" onclick="changesearch('+(data.firstPage)+','+data.pageSize+')">首页</a>' +
+                '<a href="javascript:void(0)" onclick="changesearch('+(data.lastPage)+','+data.pageSize+')">尾页</a> </div>' +
+                '<span>共'+data.total+'条数据</span>' +
+                '</td>');
+
+            if($("#onePrevPage").html() < 1){
+                $("#onePrevPage").hide();
+            }
+            if($("#twoPrevPage").html() < 1){
+                $("#twoPrevPage").hide();
+            }
+            if($("#threePrevPage").html() < 1){
+                $("#threePrevPage").hide();
+            }
+            if($("#threePrevPage").html() > data.lastPage){
+                $("#threePrevPage").hide();
+            }
+            if(falg){
+                $("#onePrevPage").addClass("current");
+                $("#onePrevPage").siblings().removeClass("current");
+            }
+            if(boo){
+                $("#threePrevPage").addClass("current");
+                $("#threePrevPage").siblings().removeClass("current");
+            }
+            if(data.lastPage==1){
+                $("#prevPage").unbind("click");
+                $("#nextPage").unbind("click");
+            }else if(data.lastPage==0){
+                $("#onePrevPage,#twoPrevPage,#threePrevPage").hide();
+                $("#pageBar").before('<tr class="content"><td colspan="6" style="color:red"> 没有搜索到数据!</td></tr>')
+            }else{
+                $("#onePrevPage,#twoPrevPage,#threePrevPage").click(function () {
+                    changesearch($(this).html(),data.pageSize);
+                })
+            }
+
+
+            if(data.pageNum > data.firstPage){
+                $("#prevPage").click(function () {
+                    changesearch(data.pageNum -1,data.pageSize);
+                })
+            }
+            if(data.pageNum < data.lastPage){
+                $("#nextPage").click(function () {
+                    changesearch(data.pageNum +1,data.pageSize);
+                })
+            }
+        },'json')
+    }
+
+    function updatePre(id) {
+        window.location.href = "/page/admin/wallet/showWallet.html?id="+id;
+    }
+    //添加子菜单
+    function relationMenuPre(id) {
+        window.location.href = "/page/admin/customerWallet/customerWallet.html?parentId="+id;
+    }
+
+    //批量更新状态
+    function batchUpdateState(status){
+        var ids="";
+        $("input[name='checkname[]']").each(function(i,o){
+            if (this.checked==true) {
+                ids += (o.value) + ',';
+            }
+        });
+        if (ids == null || ids == ''){
+            $("#listform").submit();
+            alert("未选择菜单！");
+            return ;
+        }
+        $.post("/page/admin/menu/batchUpdateState",{
+            "status":status,
+            "ids":ids
+        },function (data) {
+            reloadAfterShowMsg(data.message);
+        },'json');
+
+    }
+</script>
+</html>

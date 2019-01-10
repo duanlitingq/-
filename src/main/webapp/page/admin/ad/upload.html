@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="/page/style/css/pintuer.css">
+    <link rel="stylesheet" href="/page/style/css/admin.css">
+    <script src="/page/style/scripts/jquery/jquery-1.11.2.js"></script>
+    <script src="/page/style/scripts/jquery/ajaxfileupload.js"></script>
+    <script src="/page/style/scripts/js/global.js"></script>
+    <script src="/page/style/scripts/js/common.js"></script>
+    <script src="/page/style/scripts/layer/layer.js"></script>
+<body>
+<div class="panel admin-panel margin-top" id="add">
+    <div class="panel-head"><strong><span class="icon-pencil-square-o"></span> 添加广告</strong></div>
+    <div class="body-content">
+        <!--<form method="post" class="form-x" enctype="multipart/form-data">-->
+            <!--<div >-->
+                <!--<label >点击图片即可修改</label><br>-->
+                <!--<img id="headPic" src="/page/style/image/addPic.png"  width="150px" height="150px" style="padding: 5px">-->
+                <!--<input id="upload" name="file" accept="image/*" type="file" style="display: none"/>-->
+
+                <!--<button id="submit_btn" type="submit">确定修改</button>-->
+            <!--</div>-->
+        <div class="form-group">
+            <div class="label">
+                <label>图片：</label>
+            </div>
+            <div class="field" name="imgsDiv">
+                <img src="" id="show" width="200">
+                <a class="button bg-blue input-file" href="javascript:void(0);">+ 图片上传
+                    <input id="file" data-validate="required:" type="file" onchange="setImg1(this)"/>
+                    <input id="imgs" name="imgs" value=""/>
+                </a>
+            </div>
+        </div>
+        <!--</form>-->
+    </div>
+
+</div>
+</body>
+<script>
+    //上传图片js
+    function setImg1(obj){//用于进行图片上传，返回地址
+        var f=$(obj).val();
+        if(f == null || f ==undefined || f == ''){
+            return false;
+        }
+//        alert(f) ;
+        if(!/\.(?:png|jpg|bmp|gif|PNG|JPG|BMP|GIF)$/.test(f))
+        {
+            alert("类型必须是图片(.png|jpg|bmp|gif|PNG|JPG|BMP|GIF)");
+            $(obj).val('');
+            return false;
+        }
+        var data = new FormData();
+        $.each($(obj)[0].files,function(i,file){
+            data.append('file', file);
+        });
+        console.log($(obj)[0].files);
+
+//        $.ajax({
+//            type: "POST",
+//            url: "/page/admin/advertisement/uploadPic",
+//            data: data,
+//            cache: false,
+//            contentType: false,    //不可缺
+//            processData: false,    //不可缺
+//            dataType:"json",
+//            success: function(data) {
+//                alert(data.message)
+//            },
+//            error: function(XMLHttpRequest, textStatus, errorThrown) {
+//                alert("上传失败，请检查网络后重试");
+//                $("#url").val("");
+//                $(obj).val('');
+//            }
+//        });
+    }
+    //删除图片js：
+    //本地上传的图片删除，去掉图片的id即可
+    function delespan(id){
+        $('#a'+id).remove();
+        alert("删除成功");
+    }
+
+
+</script>
+</html>

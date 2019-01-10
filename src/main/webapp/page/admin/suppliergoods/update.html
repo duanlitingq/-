@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="/page/style/css/pintuer.css">
+    <link rel="stylesheet" href="/page/style/css/admin.css">
+    <link rel="stylesheet" type="text/css" href="/page/style/suppliergoods/css/webuploader.css"/>
+    <link rel="stylesheet" type="text/css" href="/page/style/suppliergoods/css/style.css"/>
+    <script src="/page/style/scripts/jquery/jquery-1.11.2.js"></script>
+    <script src="/page/style/scripts/jquery/ajaxfileupload.js"></script>
+    <script src="/page/style/scripts/js/global.js"></script>
+    <script src="/page/style/scripts/js/common.js"></script>
+    <script src="/page/style/scripts/layer/layer.js"></script>
+    <!--<script src="/page/style/scripts/My97DatePicker/WdatePicker.js"></script>-->
+    <script type="text/javascript" src="/page/style/upload/js/webuploader.js"></script>
+    <style>
+        .hide {
+            display: none;
+        }
+        .addImgs li{
+            display: inline-block;
+            margin: 20px;
+        }
+        .del{
+            font-size: 20px;
+            color: #ffffff;
+            background-color: rgba(32, 32, 32, 0.5);
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            left: 0;
+            bottom: 0;
+        }
+
+    </style>
+<body>
+
+<div class="panel-head"><strong><span class="icon-pencil-square-o"></span> 更新商品</strong></div>
+<div class="body-content">
+    <form method="post"id="update_goods" name="update_goods" action="/page/admin/suppliergoods/doUpdate"  onsubmit="checkData()" class="form-x"  enctype="multipart/form-data">
+        <input type="text" id="id" name="id" hidden />
+        <!--名称-->
+        <div class="form-group">
+            <div class="label">
+                <label>所属店铺：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="supplierName" name="supplierName" class="input w50"  disabled="disabled" />
+                <input type="text" id="supplierId" name="supplierId" hidden />
+                <div class="tips"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="label">
+                <label>商品名称：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="name" name="name" maxlength="127" class="input w50" value=""  data-validate="required:请输入标题" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>商品价格：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="planPrice" name="planPrice" maxlength="11" class="input w50" value=""  data-validate="required:请输入标题" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>商品规格：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="specifications" name="specifications" maxlength="127" class="input w50" value=""  data-validate="required:请输入标题" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>商品单位：</label>
+            </div>
+            <div class="field">
+                <select name="unit"  id="unit" class="input" style="width:25%; line-height:17px; display:inline-block">
+                    <option value="">选择</option>
+
+                </select>
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>商品类别：</label>
+            </div>
+            <div class="field">
+                <select name="typeId"  id="typeId" class="input" style="width:25%; line-height:17px; display:inline-block">
+                    <option value="">选择</option>
+
+                </select>
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--链接-->
+        <div class="form-group">
+            <div class="label">
+                <label>库存：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="libraryNum" name="libraryNum" class="input w50"  maxlength="127"  value="" data-validate="required:请输入链接" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>产地：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="productArea" name="productArea" class="input w50"  maxlength="127"  value="" data-validate="required:请输入链接" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>生产日期：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="productTime"   name="productTime" class="Wdate input w50 "  onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'%y-%M-%d %H:%m:%s'})"  value="" readonly="readonly" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>保质期：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="shelfLife" name="shelfLife" class="input w50"  maxlength="127"  value="" data-validate="required:请输入链接" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--图片-->
+        <div class="form-group">
+            <div class="label">
+                <label>图片：</label>
+            </div>
+
+            <div class="field">
+                <ul class="addImgs">
+                </ul>
+
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>排序：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="priority" name="priority" class="input w50"  maxlength="127"  value="" data-validate="required:请输入链接" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>展示状态：</label>
+            </div>
+            <div class="field">
+                <select name="status"  id="status" class="input" style="width:25%; line-height:17px; display:inline-block">
+                    <option value="">选择</option>
+                    <option value="1">是</option>
+                    <option value="0">否</option>
+                </select>
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--简介-->
+        <div class="form-group">
+            <div class="label">
+                <label>简介：</label>
+            </div>
+            <div class="field">
+                <textarea name="info" id="info" style="margin: 0px;width: 900px;height: 300px;"></textarea>
+            </div>
+        </div>
+        <!--提交-->
+        <div class="form-group">
+            <div class="label">
+                <label></label>
+            </div>
+            <div class="field">
+               <a  class="button bg-main icon-check-square-o" onclick="submitFun()"> 提交</a>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+<input type="hidden" name="h_typeId" id="h_typeId">
+</body>
+<script>
+    var supplierId = getUrlParam("supplierId");
+    $(function () {
+        loadSupplier();
+        loadUnit();
+        setTimeout(function () {
+        loadGoodsType();
+            loadData();
+        },200);
+    })
+    function loadSupplier(){
+        $.ajax({
+            type: "POST",
+            url: "/page/admin/supplier/findById",
+            data: {id:supplierId},
+            cache: false,
+            dataType:"json",
+            success: function(data) {
+                var name = data.name;
+                var id = data.id;
+                $("#supplierId").val(id);
+                $("#supplierId").prev().val(name);
+            }
+        });
+    }
+    function loadUnit(){
+        $.ajax({
+            type: "POST",
+            url: "/page/admin/sysdict/getUnitAll",
+            cache: false,
+            dataType:"json",
+            success: function(data) {
+                var len = data.length;
+                var html='';
+                for (var j = 0; j < len; j++) {
+                    var name = data[j].name;
+                    var id = data[j].id;
+                    html+='<option value="'+id+'">'+name+'</option>'
+                }
+                $("#unit").append(html);
+            }
+        });
+    }
+    function loadGoodsType(){
+        $.ajax({
+            type: "GET",
+            url: "/page/admin/supplierGoodsType/listGoodsType",
+            cache: false,
+            data: {
+                supplierId:supplierId,
+                status:1
+            },
+            dataType:"json",
+            success: function(data) {
+                var len = data.data[1].length;
+                var datas = data.data[1];
+                console.log(data,"-----------------")
+                var html='';
+                for (var j = 0; j < len; j++) {
+                    var name = datas[j].name;
+                    var id = datas[j].id;
+                    html+='<option value="'+id+'">'+name+'</option>'
+                }
+                $("#typeId").append(html);
+            }
+        });
+    }
+    function loadData() {
+        var id = getUrlParam("id");
+        $.post("/page/admin/suppliergoods/findById",
+            {
+                id: id
+            }, function (data) {
+                $("#id").val(data.id);
+                $("#supplierId").val(data.supplierId);
+                $("#name").val(data.name);
+                $("#planPrice").val(data.planPrice);
+                $("#unit").val(data.unit);
+                $("#typeId").val(data.typeId);
+                $("#libraryNum").val(data.libraryNum);
+                $("#productArea").val(data.productArea);
+                $("#productTime").val(data.productTime);
+                $("#shelfLife").val(data.shelfLife);
+                $("#priority").val(data.priority);
+                $("#status").val(data.status);
+                $("#info").val(data.info);
+                $("#specifications").val(data.specifications);
+                //图片回显
+                var imgs = data.imgs;
+                var imgArr = imgs.split(";");
+                var li = '';
+                var beforeImgUrl="http://other.yueyongyueyou.com:8888/";
+                for (var i = 0; i < imgArr.length-1; i++) {
+                    var imgStr = imgArr[i].replace(/\\/g, "/");//将\替换为/,g为全字匹配
+                    li += '<li style="position: relative">' +
+                        '<label>' +
+                        '<img id="img' + i + '" src="' + beforeImgUrl + imgArr[i] + '" width="200" ><i class="icon-trash-o del"onclick="removePic(\'' + imgStr + '\',' + i + ');"></i>' +/**/
+                        '</label>' +
+                        '</li>';
+                }
+                // li += '<li style="position: relative">' +
+                //     '<label>' +
+                //     '<img src="" width="200"> ' +
+                //     '<a class="button bg-blue input-file" href="javascript:void(0);">+ 图片上传' +
+                //     '<input id="file" name="file" data-validate="required:" type="file" onchange="changepic(this)"/></a>' +
+                //     '</label>' +
+                //     '</li>';
+                li +='<script type="text/javascript" src="/page/style/upload/js/supplierGoodsUpdate.js"><'+'/script>'+
+                    '<div id="wrapper">'+
+                    '<div id="container">'+
+                    '<div id="supplierGoodsUpdate">'+
+                    '<div class="queueList">'+
+                    '<div id="dndArea" class="placeholder">'+
+                    '<div id="filePicker"></div>'+
+                    '<p>或将照片拖到这里，单次最多可选300张</p>'+
+                    '</div>'+
+                    '</div>'+
+                    '<div class="statusBar" style="display:none;">'+
+                    '<div class="progress">'+
+                    '<span class="text">0%</span>'+
+                    '<span class="percentage"></span>'+
+                    '</div>'+
+                    '<div class="info"></div>'+
+                    '<div class="btns">'+
+                    '<div id="filePicker2"></div>'+
+                    '<div class="uploadBtn">开始上传</div>'+
+                    '</div>'+
+                    '</div>'+
+                    '</div>'+
+                    '</div>'+
+                    '</div>';
+                // li += '<input id="imgs" name="imgs" type="hidden" value="' +data.imgs  + '">';
+                // $(".addImgs").append(li);
+                li += '<input id="imgs" name="imgs" type="hidden" value="' + data.imgs + '">';
+                $(".addImgs").append(li);
+
+            }, 'json')
+    }    //表单提交时校验
+    function checkData() {
+        var supplierId = $("#supplierId").val();
+        var name = $("#name").val();
+        var planPrice = $("#planPrice").val();
+        var specifications = $("#specifications").val();
+        var unit = $("#unit").val();
+        var typeId = $("#typeId").val();
+        var libraryNum = $("#libraryNum").val();
+        var productArea = $("#productArea").val();
+        var productTime = $("#productTime").val();
+        var shelfLife = $("#shelfLife").val();
+        var file=   $(":file");//file类型
+        var priority = $("#priority").val();
+        var status = $("#status").val();
+        var info = $("#info").val();
+        var imgs = $("#imgs").val();
+        if(isEmpty(supplierId)){
+            failMsg("所属店铺数据异常，请刷新重试");
+            return false;
+        }
+        if(isEmpty(name)){
+            failMsg("商品名称不能为空");
+            return false;
+        }
+        if(isEmpty(planPrice)){
+            failMsg("请输入价格");
+            return false;
+        }
+        if(isPrice(planPrice)){
+            failMsg("价格格式为:##或##.##");
+            return false;
+        }
+        if(isEmpty(specifications)){
+            failMsg("请输入规格");
+            return false;
+        }
+        if(isEmpty(unit)){
+            failMsg("请选择单位");
+            return false;
+        }
+        if(isEmpty(typeId)){
+            failMsg("请选择类别");
+            return false;
+        }
+        if(isEmpty(libraryNum)){
+            failMsg("请输入库存");
+            return false;
+        }else if(isIntNum(libraryNum)){
+            failMsg("库存请输入数字");
+            return false;
+        }
+        if(isEmpty(productArea)){
+            failMsg("请输入产地");
+            return false;
+        }
+        if(isEmpty(productTime)){
+            failMsg("请输入生产日期");
+            return false;
+        }
+        if(isEmpty(shelfLife)){
+            failMsg("请输入保质期");
+            return false;
+        }
+
+        if(file.length<2&&isEmpty(imgs)){
+            //只有一个图片上传的按钮
+            failMsg("未上传图片");
+            return false;
+        }
+        if(isEmpty(priority)){
+            failMsg("排序数字不能为空");
+            return false;
+        }else if(isIntNum(priority)){
+            failMsg("请输入排序数字");
+            return false;
+        }
+        if(isEmpty(status)){
+            failMsg("请选择展示状态");
+            return false;
+        }
+        if(isEmpty(info)){
+            failMsg("请输入简介信息");
+            return false;
+        }
+        return true;
+    }
+    var i = 0;
+    function removePic(obj, imgId) {//obj是当前图片的路径
+        if(confirm("确认删除吗")){
+            //移除图片,更新
+            //js转义:将\转为/,g为全字匹配
+            var imgs = $("#imgs").val().replace(/\\/g, "/");
+            var imgsStrArr = imgs.split(";");
+            if (i != 0) {
+                imgsStrArr = imgs.split(",");
+            }
+            i += 1;
+            //在数组中删除元素,通过obj找到在数组中的索引位置,删除
+            imgsStrArr.splice($.inArray(obj, imgsStrArr), 1);
+            imgsStrArr = imgsStrArr.join(";");
+            console.log(imgsStrArr);
+            $("#imgs").val(imgsStrArr);
+            $("#img" + imgId).parent().parent().remove();//移除li
+        } else{
+            return;
+        }
+    }
+    function submitFun(){
+        if(checkData()){
+            $("#update_goods").submit();
+        }
+    }
+</script>
+</html>

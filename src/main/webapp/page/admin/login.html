@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="renderer" content="webkit">
+    <title>登录</title>  
+    <link href="/page/style/css/pintuer.css" rel="stylesheet" >
+    <link href="/page/style/css/admin.css" rel="stylesheet" >
+    <script src="/page/style/scripts/jquery/jquery-1.8.2.js"></script>
+    <script src="/page/style/scripts/js/pintuer.js"></script>
+    <script  src="/page/style/scripts/layer/layer.js" ></script>
+
+</head>
+<body>
+<div class="bg"></div>
+<div class="container">
+    <div class="line bouncein">
+        <div class="xs6 xm4 xs3-move xm4-move">
+            <div class="top-logo"  style="height:70px;text-align: center;line-height: 140px;font-weight: bold;font-size: 28px">
+            <h1>越用越有</h1>
+            </div>
+            <div class="media media-y margin-big-bottom" >
+            </div>
+            <!--<div style="background-color: red;width: 100px;height: 150px"></div>-->
+            <form action="" method="">
+            <div class="panel loginbox">
+                <div class="text-center margin-big padding-big-top"><h2>后台管理处理系</h2></div>
+                <div class="panel-body" style="padding:30px; padding-bottom:10px; padding-top:10px;">
+                    <div class="form-group">
+                        <div class="field field-icon-right">
+                            <input type="text" class="input input-big" name="userName" value=""  id="userName" placeholder="登录账号"/>
+                            <span class="icon icon-user margin-small" ></span>
+                        </div>
+                        <div class="icon  margin-small" id="userName_error" style="color:red"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="field field-icon-right">
+                            <input type="password" class="input input-big" name="password" value="" id="password" placeholder="登录密码"/>
+                            <span class="icon icon-key margin-small" ></span>
+                        </div>
+                        <div class="icon  margin-small" id="password_error" style="color:red"></div>
+                    </div>
+                    <!--<div class="form-group">-->
+                        <!--<div class="field">-->
+                            <!--<input type="text" class="input input-big" name="code" placeholder="填写右侧的验证码" data-validate="required:请填写右侧的验证码" />-->
+                           <!--<img src="images/passcode.jpg" alt="" width="100" height="32" class="passcode" style="height:43px;cursor:pointer;" onclick="this.src=this.src+'?'">  -->
+                    <!---->
+                        <!--</div>-->
+                    <!--</div>-->
+                </div>
+                <div style="padding:30px;">
+                    <input type="button"  class="button button-block bg-main text-big input-big" value="登录" id="login_form">
+                </div>
+            </div>
+            </form>          
+        </div>
+    </div>
+</div>
+
+</body>
+<script>
+    $("body").keydown(function() {
+        if (event.keyCode == "13") {//keyCode=13是回车键
+            $('#login_form').click();
+        }
+    });
+    $(function(){
+        //给登录按钮追加单击事件
+        $("#login_form").click(function(){
+            $("#userName_error").html("");
+            $("#password_error").html("");
+            //获取输入的值
+            var userName = $("#userName").val();
+            var password = $("#password").val();
+
+            var form_check = true;//表示表单通过检查
+            if(userName==""){
+                $("#userName_error").html("账号不能为空");
+                form_check = false;
+            }
+            if(password==""){
+                $("#password_error").html("密码不能为空");
+                form_check = false;
+            }
+            //发送ajax请求调用user后台服务检测
+            //如果form_check = true表示表单通过格式检查
+            if(form_check){
+                $.ajax({
+                    url:"/page/admin/sysUser/login",
+                    type:"POST",
+                    data:{"userName":userName,"password":password},
+                    dataType:"json",
+                    success:function(result){
+                        if(result.success){
+                            //将用户存入本地存储一个会话（session）中的数据
+                            sessionStorage.setItem("id",result.data[1].id);
+                            sessionStorage.setItem("userName",result.data[1].userName);
+                            //layer.msg(result.message,{icon: 16,time:500,shade : [0.3 , '#000' , true]});
+                            window.location.href="/page/admin/sysRole/role_index.html";
+                            setTimeout(function () {
+                                console.log(123456465)
+                                //window.location.href="/page/admin/welcome.html";
+                            },600);
+                        }else {
+                           layer.msg(result.message,{icon: 16,time:800,shade : [0.5 , '#000' , true]});
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>
+</html>

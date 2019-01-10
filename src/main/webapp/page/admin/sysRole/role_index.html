@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>越用越有后台管理中心</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="/page/style/css/pintuer.css" rel="stylesheet" >
+    <link href="/page/style/css/admin.css" rel="stylesheet" >
+    <script src="/page/style/scripts/js/jquery.js"></script>
+    <script src="/page/style/scripts/js/global.js"></script>
+    <script src="/page/style/scripts/js/common.js"></script>
+    <script src="/page/style/scripts/layer/layer.js"></script>
+</head>
+<body style="background-color:#f2f9fd;">
+<!--head头部-->
+<div class="header bg-main">
+    <div class="logo margin-big-left fadein-top">
+        <h1><img src="/page/style/image/y.png" class="radius-circle rotate-hover" height="50" alt="" />越用越有后台管理中心</h1>
+    </div>
+    <div class="head-l" id="loginUserName">
+        欢迎您，<a href="javascript:void(0);" name="" id="account">越用越有管理员</a> &nbsp;&nbsp;<a class="button button-little bg-red" href="javascript:void(0);"  onclick="logOut()"><span class="icon-power-off"></span> 退出登录</a>
+
+
+    </div>
+</div>
+<!--左侧导航栏-->
+<!--/page/admin/sysRole/role_index.html-->
+<div class="leftnav" >
+    <div class="leftnav-title" id="left_menu">
+        <strong>
+            <span class="icon-list"></span>菜单列表
+        </strong>
+    </div>
+</div>
+<!--面包屑导航  -->
+<ul class="bread">
+    <li id="home"><a href="/page/admin/welcome.html"  target="_blank" class="icon-home"> 首页</a></li>
+    <li><a href="#" id="a_leader_txt">网站信息</a></li>
+    <li><a href="#" id="a_leader_txt1">网站信息</a></li>
+</ul>
+<!--iframe框-->
+<div class="admin">
+    <!-- <iframe class="framewidth" style="display: block" scrolling="auto" frameborder="0" src="/page/admin/sysRole/sysRole_list.html" name="right" width="100%" height="100%"></iframe>-->
+    <iframe class="framewidth" style="display: block" scrolling="auto" frameborder="0" src="/page/admin/welcome.html" name="right" width="100%" height="100%"></iframe>
+</div>
+</div>
+</body>
+<script>
+    $(function () {
+        //加载改用户的菜单权限
+        loadLeftMenu();
+    });
+    //从session获取用户名
+    var loginUserId = sessionStorage.getItem("id");
+    var loginUserName = sessionStorage.getItem('userName');
+    $("#account").html(loginUserName);
+    function loadLeftMenu(){
+        $.ajax({
+            url:'/page/admin/menu/getLeftMenu',
+            type:'post',
+            dataType:"json",
+            data:{userId:loginUserId},
+            success:function (data) {
+                $("#left_menu").siblings().remove();
+                var len = data.length;
+                var html = "";
+                if(len > 0){
+                    for (var i = 0;i < len ; i++){
+                        var obj = data[i];
+                        var fname = obj.name;
+                        var fpageUrl = obj.pageUrl;
+                        var childs = obj.childs;
+                        html += '<h2><span class="icon-user"></span>'+fname+'</h2>'
+                        if(childs.length > 0){
+                            html+='<ul style="display:none">';
+                            for (var j = 0 ; j < childs.length ; j++){
+                                var cobj = childs[j];
+                                var cname = cobj.name;
+                                var cpageUrl = cobj.pageUrl;
+                                html+=' <li><a href="'+cpageUrl+'" target="right"><span class="icon-caret-right"></span>'+cname+'</a></li>';
+                            }
+                            html+='</ul>';
+                        }
+                    }
+                }
+                $("#left_menu").after(html);
+                $("h2").click(function () {
+                    var val = $(this).next("ul").css("display");
+                    if(val == "none"){
+                        $(this).next("ul").css("display","block");
+                    }else{
+                        $(this).next("ul").css("display","none");
+                    }
+                });
+            }
+    });
+    }
+    function  logOut(){
+        $.ajax({
+            url:'/page/admin/sysUser/logOut',
+            type:'GET',
+            data:{},
+            dataType:'json',
+            success:function(result){
+                sessionStorage.removeItem('userName');
+                sessionStorage.removeItem('id');
+                $("#account").html("请登录");
+                layer.msg(result.message,{icon: 16,time:800,shade : [0.3 , '#000' , true]});
+                setTimeout(function () {
+                    window.location.href="/page/admin/login.html";
+                },900);
+            }
+
+        });
+    }
+
+
+    function loadFirst(supplierId) {
+        var supplierId = getUrlParam("supplierId");
+        window.location.reload('/page/admin/supplierwallet/list.html?supplierId='+supplierId);
+    }
+</script>
+</html>

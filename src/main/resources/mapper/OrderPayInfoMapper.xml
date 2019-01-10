@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.OrderPayInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.OrderPayInfo" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="WX_ORDER_NO" property="wxOrderNo" jdbcType="VARCHAR" />
+    <result column="ORDER_NO" property="orderNo" jdbcType="VARCHAR" />
+    <result column="TOTAL_MONEY" property="totalMoney" jdbcType="DOUBLE" />
+    <result column="STATUS" property="status" jdbcType="INTEGER" />
+    <result column="PAY_ACCOUNT" property="payAccount" jdbcType="VARCHAR" />
+    <result column="REVENUE_ACCOUNT" property="revenueAccount" jdbcType="VARCHAR" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="COLUMN_1" property="column1" jdbcType="VARCHAR" />
+    <result column="COLUMN_2" property="column2" jdbcType="VARCHAR" />
+    <result column="COLUMN_3" property="column3" jdbcType="INTEGER" />
+    <result column="COLUMN_4" property="column4" jdbcType="INTEGER" />
+    <result column="COLUMN_5" property="column5" jdbcType="BIGINT" />
+    <result column="COLUMN_6" property="column6" jdbcType="BIGINT" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    ID,WX_ORDER_NO,ORDER_NO,TOTAL_MONEY,STATUS,PAY_ACCOUNT,REVENUE_ACCOUNT,REMARK,
+  CREATE_TIME,COLUMN_1,COLUMN_2,COLUMN_3,COLUMN_4,COLUMN_5,COLUMN_6
+  </sql>
+
+  <sql id="Base_Column_List_s" >
+   s.ID,s.WX_ORDER_NO,s.ORDER_NO,s.TOTAL_MONEY,s.STATUS,s.PAY_ACCOUNT,s.REVENUE_ACCOUNT,s.REMARK,
+  s.CREATE_TIME,s.COLUMN_1,s.COLUMN_2,s.COLUMN_3,s.COLUMN_4,s.COLUMN_5,s.COLUMN_6
+  </sql>
+
+
+  <insert id="insert" parameterType="com.yunchao.hsh.model.OrderPayInfo"  useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    insert into hsh_order_pay_info (
+                  ID,WX_ORDER_NO,ORDER_NO,TOTAL_MONEY,
+                  STATUS,PAY_ACCOUNT,REVENUE_ACCOUNT,
+                  REMARK,CREATE_TIME,COLUMN_1,COLUMN_2,
+                  COLUMN_3,COLUMN_4,COLUMN_5,COLUMN_6)
+    values (#{id,jdbcType=BIGINT}, #{wxOrderNo,jdbcType=VARCHAR},#{orderNo,jdbcType=VARCHAR},
+      #{totalMoney,jdbcType=DOUBLE}, #{status,jdbcType=INTEGER},
+      #{payAccount,jdbcType=VARCHAR},#{revenueAccount,jdbcType=VARCHAR},
+      #{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+      #{column1,jdbcType=VARCHAR},
+      #{column2,jdbcType=VARCHAR},
+       #{column3,jdbcType=INTEGER},
+       #{column4,jdbcType=INTEGER},
+       #{column5,jdbcType=BIGINT},
+       #{column6,jdbcType=BIGINT}
+      )
+  </insert>
+  <update id="updateOrderPayInfo" parameterType="com.yunchao.hsh.model.OrderPayInfo">
+    update hsh_order_pay_info
+    set STATUS = #{status,jdbcType=INTEGER},TOTAL_MONEY=#{totalMoney,jdbcType=DOUBLE}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="getOrderPayInfoById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"></include>
+    from hsh_order_pay_info
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+</mapper>

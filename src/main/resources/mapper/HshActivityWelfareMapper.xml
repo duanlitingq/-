@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.HshActivityWelfareMapper" >
+  <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.HshActivityWelfare" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="welfare_title" property="welfareTitle" jdbcType="VARCHAR" />
+    <result column="welfare_img" property="welfareImg" jdbcType="VARCHAR" />
+    <result column="welfare_status" property="welfareStatus" jdbcType="TINYINT" />
+    <result column="welfare_tag" property="welfareTag" jdbcType="VARCHAR" />
+    <result column="cus_num_1" property="cusNum1" jdbcType="VARCHAR" />
+    <result column="cus_num_2" property="cusNum2" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      id, welfare_title, welfare_img, welfare_status, welfare_tag, cus_num_1, cus_num_2
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.yunchao.hsh.model.HshActivityWelfareExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hsh_activity_welfare
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    id,welfare_title,welfare_img,welfare_status,welfare_tag,cus_num_1,cus_num_2
+    from hsh_activity_welfare
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from hsh_activity_welfare
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.yunchao.hsh.model.HshActivityWelfareExample" >
+    delete from hsh_activity_welfare
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.yunchao.hsh.model.HshActivityWelfare" >
+    insert into hsh_activity_welfare (id, welfare_title, welfare_img, 
+      welfare_status, welfare_tag, cus_num_1, 
+      cus_num_2)
+    values (#{id,jdbcType=BIGINT}, #{welfareTitle,jdbcType=VARCHAR}, #{welfareImg,jdbcType=VARCHAR}, 
+      #{welfareStatus,jdbcType=TINYINT}, #{welfareTag,jdbcType=VARCHAR}, #{cusNum1,jdbcType=VARCHAR}, 
+      #{cusNum2,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yunchao.hsh.model.HshActivityWelfare" >
+    insert into hsh_activity_welfare
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="welfareTitle != null" >
+        welfare_title,
+      </if>
+      <if test="welfareImg != null" >
+        welfare_img,
+      </if>
+      <if test="welfareStatus != null" >
+        welfare_status,
+      </if>
+      <if test="welfareTag != null" >
+        welfare_tag,
+      </if>
+      <if test="cusNum1 != null" >
+        cus_num_1,
+      </if>
+      <if test="cusNum2 != null" >
+        cus_num_2,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="welfareTitle != null" >
+        #{welfareTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="welfareImg != null" >
+        #{welfareImg,jdbcType=VARCHAR},
+      </if>
+      <if test="welfareStatus != null" >
+        #{welfareStatus,jdbcType=TINYINT},
+      </if>
+      <if test="welfareTag != null" >
+        #{welfareTag,jdbcType=VARCHAR},
+      </if>
+      <if test="cusNum1 != null" >
+        #{cusNum1,jdbcType=VARCHAR},
+      </if>
+      <if test="cusNum2 != null" >
+        #{cusNum2,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.yunchao.hsh.model.HshActivityWelfareExample" resultType="java.lang.Integer" >
+    select count(*) from hsh_activity_welfare
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update hsh_activity_welfare
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.welfareTitle != null" >
+        welfare_title = #{record.welfareTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.welfareImg != null" >
+        welfare_img = #{record.welfareImg,jdbcType=VARCHAR},
+      </if>
+      <if test="record.welfareStatus != null" >
+        welfare_status = #{record.welfareStatus,jdbcType=TINYINT},
+      </if>
+      <if test="record.welfareTag != null" >
+        welfare_tag = #{record.welfareTag,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cusNum1 != null" >
+        cus_num_1 = #{record.cusNum1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cusNum2 != null" >
+        cus_num_2 = #{record.cusNum2,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update hsh_activity_welfare
+    set id = #{record.id,jdbcType=BIGINT},
+      welfare_title = #{record.welfareTitle,jdbcType=VARCHAR},
+      welfare_img = #{record.welfareImg,jdbcType=VARCHAR},
+      welfare_status = #{record.welfareStatus,jdbcType=TINYINT},
+      welfare_tag = #{record.welfareTag,jdbcType=VARCHAR},
+      cus_num_1 = #{record.cusNum1,jdbcType=VARCHAR},
+      cus_num_2 = #{record.cusNum2,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yunchao.hsh.model.HshActivityWelfare" >
+    update hsh_activity_welfare
+    <set >
+      <if test="welfareTitle != null" >
+        welfare_title = #{welfareTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="welfareImg != null" >
+        welfare_img = #{welfareImg,jdbcType=VARCHAR},
+      </if>
+      <if test="welfareStatus != null" >
+        welfare_status = #{welfareStatus,jdbcType=TINYINT},
+      </if>
+      <if test="welfareTag != null" >
+        welfare_tag = #{welfareTag,jdbcType=VARCHAR},
+      </if>
+      <if test="cusNum1 != null" >
+        cus_num_1 = #{cusNum1,jdbcType=VARCHAR},
+      </if>
+      <if test="cusNum2 != null" >
+        cus_num_2 = #{cusNum2,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yunchao.hsh.model.HshActivityWelfare" >
+    update hsh_activity_welfare
+    set welfare_title = #{welfareTitle,jdbcType=VARCHAR},
+      welfare_img = #{welfareImg,jdbcType=VARCHAR},
+      welfare_status = #{welfareStatus,jdbcType=TINYINT},
+      welfare_tag = #{welfareTag,jdbcType=VARCHAR},
+      cus_num_1 = #{cusNum1,jdbcType=VARCHAR},
+      cus_num_2 = #{cusNum2,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

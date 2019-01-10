@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit">
+<title></title>
+  <link href="/page/style/css/pintuer.css" rel="stylesheet" >
+  <link href="/page/style/css/admin.css" rel="stylesheet" >
+  <script src="/page/style/scripts/jquery/jquery-1.8.2.js" ></script>
+  <script src="/page/style/scripts/js/pintuer.js"></script>
+  <script src="/page/style/scripts/js/global.js"></script>
+  <script  src="/page/style/scripts/layer/layer.js"></script>
+</head>
+<body>
+<form method="post" action="" id="listform">
+  <div class="panel admin-panel">
+    <div class="panel-head"><strong class="icon-reorder"> 平台用户</strong> </div>
+    <div class="padding border-bottom">
+      <ul class="search" style="padding-left:10px;">
+      <li> <a class="button border-main icon-plus-square-o" href="/page/admin/sysUser/user_add.html" > 添加用户</a> </li>
+      <!--搜索框-->
+      <li>
+        用户名：<input type="text" id="keyWord" placeholder="请输入搜索用户名" name="keyWord" class="input" style="width:250px; line-height:17px;display:inline-block" />
+        手机号：<input type="text" id="phone" placeholder="请输入搜索手机号" name="phone" class="input" style="width:250px; line-height:17px;display:inline-block" />
+        <a href="javascript:void(0)" class="button border-main icon-search" onclick="changesearch()" > 搜索</a></li>
+      </ul>
+    </div>
+    <table class="table table-hover text-center">
+      <tr>
+        <th width="100" style=" padding-left:20px;">ID</th>
+        <th width="10%">用户名</th>
+        <th>真实姓名</th>
+        <th>手机号</th>
+        <th>角色名</th>
+        <th>创建日期</th>
+        <th width="10%">最后登录日期</th>
+        <th>状态</th>
+        <th width="310">操作</th>
+      </tr>
+      <tr id="pageBar">
+      </tr>
+    </table>
+    <!--<tr>
+      <td colspan="9"><div class="pagelist"> <a href="">上一页</a> <span class="current">1</span><a href="">2</a><a href="">3</a><a href="">下一页</a><a href="">尾页</a> </div></td>
+    </tr>-->
+  </div>
+</form>
+</body>
+<script>
+  var colspan=10;
+
+  $(function(){
+    //加载用户列表
+    loadAll();
+  });
+
+  //弹出用户详情
+  function show_detail(id){
+    layer.open({
+      type: 2,
+      title: false,
+      //closeBtn: 0, //不显示关闭按钮
+      shade: [0],
+      area: ['340px', '400px'],
+      //time: 2000, //2秒后自动关闭
+      anim: 2,
+      content: ['user_view.html?id='+id, 'no']
+    });
+  };
+
+  //刷新列表信息
+  function loadAll() {
+    $.post("/page/admin/sysUser/getPage",{},function (data) {
+//      console.log(data)
+      for (var i = 0 ; i < data.list.length ; i++){
+        var userLock = data.list[i].userLock == '0' ? '<a href="javascript:;" class="button border-red  wei" onclick="notLock('+data.list[i].id+')">未锁定</a>': '<a href="javascript:;" class="button border-green yi" onclick="isLock('+data.list[i].id+')">已锁定</a>'; //状态信息
+        $("#pageBar").before('<tr class="content">'+
+                '	<td>'+data.list[i].id+'</td>'+
+                '    <td style="padding-left:20px;">'+
+                '	    <a href="javascript:;" onclick=show_detail('+data.list[i].id+')>'+
+                '	    <font color="#00CC99">'+data.list[i].userName+
+                '	    </font></a>'+
+                '	   </td>'+
+                '	<td>'+data.list[i].realName+'</td>'+
+                '	<td>'+data.list[i].phone+'</td>'+
+                '	<td>'+data.list[i].roleName+'</td>'+
+                '	<td>'+data.list[i].createDateStr+'</td>'+
+                '	<td>'+data.list[i].lastLoginDateStr+'</td>'+
+                '	<td>'+userLock+'</td>'+
+                '      <td>'+
+                '          <div class="button-group"> '+
+                '              <a class="button border-main" href="user_update.html?id='+data.list[i].id+'">'+
+                '                <span class="icon-edit"></span> 更新</a> '+
+                '               <a class="button border-main" href="userAdmin_update.html?id='+data.list[i].id+'">'+
+                '                 <span class="icon-edit"></span> 权限设置</a> '+
+                '             </div>'+
+                '       </td>'+
+                ' </tr>'
+        )
+      }
+      $("#pageBar").html(
+              '<td colspan="'+colspan+'"  class="colspan" style="text-align:center;">' +
+              '<div class="pagelist"> ' +
+               '<a href="javascript:void(0)" class="disableds" onclick="changesearch('+(data.firstPage)+','+data.pageSize+')">首页</a> ' +
+               '<a  href="#">上一页</a>' +
+              '<a href="#"  class="current">'+1+'</a>' +
+              '<a href="javascript:void(0)" class="disableds disableds2" onclick="changesearch(2,'+data.pageSize+')">2</a>' +
+              '<a href="javascript:void(0)" class="disableds disableds3" onclick="changesearch(3,'+data.pageSize+')">3</a>' +
+              '<a href="javascript:void(0)" class="disableds disabledsNext" onclick="changesearch('+(data.pageNum +1)+','+data.pageSize+')">下一页</a>' +
+              '<a href="javascript:void(0)" class="disableds" onclick="changesearch('+(data.lastPage)+','+data.pageSize+')">尾页</a> </div>' +
+              '<span>共'+data.total+'条数据</span>' +
+              '</td>')
+      if(data.lastPage == 1){
+        $(".disableds").removeAttr("onclick");
+        $(".disableds3,.disableds2").hide();
+      }else if(data.lastPage < 3){
+        $(".disableds3").hide();
+      }
+
+    },'json')
+  }
+  //条件搜索
+  function changesearch(pageNum,pageSize) {/**/
+    var keyWord = $("#keyWord").val();
+    var phone = $("#phone").val();
+    $.post("/page/admin/sysUser/getPage",{
+      "keyWord":keyWord,
+      "phone":phone,
+      "pageNum":pageNum,
+      "pageSize":pageSize
+    },function (data) {
+      $(".content").html('');
+      for (var i = 0 ; i < data.list.length ; i++){
+        var userLock = data.list[i].userLock == '0' ? '<a href="javascript:;" class="button border-red  wei" onclick="notLock('+data.list[i].id+')">未锁定</a>': '<a href="javascript:;" class="button border-green  yi" onclick="isLock('+data.list[i].id+')">已锁定</a>'; //状态信息
+
+        $("#pageBar").before('<tr class="content">'+
+                '	<td>'+data.list[i].id+'</td>'+
+                '    <td style=" padding-left:20px;">'+
+                '	    <a href="javascript:;" onclick=show_detail('+data.list[i].id+')>'+
+                '	    <font color="#00CC99">'+data.list[i].userName+
+                '	    </font></a>'+
+                '	   </td>'+
+                '	<td>'+data.list[i].realName+'</td>'+
+                '	<td>'+data.list[i].phone+'</td>'+
+                '	<td>'+data.list[i].roleName+'</td>'+
+                '	<td>'+data.list[i].createDateStr+'</td>'+
+                '	<td>'+data.list[i].lastLoginDateStr+'</td>'+
+                '	<td>'+userLock+'</td>'+
+                '      <td>'+
+                '          <div class="button-group"> '+
+                '              <a class="button border-main" href="user_update.html?id='+data.list[i].id+'">'+
+                '                <span class="icon-edit"></span> 更新</a> '+
+                '               <a class="button border-main" href="userAdmin_update.html?id='+data.list[i].id+'">'+
+                '                 <span class="icon-edit"></span> 权限设置</a> '+
+                '             </div>'+
+                '       </td>'+
+                ' </tr>')
+      }
+      //此处调用分页插件
+      var html = "";
+      var falg = false;
+      var boo = false;
+      if(data.pageNum!=1 &&  data.pageNum != data.lastPage){
+        html = '<a href="javascript:void(0)" id="onePrevPage" >'+(data.pageNum - 1)+'</a>'+
+                '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >'+data.pageNum+'</a>' +
+                '<a href="javascript:void(0)"  id="threePrevPage" >'+(data.pageNum + 1)+'</a>';
+      }else{
+        html = '<a href="javascript:void(0)" id="onePrevPage" >'+data.pageNum+'</a>'+
+                '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >'+(data.pageNum + 1)+'</a>' +
+                '<a href="javascript:void(0)"  id="threePrevPage"  >'+(data.pageNum + 2)+'</a>';
+        falg = true;
+      }
+      if(data.pageNum == data.lastPage){
+        html = '<a href="javascript:void(0)" id="onePrevPage" >'+(data.pageNum - 2)+'</a>'+
+                '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >'+(data.pageNum  - 1)+'</a>' +
+                '<a href="javascript:void(0)"  id="threePrevPage"  >'+data.pageNum +'</a>';
+        boo = true;
+      }
+      $("#pageBar").html(
+              '<td colspan="'+colspan+'"  class="colspan" style="text-align:center;">' +
+              '<div class="pagelist"> ' +
+              '<a href="javascript:void(0)" onclick="changesearch('+(data.firstPage)+','+data.pageSize+')">首页</a>' +
+              '<a id="prevPage" href="#">上一页</a>' +
+              html +
+              '<a id="nextPage" href="#" >下一页</a>' +
+
+              '<a href="javascript:void(0)" onclick="changesearch('+(data.lastPage)+','+data.pageSize+')">尾页</a> </div>' +
+              '<span>共'+data.total+'条数据</span>' +
+              '</td>');
+
+      if($("#onePrevPage").html() < 1){
+        $("#onePrevPage").hide();
+      }
+      if($("#twoPrevPage").html() < 1){
+        $("#twoPrevPage").hide();
+      }
+      if($("#threePrevPage").html() < 1){
+        $("#threePrevPage").hide();
+      }
+      if($("#threePrevPage").html() > data.lastPage){
+        $("#threePrevPage").hide();
+      }
+      if(falg){
+        $("#onePrevPage").addClass("current");
+        $("#onePrevPage").siblings().removeClass("current");
+      }
+      if(boo){
+        $("#threePrevPage").addClass("current");
+        $("#threePrevPage").siblings().removeClass("current");
+      }
+      if(data.lastPage==1){
+        $("#prevPage").unbind("click");
+        $("#nextPage").unbind("click");
+      }else if(data.lastPage==0){
+        $("#onePrevPage,#twoPrevPage,#threePrevPage").hide();
+        $("#pageBar").before('<tr class="content"><td colspan="6" style="color:red"> 没有搜索到数据!</td></tr>')
+      }else{
+        $("#onePrevPage,#twoPrevPage,#threePrevPage").click(function () {
+          changesearch($(this).html(),data.pageSize);
+        })
+      }
+
+      if(data.pageNum > data.firstPage){
+        $("#prevPage").click(function () {
+          changesearch(data.pageNum -1,data.pageSize);
+        })
+      }
+      if(data.pageNum < data.lastPage){
+        $("#nextPage").click(function () {
+          changesearch(data.pageNum +1,data.pageSize);
+        })
+      }
+    },'json')
+  }
+  //未锁定 设置锁定状态
+  function notLock(lockId){
+    $(".wei").html("已锁定");
+    $.ajax({
+      url:"/page/admin/sysUser/doUpdateUserLock",
+      type:"POST",
+      data:{"id":lockId,"userLock":1},
+      dataType:"JSON",
+      success:function(result){
+        layer.msg(result.message,{icon: 16,time:900,shade : [0.5 , '#000' , true]});
+        setTimeout(function () {
+          window.location.reload();
+        },1000);
+      }
+    });
+  };
+
+  //已锁定 设置未锁定
+  function isLock(lockId){
+    $(".yi").html("未锁定");
+    $.ajax({
+      url:"/page/admin/sysUser/doUpdateUserLock",
+      type:"POST",
+      data:{"id":lockId,"userLock":0},
+      dataType:"JSON",
+      success:function(result){
+        layer.msg(result.message,{icon: 16,time:900,shade : [0.5 , '#000' , true]});
+        setTimeout(function () {
+          window.location.reload();
+        },1000);
+      }
+    });
+  };
+</script>
+</html>

@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.HshCollectionMapper">
+    <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.HshCollection">
+        <id column="coll_id" property="collId" jdbcType="BIGINT"/>
+        <result column="item_id" property="itemId" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="store_id" property="storeId" jdbcType="BIGINT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="coll_type" property="collType" jdbcType="TINYINT"/>
+        <result column="is_del" property="isDel" jdbcType="TINYINT"/>
+        <result column="cus_num_1" property="cusNum1" jdbcType="VARCHAR"/>
+        <result column="cus_num_2" property="cusNum2" jdbcType="BIGINT"/>
+        <result column="cus_num_3" property="cusNum3" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        <if test="fields == null">
+            coll_id, item_id, user_id, store_id, create_time, coll_type, is_del, cus_num_1, cus_num_2,
+            cus_num_3
+        </if>
+        <if test="fields != null">
+            ${fields}
+        </if>
+    </sql>
+    <select id="selectUserCollection" resultMap="BaseResultMap" parameterType="com.yunchao.hsh.model.HshCollection">
+        select
+        coll_id, item_id, user_id, store_id, create_time, coll_type, is_del, cus_num_1, cus_num_2,cus_num_3
+        from hsh_collection
+        <where>
+            1=1
+            <if test="itemId !=null">
+                and item_id=#{itemId,jdbcType=BIGINT}
+            </if>
+            <if test="userId !=null">
+                and user_id=#{userId,jdbcType=BIGINT}
+            </if>
+            <if test="storeId !=null">
+                and store_id=#{storeId,jdbcType=BIGINT}
+            </if>
+        </where>
+    </select>
+    <select id="findPage" resultMap="BaseResultMap" parameterType="java.util.Map">
+     select
+     coll_id, item_id, user_id, store_id, create_time, coll_type, is_del, cus_num_1, cus_num_2,cus_num_3
+      from
+      hsh_collection
+      where
+       user_id=#{userId,jdbcType=BIGINT}
+       and
+        coll_type=#{collType,jdbcType=TINYINT}
+   </select>
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.yunchao.hsh.model.HshCollectionExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from hsh_collection
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+        <if test="startRow != null">
+            limit #{startRow} , #{pageSize}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select 
+    coll_id,item_id,user_id,store_id,create_time,coll_type,is_del,cus_num_1,cus_num_2,cus_num_3
+    from hsh_collection
+    where coll_id = #{collId,jdbcType=BIGINT}
+  </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from hsh_collection
+    where coll_id = #{collId,jdbcType=BIGINT}
+  </delete>
+    <delete id="deleteByExample" parameterType="com.yunchao.hsh.model.HshCollectionExample">
+        delete from hsh_collection
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <delete id="deleteCollection"  parameterType="com.yunchao.hsh.model.HshCollection" >
+        delete from hsh_collection where 1=1
+        <if test="userId !=null">
+           and user_id=#{userId,jdbcType=BIGINT}
+        </if>
+        <if test="itemId !=null">
+        and  item_id=#{itemId,jdbcType=BIGINT}
+        </if>
+        <if test="storeId !=null">
+        and store_id=#{storeId,jdbcType=BIGINT}
+        </if>
+    </delete>
+
+    <insert id="insert" parameterType="com.yunchao.hsh.model.HshCollection">
+    insert into hsh_collection (coll_id, item_id, user_id, 
+      store_id, create_time, coll_type, 
+      is_del, cus_num_1, cus_num_2, 
+      cus_num_3)
+    values (#{collId,jdbcType=BIGINT}, #{itemId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, 
+      #{storeId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{collType,jdbcType=TINYINT}, 
+      #{isDel,jdbcType=TINYINT}, #{cusNum1,jdbcType=VARCHAR}, #{cusNum2,jdbcType=BIGINT}, 
+      #{cusNum3,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.yunchao.hsh.model.HshCollection">
+        insert into hsh_collection
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="collId != null">
+                coll_id,
+            </if>
+            <if test="itemId != null">
+                item_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="storeId != null">
+                store_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="collType != null">
+                coll_type,
+            </if>
+            <if test="isDel != null">
+                is_del,
+            </if>
+            <if test="cusNum1 != null">
+                cus_num_1,
+            </if>
+            <if test="cusNum2 != null">
+                cus_num_2,
+            </if>
+            <if test="cusNum3 != null">
+                cus_num_3,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="collId != null">
+                #{collId,jdbcType=BIGINT},
+            </if>
+            <if test="itemId != null">
+                #{itemId,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="storeId != null">
+                #{storeId,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="collType != null">
+                #{collType,jdbcType=TINYINT},
+            </if>
+            <if test="isDel != null">
+                #{isDel,jdbcType=TINYINT},
+            </if>
+            <if test="cusNum1 != null">
+                #{cusNum1,jdbcType=VARCHAR},
+            </if>
+            <if test="cusNum2 != null">
+                #{cusNum2,jdbcType=BIGINT},
+            </if>
+            <if test="cusNum3 != null">
+                #{cusNum3,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.yunchao.hsh.model.HshCollectionExample"
+            resultType="java.lang.Integer">
+        select count(*) from hsh_collection
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update hsh_collection
+        <set>
+            <if test="record.collId != null">
+                coll_id = #{record.collId,jdbcType=BIGINT},
+            </if>
+            <if test="record.itemId != null">
+                item_id = #{record.itemId,jdbcType=BIGINT},
+            </if>
+            <if test="record.userId != null">
+                user_id = #{record.userId,jdbcType=BIGINT},
+            </if>
+            <if test="record.storeId != null">
+                store_id = #{record.storeId,jdbcType=BIGINT},
+            </if>
+            <if test="record.createTime != null">
+                create_time = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.collType != null">
+                coll_type = #{record.collType,jdbcType=TINYINT},
+            </if>
+            <if test="record.isDel != null">
+                is_del = #{record.isDel,jdbcType=TINYINT},
+            </if>
+            <if test="record.cusNum1 != null">
+                cus_num_1 = #{record.cusNum1,jdbcType=VARCHAR},
+            </if>
+            <if test="record.cusNum2 != null">
+                cus_num_2 = #{record.cusNum2,jdbcType=BIGINT},
+            </if>
+            <if test="record.cusNum3 != null">
+                cus_num_3 = #{record.cusNum3,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update hsh_collection
+        set coll_id = #{record.collId,jdbcType=BIGINT},
+        item_id = #{record.itemId,jdbcType=BIGINT},
+        user_id = #{record.userId,jdbcType=BIGINT},
+        store_id = #{record.storeId,jdbcType=BIGINT},
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+        coll_type = #{record.collType,jdbcType=TINYINT},
+        is_del = #{record.isDel,jdbcType=TINYINT},
+        cus_num_1 = #{record.cusNum1,jdbcType=VARCHAR},
+        cus_num_2 = #{record.cusNum2,jdbcType=BIGINT},
+        cus_num_3 = #{record.cusNum3,jdbcType=VARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.yunchao.hsh.model.HshCollection">
+        update hsh_collection
+        <set>
+            <if test="itemId != null">
+                item_id = #{itemId,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="storeId != null">
+                store_id = #{storeId,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="collType != null">
+                coll_type = #{collType,jdbcType=TINYINT},
+            </if>
+            <if test="isDel != null">
+                is_del = #{isDel,jdbcType=TINYINT},
+            </if>
+            <if test="cusNum1 != null">
+                cus_num_1 = #{cusNum1,jdbcType=VARCHAR},
+            </if>
+            <if test="cusNum2 != null">
+                cus_num_2 = #{cusNum2,jdbcType=BIGINT},
+            </if>
+            <if test="cusNum3 != null">
+                cus_num_3 = #{cusNum3,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where coll_id = #{collId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.yunchao.hsh.model.HshCollection">
+    update hsh_collection
+    set item_id = #{itemId,jdbcType=BIGINT},
+      user_id = #{userId,jdbcType=BIGINT},
+      store_id = #{storeId,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      coll_type = #{collType,jdbcType=TINYINT},
+      is_del = #{isDel,jdbcType=TINYINT},
+      cus_num_1 = #{cusNum1,jdbcType=VARCHAR},
+      cus_num_2 = #{cusNum2,jdbcType=BIGINT},
+      cus_num_3 = #{cusNum3,jdbcType=VARCHAR}
+    where coll_id = #{collId,jdbcType=BIGINT}
+  </update>
+</mapper>

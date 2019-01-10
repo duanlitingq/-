@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.SupplierGoodsMapper" >
+  <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.SupplierGoods" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="SUPPLIER_ID" property="supplierId" jdbcType="BIGINT" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="INFO" property="info" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="INTEGER" />
+    <result column="IMGS" property="imgs" jdbcType="VARCHAR" />
+    <result column="PLAN_PRICE" property="planPrice" jdbcType="DOUBLE" />
+    <result column="ACT_PRICE" property="actPrice" jdbcType="DOUBLE" />
+    <result column="UNIT" property="unit" jdbcType="VARCHAR" />
+    <result column="TYPE_ID" property="typeId" jdbcType="BIGINT" />
+    <result column="LIBRARY_NUM" property="libraryNum" jdbcType="INTEGER" />
+    <result column="PRODUCT_AREA" property="productArea" jdbcType="VARCHAR" />
+    <result column="PRODUCT_TIME" property="productTime" jdbcType="TIMESTAMP" />
+    <result column="PRIORITY" property="priority" jdbcType="INTEGER" />
+    <result column="SHELF_LIFE" property="shelfLife" jdbcType="VARCHAR" />
+    <result column="COLUMN_1" property="column1" jdbcType="VARCHAR" />
+    <result column="COLUMN_2" property="column2" jdbcType="INTEGER" />
+    <result column="COLUMN_3" property="column3" jdbcType="BIGINT"/>
+    <result column="SPECIFICATIONS" property="specifications" jdbcType="VARCHAR"/>
+  </resultMap>
+  <resultMap id="goodsResp" type="com.yunchao.hsh.dto.resp.SupplierGoodsResp" extends="BaseResultMap">
+    <result column="UNIT_NAME" property="unitName"></result>
+    <result column="SUPPLIER_NAME" property="supplierName"></result>
+    <result column="TYPE_NAME" property="typeName"></result>
+  </resultMap>
+  <sql id="Base_Column_List" >
+   ID,SUPPLIER_ID,NAME,INFO,STATUS,IMGS,PLAN_PRICE,ACT_PRICE,UNIT,TYPE_ID,LIBRARY_NUM,PRODUCT_AREA,PRODUCT_TIME,
+   PRIORITY,SHELF_LIFE,COLUMN_1,COLUMN_2,COLUMN_3,SPECIFICATIONS
+  </sql>
+
+  <sql id="Base_Column_List_s" >
+    g.ID,g.SUPPLIER_ID,g.NAME,g.INFO,g.STATUS,g.IMGS,g.PLAN_PRICE,g.ACT_PRICE,g.UNIT,g.TYPE_ID,g.LIBRARY_NUM,
+    g.PRODUCT_AREA,g.PRODUCT_TIME,
+   g.PRIORITY,g.SHELF_LIFE,g.COLUMN_1,g.COLUMN_2,g.COLUMN_3,g.SPECIFICATIONS
+  </sql>
+
+  <select id="findById" resultMap="goodsResp" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List_s" />,d.NAME as UNIT_NAME,s.NAME as SUPPLIER_NAME,st.NAME AS TYPE_NAME
+    from hsh_supplier_goods g
+    LEFT JOIN sys_dict d on d.id = g.UNIT
+    LEFT JOIN hsh_supplier s on s.id = g.SUPPLIER_ID
+    LEFT JOIN hsh_supplier_goods_type st on st.ID = g.TYPE_ID
+    where g.ID = #{id,jdbcType=BIGINT}
+  </select>
+
+
+  <select id="findList" resultMap="goodsResp">
+    select
+    <include refid="Base_Column_List" />
+    from hsh_supplier_goods
+  </select>
+
+  <select id="findPage" resultMap="goodsResp" parameterType="java.util.Map">
+    select
+    <include refid="Base_Column_List_s" />,d.NAME as UNIT_NAME,s.NAME as SUPPLIER_NAME,st.NAME AS TYPE_NAME
+    from hsh_supplier_goods g
+    LEFT JOIN sys_dict d on d.id = g.UNIT
+    LEFT JOIN hsh_supplier s on s.id = g.SUPPLIER_ID
+    LEFT JOIN hsh_supplier_goods_type st on st.ID = g.TYPE_ID
+    <where>
+      1=1
+      <if test="@Ognl@isNotEmpty(id)">
+        and g.ID = #{id}
+      </if>
+      <if test="@Ognl@isNotEmpty(name)">
+        and g.NAME LIKE '%${name}%'
+      </if>
+      <if test="@Ognl@isNotEmpty(status)">
+        and g.STATUS = #{status}
+      </if>
+      <if test="@Ognl@isNotEmpty(supplierId)">
+        and g.SUPPLIER_ID = #{supplierId}
+      </if>
+      <if test="@Ognl@isNotEmpty(typeId)">
+        and g.TYPE_ID = #{typeId}
+      </if>
+    </where>
+  </select>
+
+  <insert id="insert" parameterType="com.yunchao.hsh.model.SupplierGoods" >
+    insert into hsh_supplier_goods (
+        ID,SUPPLIER_ID,NAME,INFO,
+        STATUS,IMGS,PLAN_PRICE,
+        ACT_PRICE,UNIT,TYPE_ID,LIBRARY_NUM,
+        PRODUCT_AREA,PRODUCT_TIME,
+        PRIORITY,SHELF_LIFE,COLUMN_1,
+        COLUMN_2,COLUMN_3,SPECIFICATIONS)
+    values (
+      #{id,jdbcType=BIGINT}, #{supplierId,jdbcType=BIGINT},#{name,jdbcType=VARCHAR},
+      #{info,jdbcType=VARCHAR},#{status,jdbcType=INTEGER},#{imgs,jdbcType=VARCHAR},
+      #{planPrice,jdbcType=DOUBLE},#{actPrice,jdbcType=DOUBLE},#{unit,jdbcType=VARCHAR},
+      #{typeId,jdbcType=BIGINT},
+       #{libraryNum,jdbcType=INTEGER}, #{productArea,jdbcType=VARCHAR},
+       #{productTime,jdbcType=TIMESTAMP},
+      #{priority,jdbcType=INTEGER},#{shelfLife,jdbcType=VARCHAR},
+      #{column1,jdbcType=VARCHAR}, #{column2,jdbcType=INTEGER},#{column3,jdbcType=BIGINT}
+      ,#{specifications,jdbcType=BIGINT}
+      )
+  </insert>
+
+
+  <update id="update" parameterType="com.yunchao.hsh.model.SupplierGoods" >
+    update hsh_supplier_goods
+    set
+      NAME = #{name,jdbcType=VARCHAR},
+      INFO = #{info,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=INTEGER},
+      IMGS = #{imgs,jdbcType=VARCHAR},
+      PLAN_PRICE = #{planPrice,jdbcType=DOUBLE},
+      ACT_PRICE = #{actPrice,jdbcType=DOUBLE},
+      UNIT = #{unit,jdbcType=VARCHAR},
+      TYPE_ID = #{typeId,jdbcType=BIGINT},
+      LIBRARY_NUM= #{libraryNum,jdbcType=INTEGER},
+      PRODUCT_AREA = #{productArea,jdbcType=VARCHAR},
+      PRODUCT_TIME = #{productTime,jdbcType=TIMESTAMP},
+      PRIORITY = #{priority,jdbcType=INTEGER},
+      SHELF_LIFE = #{shelfLife,jdbcType=VARCHAR},
+      SPECIFICATIONS = #{specifications,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateStatus" parameterType="com.yunchao.hsh.model.SupplierGoods" >
+    update hsh_supplier_goods
+    set
+      STATUS = #{status,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+</mapper>

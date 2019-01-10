@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.SupplierOrderItemMapper" >
+  <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.SupplierOrderItem" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="ORDER_ID" property="orderId" jdbcType="BIGINT" />
+    <result column="GOODS_ID" property="goodsId" jdbcType="BIGINT" />
+    <result column="SALES_NUM" property="salesNum" jdbcType="INTEGER" />
+    <result column="PLAN_PRICE" property="planPrice" jdbcType="DOUBLE" />
+    <result column="ACT_PRICE" property="actPrice" jdbcType="DOUBLE" />
+    <result column="COLUMN_1" property="column1" jdbcType="VARCHAR" />
+    <result column="COLUMN_2" property="column2" jdbcType="INTEGER" />
+    <result column="COLUMN_3" property="column3" jdbcType="BIGINT" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    ID,ORDER_ID,GOODS_ID,SALES_NUM,PLAN_PRICE,ACT_PRICE,COLUMN_1,COLUMN_2,COLUMN_3
+  </sql>
+
+  <sql id="Base_Column_List_s" >
+    i.ID,ORDER_ID,i.GOODS_ID,i.SALES_NUM,i.PLAN_PRICE,i.ACT_PRICE,i.COLUMN_1,i.COLUMN_2,i.COLUMN_3
+  </sql>
+
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from hsh_supplier_order_item
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+
+
+  <select id="findList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from hsh_supplier_order_item
+  </select>
+
+  <select id="findPage" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select
+    <include refid="Base_Column_List" />
+    from hsh_supplier_order_item
+    <where>
+      <if test="@Ognl@isNotEmpty(id)">
+        ID = #{id}
+      </if>
+      <if test="@Ognl@isNotEmpty(orderId)">
+        ORDER_ID = #{orderId}
+      </if>
+      <if test="@Ognl@isNotEmpty(goodsId)">
+        GOODS_ID = #{goodsId}
+      </if>
+    </where>
+  </select>
+    <select id="findByOrderId" resultMap="BaseResultMap" parameterType="long">
+        select
+        <include refid="Base_Column_List" />
+        from hsh_supplier_order_item
+        <where>
+                ORDER_ID = #{orderId}
+        </where>
+    </select>
+
+  <insert id="insert" parameterType="com.yunchao.hsh.model.SupplierOrder" >
+    insert into hsh_supplier_order_item (
+           ID,ORDER_ID,GOODS_ID,
+           SALES_NUM,PLAN_PRICE,
+           ACT_PRICE,COLUMN_1,COLUMN_2,COLUMN_3)
+    values (#{id,jdbcType=BIGINT},
+        #{orderId,jdbcType=BIGINT},
+        #{goodsId,jdbcType=BIGINT},
+        #{salesNum,jdbcType=BIGINT},
+        #{planPrice,jdbcType=DOUBLE},
+        #{actPrice,jdbcType=DOUBLE},
+        #{column1,jdbcType=VARCHAR},
+       #{column2,jdbcType=INTEGER},
+       #{column3,jdbcType=BIGINT}
+      )
+  </insert>
+
+
+  <update id="update" parameterType="com.yunchao.hsh.model.SupplierOrder" >
+    update hsh_supplier_order_item
+    set
+        ORDER_ID = #{orderId,jdbcType=BIGINT},
+        GOODS_ID = #{goodsId,jdbcType=BIGINT},
+        SALES_NUM = #{salesNum,jdbcType=BIGINT},
+        PLAN_PRICE = #{planPrice,jdbcType=DOUBLE},
+        ACT_PRICE = #{actPrice,jdbcType=DOUBLE},
+        COLUMN_1 = #{column1,jdbcType=VARCHAR},
+       COLUMN_2 = #{column2,jdbcType=INTEGER},
+       COLUMN_3 = #{column3,jdbcType=BIGINT}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+    <delete id="removeOrderItemByOrderId" parameterType="java.lang.Long">
+        delete from hsh_supplier_order_item where ORDER_ID=#{orderId}
+    </delete>
+</mapper>

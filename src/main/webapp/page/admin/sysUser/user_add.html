@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="renderer" content="webkit">
+  <title></title>
+  <link href="/page/style/css/pintuer.css" rel="stylesheet" >
+  <link href="/page/style/css/admin.css" rel="stylesheet" >
+  <script src="/page/style/scripts/jquery/jquery-1.8.2.js" ></script>
+  <script  src="/page/style/scripts/layer/layer.js" ></script>
+  <script src="/page/style/scripts/js/common.js"></script>
+  <script src="/page/style/scripts/js/pintuer.js"></script>
+  <script src="/page/style/scripts/js/global.js"></script>
+  <script>
+      $(function(){
+          showAdmin();
+          //给添加按钮追加单击事件
+          $("#addUser_form").click(function(){
+               $("#userName_error").html("");
+                 $("#roleId_error").html("");
+                 $("#password_error").html("");
+                 $("#phone_error").html("");
+                 $("#realName_error").html("");
+
+              //获取表的参数
+              var sel = document.getElementById("showOption2");
+              console.log(sel);
+              var index = sel.selectedIndex;//选中索引
+              console.log(index); // 索引值
+              // value值
+              roleId = $("#showOption2 option")[index].value;
+              console.log(roleId);
+              //console.log(id);
+
+              //获取输入的值
+              var userName = $("#userName").val();
+              //var roleId = $("#roleId").val();
+              var password = $("#password").val();
+              var phone = $("#phone").val();
+              var realName = $("#realName").val();
+
+              var addUser_check = true;//表示表单通过检查
+              if(userName==""){
+                  $("#userName_error").html("用户名不能为空");
+                 addUser_check = false;
+
+              }
+              if(roleId==""){
+                  $("#roleId_error").html("角色不能为空!");
+                  addUser_check = false;
+              }
+              if(password==""){
+                  $("#password_error").html("密码不能为空");
+                  addUser_check = false;
+              }
+             if(phone==""){
+                  $("#phone_error").html("手机号不能为空");
+                  addUser_check = false;
+              }
+              if(realName==""){
+                  $("#realName_error").html("真实姓名不能为空");
+                  addUser_check = false;
+              }
+
+              var paramObject = {
+                  "userName":userName,
+                  "roleId":roleId,
+                  "password":password,
+                  "phone":phone,
+                  "realName":realName
+              };
+
+              if(addUser_check){
+                  $.ajax({
+                      url:"/page/admin/sysUser/addCheckEcho",
+                      type:"POST",
+                      contentType:"application/json",
+                      data:JSON.stringify(paramObject),
+                      dataType:"json",
+                      success:function(result){
+                          if(result.success){
+                              successMsg(result.message);
+                              setTimeout(function () {
+                                  window.location.href="/page/admin/sysUser/user_list.html";
+                              },900);
+                          }else {
+                              failMsg(result.message);
+                          }
+                      }
+                  });
+              }
+          });
+      });
+
+
+            //查找所有的角色
+           function  showAdmin(){
+               $.ajax({
+                   url:"/page/admin/sysRole/getList",
+                   type:"GET",
+                   data:{},
+                   dataType:"json",
+                   success:function (result) {
+                       var str='';
+                       for(var  i=0;i<result.length;i++){
+                           var id = result[i].id;
+                           var name = result[i].name;
+                           str+='<option value="'+id+'" >'+name+'</option>';
+                       }
+                       //console.log(str);
+                       $("#showOption2").append(str);
+
+                   }
+               });
+           }
+
+
+  </script>
+</head>
+<body>
+<!-- /page/admin/sysUser/user_add.html -->
+<div class="panel admin-panel">
+  <div class="panel-head" id="add"><strong><span class="icon-pencil-square-o"></span>添加用户</strong></div>
+
+  <div class="body-content">
+    <form method="post" class="form-x" action="javascript:void(0);">
+
+      <div class="form-group">
+        <div class="label">
+          <label>用户名：</label>
+        </div>
+        <div class="field">
+          <input type="text" name="userName" id="userName" class="input w50" value=""   placeholder="请输入名称" /><p style="display:inline-block;line-height: 22px; color: red;margin-left: 6px;margin-top: 10px">*</p>
+          <div class="tips"  id="userName_error" style="color: red"></div>
+        </div>
+      </div>
+      <!--密码-->
+      <div class="form-group">
+        <div class="label">
+          <label>密码：</label>
+        </div>
+        <div class="field">
+          <input type="text" name="password" id="password" class="input w50" value=""   placeholder="请输入至少4位密码"/><p style="display:inline-block;line-height: 22px; color: red;margin-left: 6px;margin-top: 10px">*</p>
+          <div class="tips" id="password_error" style="color: red"></div>
+        </div>
+      </div>
+      <!--姓名:真实性名-->
+      <div class="form-group">
+        <div class="label">
+          <label>真实姓名：</label>
+        </div>
+        <div class="field">
+          <input type="text"  name="realName" id="realName" class="input w50" value=""   placeholder="请输入名称" /><p style="display:inline-block;line-height: 22px; color: red;margin-left: 6px;margin-top: 10px">*</p>
+          <div class="tips" id="realName_error" style="color: red;"></div>
+        </div>
+      </div>
+      <!--手机-->
+      <div class="form-group">
+        <div class="label">
+          <label>手机：</label>
+        </div>
+        <div class="field">
+          <input type="number"  name="phone" id="phone" class="input w50" value=""    placeholder="请输入手机号码"><p style="display:inline-block;line-height: 22px; color: red;margin-left: 6px;margin-top: 10px">*</p>
+          <div class="tips" id="phone_error" style="color: red"></div>
+        </div>
+      </div>
+
+      <!--角色的ID-->
+      <div class="form-group">
+        <div class="label">
+          <label>角色：</label>
+        </div>
+        <div class="field Menu" >
+          <select name="s_isvouch" class="input"  id="showOption2" name="roleId2"  style="width:90px; line-height:17px;display:inline-block">
+            <!--<option value="0">请选择</option>-->
+          </select>
+          <div class="tips"></div>
+        </div>
+        <span id="roleId_error"></span>
+      </div>
+
+      <!--邮箱-->
+      <!--data-validate="required:必填,chinese:姓名只能填写纯汉字" placeholder="请输入名称"-->
+    <!--  <div class="form-group">
+        <div class="label">
+          <label>邮箱：</label>
+        </div>
+        <div class="field">
+          <input type="text" id="postbox" class="input w50" value="" name="title"  placeholder="请输入邮箱">
+          <div class="tips"></div>
+        </div>
+      </div>-->
+
+      <!-- <button class="btn  btn-primary btn-lg active" > 添加</button>-->
+      <div class="form-group">
+        <div class="label">
+          <label></label>
+        </div>
+        <div class="field field1">
+          <button class="button bg-main icon-check-square-o" id="addUser_form" > 提交</button>
+          <a class="button bg-main icon-check-square-o" href="/page/admin/sysUser/user_list.html">取消</a>
+        </div>
+
+      </div>
+    </form>
+  </div>
+</div>
+</body></html>

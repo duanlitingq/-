@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.HshActivityOrderMapper">
+    <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.HshActivityOrder">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="order_id" property="orderId" jdbcType="VARCHAR"/>
+        <result column="activity_id" property="activityId" jdbcType="BIGINT"/>
+        <result column="trade_no" property="tradeNo" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="receiver_mobile" property="receiverMobile" jdbcType="VARCHAR"/>
+        <result column="receiver_name" property="receiverName" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="pay_time" property="payTime" jdbcType="TIMESTAMP"/>
+        <result column="pay_mode" property="payMode"/>
+        <result column="get_start_time" property="getStartTime" jdbcType="TIMESTAMP"/>
+        <result column="get_end_time" property="getEndTime" jdbcType="TIMESTAMP"/>
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP"/>
+        <result column="get_num" property="getNum" jdbcType="BIGINT"/>
+        <result column="order_status" property="orderStatus" jdbcType="TINYINT"/>
+        <result column="customer_id" property="customerId" jdbcType="BIGINT"/>
+        <result column="last_name" property="lastName" jdbcType="VARCHAR"/>
+        <result column="cus_num_1" property="cusNum1" jdbcType="VARCHAR"/>
+        <result column="cus_num_2" property="cusNum2" jdbcType="BIGINT"/>
+        <result column="cus_num_3" property="cusNum3" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="orderDetailsResp" type="com.yunchao.hsh.dto.resp.OrderDetailsResp" extends="BaseResultMap"/>
+
+
+    <resultMap id="BaseOrderMap" type="com.yunchao.hsh.dto.resp.OrderItemResp" extends="BaseResultMap">
+        <result column="activity_item_img" property="activityImg" jdbcType="VARCHAR"/>
+        <result column="activity_price" property="activityPrice" jdbcType="VARCHAR"/>
+        <result column="activity_name" property="activityName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <select id="findPage" resultType="com.yunchao.hsh.model.HshActivityOrder">
+
+
+    </select>
+
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        <if test="fields == null">
+            id,order_id, trade_no,activity_id, user_id, receiver_mobile, receiver_name,pay_time ,pay_mode,create_time,
+            update_time,
+            get_start_time, get_end_time, end_time, get_num, order_status, customer_id, last_name,
+            cus_num_1, cus_num_2, cus_num_3
+        </if>
+        <if test="fields != null">
+            ${fields}
+        </if>
+    </sql>
+
+    <sql id="Order_Detail_List">
+                    id,order_id, trade_no,activity_id, user_id, receiver_mobile, receiver_name,pay_time ,pay_mode,create_time,
+            update_time,
+            get_start_time, get_end_time, end_time, get_num, order_status, customer_id, last_name,
+            cus_num_1, cus_num_2, cus_num_3
+    </sql>
+
+    <select id="selectByPage" resultMap="BaseOrderMap" parameterType="com.yunchao.hsh.model.HshSelfOrderExample">
+        SELECT
+        o.order_id,
+        a.activity_price,
+        a.activity_item_img,
+        o.order_status,
+        a.activity_name
+        FROM
+        hsh_activity_order o
+        LEFT JOIN hsh_activity a ON o.activity_id = a.activity_id
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        and o.order_status IN(2,3)
+        ORDER BY
+        o.create_time DESC
+    </select>
+    <select id="selectByExample" resultMap="BaseResultMap"
+            parameterType="com.yunchao.hsh.model.HshActivityOrderExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from hsh_activity_order
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+        <if test="startRow != null">
+            limit #{startRow} , #{pageSize}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select 
+    id,order_id,trade_no,activity_id,user_id,receiver_mobile,receiver_name,pay_time,pay_mode,create_time,update_time,get_start_time,get_end_time,end_time,get_num,order_status,customer_id,last_name,cus_num_1,cus_num_2,cus_num_3
+    from hsh_activity_order
+    where order_id = #{orderId,jdbcType=VARCHAR}
+  </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from hsh_activity_order
+    where order_id = #{orderId,jdbcType=VARCHAR}
+  </delete>
+    <delete id="deleteByExample" parameterType="com.yunchao.hsh.model.HshActivityOrderExample">
+        delete from hsh_activity_order
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.yunchao.hsh.model.HshActivityOrder">
+    insert into hsh_activity_order (id,order_id,trade_no,activity_id, user_id,
+      receiver_mobile, receiver_name, create_time, 
+      update_time, get_start_time, get_end_time, 
+      end_time, get_num, order_status, 
+      customer_id, last_name, cus_num_1, 
+      cus_num_2, cus_num_3,pay_time,pay_mode)
+    values (#{id,jdbcType=BIGINT},#{orderId,jdbcType=VARCHAR},#{tradeNo,jdbcType=VARCHAR}, #{activityId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT},
+      #{receiverMobile,jdbcType=VARCHAR}, #{receiverName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{getStartTime,jdbcType=TIMESTAMP}, #{getEndTime,jdbcType=TIMESTAMP}, 
+      #{endTime,jdbcType=TIMESTAMP}, #{getNum,jdbcType=BIGINT}, #{orderStatus,jdbcType=TINYINT}, 
+      #{customerId,jdbcType=BIGINT}, #{lastName,jdbcType=VARCHAR}, #{cusNum1,jdbcType=VARCHAR}, 
+      #{cusNum2,jdbcType=BIGINT}, #{cusNum3,jdbcType=VARCHAR},#{payTime},#{payMode})
+  </insert>
+    <insert id="insertSelective" parameterType="com.yunchao.hsh.model.HshActivityOrder">
+        insert into hsh_activity_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="orderId != null">
+                order_id,
+            </if>
+            <if test="tradeNo != null">
+                trade_no,
+            </if>
+            <if test="activityId != null">
+                activity_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="receiverMobile != null">
+                receiver_mobile,
+            </if>
+            <if test="receiverName != null">
+                receiver_name,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="getStartTime != null">
+                get_start_time,
+            </if>
+            <if test="getEndTime != null">
+                get_end_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="getNum != null">
+                get_num,
+            </if>
+            <if test="orderStatus != null">
+                order_status,
+            </if>
+            <if test="customerId != null">
+                customer_id,
+            </if>
+            <if test="lastName != null">
+                last_name,
+            </if>
+            <if test="cusNum1 != null">
+                cus_num_1,
+            </if>
+            <if test="cusNum2 != null">
+                cus_num_2,
+            </if>
+            <if test="cusNum3 != null">
+                cus_num_3,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="orderId != null">
+                #{orderId,jdbcType=BIGINT},
+            </if>
+            <if test="tradeNo != null">
+                #{tradeNo,jdbcType=BIGINT},
+            </if>
+            <if test="activityId != null">
+                #{activityId,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="receiverMobile != null">
+                #{receiverMobile,jdbcType=VARCHAR},
+            </if>
+            <if test="receiverName != null">
+                #{receiverName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="getStartTime != null">
+                #{getStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="getEndTime != null">
+                #{getEndTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="getNum != null">
+                #{getNum,jdbcType=BIGINT},
+            </if>
+            <if test="orderStatus != null">
+                #{orderStatus,jdbcType=TINYINT},
+            </if>
+            <if test="customerId != null">
+                #{customerId,jdbcType=BIGINT},
+            </if>
+            <if test="lastName != null">
+                #{lastName,jdbcType=VARCHAR},
+            </if>
+            <if test="cusNum1 != null">
+                #{cusNum1,jdbcType=VARCHAR},
+            </if>
+            <if test="cusNum2 != null">
+                #{cusNum2,jdbcType=BIGINT},
+            </if>
+            <if test="cusNum3 != null">
+                #{cusNum3,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.yunchao.hsh.model.HshActivityOrderExample"
+            resultType="java.lang.Integer">
+        select count(*) from hsh_activity_order
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+
+    <select id="getOrderDetail" resultType="com.yunchao.hsh.dto.resp.OrderDetailsResp" parameterType="String">
+        select
+         <include refid="Order_Detail_List"/>
+         from  hsh_activity_order
+         WHERE order_id = #{orderId,jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateByExampleSelective" parameterType="map">
+        update hsh_activity_order
+        <set>
+            <if test="record.orderId != null">
+                order_id = #{record.orderId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.activityId != null">
+                activity_id = #{record.activityId,jdbcType=BIGINT},
+            </if>
+            <if test="record.userId != null">
+                user_id = #{record.userId,jdbcType=BIGINT},
+            </if>
+            <if test="record.receiverMobile != null">
+                receiver_mobile = #{record.receiverMobile,jdbcType=VARCHAR},
+            </if>
+            <if test="record.receiverName != null">
+                receiver_name = #{record.receiverName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createTime != null">
+                create_time = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.updateTime != null">
+                update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.getStartTime != null">
+                get_start_time = #{record.getStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.getEndTime != null">
+                get_end_time = #{record.getEndTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.endTime != null">
+                end_time = #{record.endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.getNum != null">
+                get_num = #{record.getNum,jdbcType=BIGINT},
+            </if>
+            <if test="record.orderStatus != null">
+                order_status = #{record.orderStatus,jdbcType=TINYINT},
+            </if>
+            <if test="record.customerId != null">
+                customer_id = #{record.customerId,jdbcType=BIGINT},
+            </if>
+            <if test="record.lastName != null">
+                last_name = #{record.lastName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.cusNum1 != null">
+                cus_num_1 = #{record.cusNum1,jdbcType=VARCHAR},
+            </if>
+            <if test="record.cusNum2 != null">
+                cus_num_2 = #{record.cusNum2,jdbcType=BIGINT},
+            </if>
+            <if test="record.cusNum3 != null">
+                cus_num_3 = #{record.cusNum3,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update hsh_activity_order
+        set order_id = #{record.orderId,jdbcType=VARCHAR},
+        trade_no = #{record.tradeNo,jdbcType=VARCHAR},
+        activity_id = #{record.activityId,jdbcType=BIGINT},
+        user_id = #{record.userId,jdbcType=BIGINT},
+        receiver_mobile = #{record.receiverMobile,jdbcType=VARCHAR},
+        receiver_name = #{record.receiverName,jdbcType=VARCHAR},
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+        get_start_time = #{record.getStartTime,jdbcType=TIMESTAMP},
+        get_end_time = #{record.getEndTime,jdbcType=TIMESTAMP},
+        end_time = #{record.endTime,jdbcType=TIMESTAMP},
+        get_num = #{record.getNum,jdbcType=BIGINT},
+        order_status = #{record.orderStatus,jdbcType=TINYINT},
+        customer_id = #{record.customerId,jdbcType=BIGINT},
+        last_name = #{record.lastName,jdbcType=VARCHAR},
+        cus_num_1 = #{record.cusNum1,jdbcType=VARCHAR},
+        cus_num_2 = #{record.cusNum2,jdbcType=BIGINT},
+        cus_num_3 = #{record.cusNum3,jdbcType=VARCHAR},
+        pay_time=#{payTime},
+        pay_mode=#{payMode}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.yunchao.hsh.model.HshActivityOrder">
+        update hsh_activity_order
+        <set>
+            <if test="tradeNo != null">
+                trade_no = #{tradeNo,jdbcType=VARCHAR},
+            </if>
+            <if test="activityId != null">
+                activity_id = #{activityId,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="receiverMobile != null">
+                receiver_mobile = #{receiverMobile,jdbcType=VARCHAR},
+            </if>
+            <if test="receiverName != null">
+                receiver_name = #{receiverName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="getStartTime != null">
+                get_start_time = #{getStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="getEndTime != null">
+                get_end_time = #{getEndTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="getNum != null">
+                get_num = #{getNum,jdbcType=BIGINT},
+            </if>
+            <if test="orderStatus != null">
+                order_status = #{orderStatus,jdbcType=TINYINT},
+            </if>
+            <if test="customerId != null">
+                customer_id = #{customerId,jdbcType=BIGINT},
+            </if>
+            <if test="lastName != null">
+                last_name = #{lastName,jdbcType=VARCHAR},
+            </if>
+            <if test="cusNum1 != null">
+                cus_num_1 = #{cusNum1,jdbcType=VARCHAR},
+            </if>
+            <if test="cusNum2 != null">
+                cus_num_2 = #{cusNum2,jdbcType=BIGINT},
+            </if>
+            <if test="cusNum3 != null">
+                cus_num_3 = #{cusNum3,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where order_id = #{orderId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.yunchao.hsh.model.HshActivityOrder">
+    update hsh_activity_order
+    set
+      trade_no = #{tradeNo,jdbcType=VARCHAR},
+      activity_id = #{activityId,jdbcType=BIGINT},
+      user_id = #{userId,jdbcType=BIGINT},
+      receiver_mobile = #{receiverMobile,jdbcType=VARCHAR},
+      receiver_name = #{receiverName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      get_start_time = #{getStartTime,jdbcType=TIMESTAMP},
+      get_end_time = #{getEndTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      get_num = #{getNum,jdbcType=BIGINT},
+      order_status = #{orderStatus,jdbcType=TINYINT},
+      customer_id = #{customerId,jdbcType=BIGINT},
+      last_name = #{lastName,jdbcType=VARCHAR},
+      cus_num_1 = #{cusNum1,jdbcType=VARCHAR},
+      cus_num_2 = #{cusNum2,jdbcType=BIGINT},
+      cus_num_3 = #{cusNum3,jdbcType=VARCHAR},
+      pay_time=#{payTime},
+      pay_mode=#{payMode}
+    where order_id = #{orderId,jdbcType=VARCHAR}
+  </update>
+
+    <update id="updateById" parameterType="com.yunchao.hsh.model.HshActivityOrder">
+    update hsh_activity_order
+    set
+      trade_no = #{tradeNo,jdbcType=VARCHAR},
+      activity_id = #{activityId,jdbcType=BIGINT},
+      user_id = #{userId,jdbcType=BIGINT},
+      receiver_mobile = #{receiverMobile,jdbcType=VARCHAR},
+      receiver_name = #{receiverName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      get_start_time = #{getStartTime,jdbcType=TIMESTAMP},
+      get_end_time = #{getEndTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      get_num = #{getNum,jdbcType=BIGINT},
+      order_status = #{orderStatus,jdbcType=TINYINT},
+      customer_id = #{customerId,jdbcType=BIGINT},
+      last_name = #{lastName,jdbcType=VARCHAR},
+      cus_num_1 = #{cusNum1,jdbcType=VARCHAR},
+      cus_num_2 = #{cusNum2,jdbcType=BIGINT},
+      cus_num_3 = #{cusNum3,jdbcType=VARCHAR},
+      pay_time=#{payTime},
+      pay_mode=#{payMode}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

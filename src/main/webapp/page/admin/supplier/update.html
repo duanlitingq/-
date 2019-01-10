@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="/page/style/css/pintuer.css">
+    <link rel="stylesheet" href="/page/style/css/admin.css">
+    <link rel="stylesheet" type="text/css" href="/page/style/upload/css/webuploader.css"/>
+    <link rel="stylesheet" type="text/css" href="/page/style/upload/css/style.css"/>
+    <script src="/page/style/scripts/jquery/jquery-1.11.2.js"></script>
+    <script src="/page/style/scripts/jquery/ajaxfileupload.js"></script>
+    <script src="/page/style/scripts/js/global.js"></script>
+    <script src="/page/style/scripts/js/common.js"></script>
+    <script src="/page/style/scripts/layer/layer.js"></script>
+    <script type="text/javascript" src="/page/style/upload/js/webuploader.js"></script>
+
+    <style>
+        .hide {
+            display: none;
+        }
+        .addImgs li{
+            display: inline-block;
+            margin: 20px;
+        }
+        .del{
+            font-size: 20px;
+            color: #ffffff;
+            background-color: rgba(32, 32, 32, 0.5);
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            left: 0;
+            bottom: 0;
+        }
+
+    </style>
+<body>
+
+<div class="panel-head"><strong><span class="icon-pencil-square-o"></span> 更新店铺</strong></div>
+<div class="body-content">
+    <form method="post" class="form-x" action="/page/admin/supplier/doUpdate" onsubmit="return checkData()" enctype="multipart/form-data">
+        <input type="text" id="id" name="id" hidden />
+        <!--名称-->
+        <div class="form-group">
+            <div class="label">
+                <label>店铺名称：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="name" name="name" maxlength="20" class="input w50"  data-validate="required:请输入标题" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>排序：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="priority" name="priority" maxlength="11" class="input w50"  data-validate="required:请输入排序" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--链接-->
+        <div class="form-group">
+            <div class="label">
+                <label>联系人：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="linkman" name="linkman" class="input w50" maxlength="20"  data-validate="required:请输入链接" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>联系人手机号：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="mobile" name="mobile" class="input w50"  maxlength="11"  value="" data-validate="required:请输入链接" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>地址：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="address" name="address" class="input w50"  maxlength="127"  value="" data-validate="required:请输入链接" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--图片-->
+        <div class="form-group">
+            <div class="label">
+                <label>图片：</label>
+            </div>
+
+            <div class="field">
+                <ul class="addImgs">
+                </ul>
+
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>所属类别：</label>
+            </div>
+            <div class="field">
+                <select name="typeId"  id="typeId" class="input" style="width:25%; line-height:17px; display:inline-block">
+                    <option value="">选择</option>
+                </select>
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>管理人：</label>
+            </div>
+            <div class="field">
+                <select name="userId"  id="userId" class="input" style="width:25%; line-height:17px; display:inline-block">
+                    <option value="">选择</option>
+                </select>
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--是否展示-->
+        <div class="form-group">
+            <div class="label">
+                <label>展示状态：</label>
+            </div>
+            <div class="field">
+                <select name="status" id="status" class="input"
+                        style="width:60px; line-height:17px; display:inline-block">
+                    <option value="">选择</option>
+                    <option value="1">是</option>
+                    <option value="0">否</option>
+                </select>
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--简介-->
+        <div class="form-group">
+            <div class="label">
+                <label>简介：</label>
+            </div>
+            <div class="field">
+                <textarea name="info" id="info" style="margin: 0px;width: 900px;height: 300px;"></textarea>
+            </div>
+        </div>
+        <!--提交-->
+        <div class="form-group">
+            <div class="label">
+                <label></label>
+            </div>
+            <div class="field">
+                <button id="refer" class="button bg-main icon-check-square-o" type="submit"> 提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+</body>
+
+<script>
+    $(function () {
+        loadType();
+        loadUser();
+        setTimeout(function () {
+            loadData();
+        },500)
+    })
+    function loadType(){
+        $.ajax({
+            type: "POST",
+            url: "/page/admin/supplierGoodsType/listGoodsType",
+            cache: false,
+            data: {
+                parentId:0,
+                status:1
+            },
+            success:function(data){
+                if(data != null && typeof data != "undefined"){
+                    var html = '';
+                    var len = data.data[1].length;
+                    if(len > 0){
+                        for (var i = 0; i < len; i++) {
+                            var obj = data.data[1][i];
+                            var id = obj.id;
+                            var name = obj.name;
+                            html+='<option value="'+id+'">'+name+'</option>';
+                        }
+                    }
+                    $("#typeId").append(html);
+                }
+            }
+        })
+    }
+    function loadUser(){
+        $.ajax({
+            url:'/page/admin/sysUser/userGetAll',
+            type:'get',
+            dataType:'json',
+            success:function(data){
+                if(data != null && typeof data != "undefined"){
+                    var html = '';
+                    var len = data.length;
+                    if(len > 0){
+                        for (var i = 0; i < len; i++) {
+                            var obj = data[i];
+                            var id = obj.id;
+                            var name = obj.realName;
+                            html+='<option value="'+id+'">'+name+'</option>';
+                        }
+                    }
+                    $("#userId").append(html);
+                }
+            }
+        })
+    }
+    function loadData() {
+        var id = getUrlParam("id");
+        $.post("/page/admin/supplier/findById",
+            {
+                id: id
+            }, function (data) {
+                $("#id").val(data.id);
+                $("#name").val(data.name);
+                $("#priority").val(data.priority);
+                $("#linkman").val(data.linkman);
+                $("#mobile").val(data.mobile);
+                $("#address").val(data.address);
+                $("#typeId").val(data.typeId);
+                $("#userId").val(data.userId);
+                $("#status").val(data.status);
+                $("#info").val(data.info);
+                //图片回显
+                var imgs = data.imgs;
+                var imgArr = imgs.split(";");
+                var li = '';
+                var beforeImgUrl="http://other.yueyongyueyou.com:8888/";
+                for (var i = 0; i < imgArr.length-1; i++) {
+                    var imgStr = imgArr[i].replace(/\\/g, "/");//将\替换为/,g为全字匹配
+                    li += '<li style="position: relative">' +
+                        '<label>' +
+                        '<img id="img' + i + '" src="' + beforeImgUrl + imgArr[i] + '" width="200" ><i class="icon-trash-o del"onclick="removePic(\'' + imgStr + '\',' + i + ');"></i>' +/**/
+                        '</label>' +
+                        '</li>';
+                }
+                // li += '<li style="position: relative">' +
+                //     '<label>' +
+                //     '<img src="" width="200"> ' +
+                //     '<a class="button bg-blue input-file" href="javascript:void(0);">+ 图片上传' +
+                //     '<input id="file" name="file" data-validate="required:" type="file" onchange="changepic(this)"/></a>' +
+                //     '</label>' +
+                //     '</li>';
+                li +='<script type="text/javascript" src="/page/style/upload/js/supplierUpdate.js"><'+'/script>'+
+                    '<div id="wrapper">'+
+                    '<div id="container">'+
+                    '<div id="supplierUpdate">'+
+                    '<div class="queueList">'+
+                    '<div id="dndArea" class="placeholder">'+
+                    '<div id="filePicker"></div>'+
+                    '<p>或将照片拖到这里，单次最多可选300张</p>'+
+                    '</div>'+
+                    '</div>'+
+                    '<div class="statusBar" style="display:none;">'+
+                    '<div class="progress">'+
+                    '<span class="text">0%</span>'+
+                    '<span class="percentage"></span>'+
+                    '</div>'+
+                    '<div class="info"></div>'+
+                    '<div class="btns">'+
+                    '<div id="filePicker2"></div>'+
+                    '<div class="uploadBtn">开始上传</div>'+
+                    '</div>'+
+                    '</div>'+
+                    '</div>'+
+                    '</div>'+
+                    '</div>';
+
+                li += '<input id="imgs" name="imgs" type="hidden" value="' + data.imgs + '">';
+                // li += '<input type="hidden" name="imgsStr" id="imgsStr" value="' + data.imgs + '">';
+                $(".addImgs").append(li);
+
+            }, 'json')
+    }    //表单提交时校验
+    function checkData() {
+        var name = $("#name").val();
+        var priority = $("#priority").val();
+        var linkman = $("#linkman").val();
+        var mobile = $("#mobile").val();
+        var address = $("#address").val();
+        var file=   $(":file");//file类型
+        var typeId = $("#typeId").val();
+        var userId = $("#userId").val();
+        var status = $("#status").val();
+        var info = $("#info").val();
+        var imgsStr = $("#imgsStr").val();
+        var imgs = $("#imgs").val();
+        if(isEmpty(name)){
+            failMsg("名称不能为空");
+            return false;
+        }
+        if(isEmpty(priority)){
+            failMsg("排序数字不能为空");
+            return false;
+        }else if(isIntNum(priority)){
+            failMsg("请输入排序数字");
+            return false;
+        }
+        if(isEmpty(linkman)){
+            failMsg("请输入联系人");
+            return false;
+        }
+        if(isEmpty(mobile)){
+            failMsg("请输入联系人手机号");
+            return false;
+        }else if(isMobile(mobile)){
+            failMsg("联系手机号格式不正确");
+            return false;
+        }
+        if(isEmpty(address)){
+            failMsg("请输入地址");
+            return false;
+        }
+        // if(file.length<2&&isEmpty(imgsStr)){
+        if(file.length<2&&isEmpty(imgs)){
+            //只有一个图片上传的按钮
+            failMsg("未上传图片");
+            return false;
+        }
+        if(isEmpty(typeId)){
+            failMsg("请选择所属类别");
+            return false;
+        }
+        if(isEmpty(userId)){
+            failMsg("请选择管理人");
+            return false;
+        }
+        if(isEmpty(status)){
+            failMsg("请选择展示状态");
+            return false;
+        }
+        if(isEmpty(info)){
+            failMsg("请输入简介信息");
+            return false;
+        }
+        return true;
+    }
+    var i = 0;
+    function removePic(obj, imgId) {//obj是当前图片的路径
+        if(confirm("确认删除吗")){
+            //移除图片,更新
+            //js转义:将\转为/,g为全字匹配
+            // var imgsStr = $("#imgsStr").val().replace(/\\/g, "/");
+            var imgs = $("#imgs").val().replace(/\\/g, "/");
+            // var imgsStrArr = imgsStr.split(";");
+            var imgsStrArr = imgs.split(";");
+            if (i != 0) {
+                // imgsStrArr = imgsStr.split(",");
+                imgsStrArr = imgs.split(",");
+            }
+            i += 1;
+            //在数组中删除元素,通过obj找到在数组中的索引位置,删除
+            imgsStrArr.splice($.inArray(obj, imgsStrArr), 1);
+            // $("#imgsStr").val(imgsStrArr);
+            imgsStrArr = imgsStrArr.join(";");
+            $("#imgs").val(imgsStrArr);
+            $("#img" + imgId).parent().parent().remove();//移除li
+        } else{
+            return;
+        }
+    }
+
+
+</script>
+
+</html>

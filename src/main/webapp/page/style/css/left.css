@@ -1,0 +1,22 @@
+body,ul,li,h1,h2,h3,h4,h5,h6,form,dl,dd,ol{margin:0;padding:0;list-style:none;}
+html,body{height:100%;font-size:12px;}
+dl,dt,dd{display:block;margin:0}
+img{border:0}
+ul,LI{margin:0;padding:0;border-width:0;list-style-type:none}
+a{text-decoration:none}
+.container {width: 100%;height: 100%;margin: auto;}
+.leftsidebar_box {width: 190px;height: auto !important;overflow: visible !important;position:absolute;height: 100% !important;}
+.ControlCenter_nav dt {}
+.leftsidebar_box dt {padding-left:15px;padding-right: 10px;font-size: 14px;position: relative;line-height: 48px;cursor: pointer;font-family:"Microsoft YaHei"; *padding-top:12px;*padding-bottom:12px;*line-height: 20px;}
+.leftsidebar_box dt i{font-size:20px;padding-right:2px;}
+.leftsidebar_box dt img {width:15px; height:15px;}
+.leftsidebar_box dd a {padding-left: 50px;display: block; height: 27px; line-height: 27px;padding-top: 5px;margin-top: 1px; font-family:"Microsoft YaHei";}
+.leftsidebar_box dd a:hover {text-decoration:none;}
+.leftsidebar_box dt .icoLeft { display:inline-table;width:5px; height:6px; line-height:6px; position:absolute; right:32px; top:17px;transform:rotate(-90deg);-ms-transform:rotate(-90deg); 	/* IE 9 */-moz-transform:rotate(-90deg); 	/* Firefox */-webkit-transform:rotate(-90deg); /* Safari 和 Chrome */-o-transform:rotate(-90deg); 	/* Opera */ }
+.leftsidebar_box dt .icoLeft i{ font-size:12px; padding:0}
+.leftsidebar_box dt .icoBottom { display:inline-table; width:5px; height:6px; line-height:6px;  position:absolute; right:32px; top:17px;transform:rotate(0deg);-ms-transform:rotate(0deg); 	/* IE 9 */-moz-transform:rotate(0deg); 	/* Firefox */-webkit-transform:rotate(0deg); /* Safari 和 Chrome */-o-transform:rotate(0deg);}
+
+/*三级菜单*/
+.leftsidebar_box dd ul{display: inline-block;width: 100%;}
+.leftsidebar_box dd ul li{padding-left: 75px;height: 27px;line-height: 27px;padding-top: 5px;margin-top: 1px;overflow: hidden; color:#fff;}
+

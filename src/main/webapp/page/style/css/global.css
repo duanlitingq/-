@@ -1,0 +1,258 @@
+@charset "utf-8";
+/* CSS Document */
+body,ul,li,h1,h2,h3,h4,h5,h6,form,dl,dd,ol{margin:0;padding:0;list-style:none;}
+p{margin:0;padding:0;}
+body{font-size:12px;font-family:"Microsoft YaHei"}
+html,body{height:100%;font-size:12px;}
+dl,dt,dd{display:block;margin:0}
+img{border:0}
+ul,LI{margin:0;padding:0;border-width:0;list-style-type:none}
+em, i{font-style:normal;}
+article,section,header,footer,aside,nav,iframe{display:block}
+input::focus-inner{padding:0;border:0}
+input{outline:0}
+input,textarea {font-family:"Microsoft YaHei"; font-size:12px;}
+button,input,optgroup,select,textarea {	margin: 0;	font: inherit;	color: inherit}
+button {overflow: visible}
+button,select {	text-transform: none}
+button,html input[type=button],input[type=reset],input[type=submit] {-webkit-appearance: button;	cursor: pointer}
+button[disabled],html input[disabled] {	cursor: default}
+button::-moz-focus-inner,input::-moz-focus-inner {padding: 0;border: 0}
+input {line-height: normal}
+input[type=checkbox],input[type=radio] {-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;padding: 0}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button {height: auto}
+input[type=search] {-webkit-box-sizing: content-box;-moz-box-sizing: content-box;box-sizing: content-box;-webkit-appearance: textfield}
+input[type=search]::-webkit-search-cancel-button,input[type=search]::-webkit-search-decoration { -webkit-appearance: none}
+.clearfix:after{clear:both;display:block;visibility:hidden;height:0;content:"\20";line-height:0}
+.clearfix{*zoom:1}
+.clear{clear:both}
+.wrap{font-size:12px;font-family:YaHei;line-height:26px}
+/*------------------字体-----------------------*/
+.f10{font-size:10px}
+.f12{font-size:12px}
+.f14{font-size:14px}
+.f15{font-size:15px}
+.f16{font-size:16px}
+.f18{font-size:18px}
+.f22{font-size:22px}
+.f24{font-size:24px}
+.f30{font-size:30px}
+.f36{font-size:36px}
+.f68{font-size:68px}
+.fw-bold{ font-weight:bold;}
+.fw-normal{ font-weight:normal}
+.ff-yahei { font-family: 'Microsoft YaHei';}
+/*------------------颜色-----------------------*/
+.cRed{color:red}
+.cBlue{color:blue}
+.cfff{color:#fff}
+.c333{color:#333}
+.c666{color:#666}
+.c999{color:#999}
+.cccc{color:#ccc}
+.c-09C{ color:#09C}
+.c-00a0ea{ color:#00a0ea}/*天蓝*/
+.c-2dc3e8{ color:#2dc3e8}
+.cBlue2{ color:#3a87ad}
+.htred,a.htred{color:#e4393c}
+.cYellow,.cYellow:visited{color:#ff0}
+.cGray,.cGray:visited,a.cGray{color:#bebebe}
+.cGray3,.cGray3:visited,a.cGray3{color:#8d8d8d}
+.cGray2,.cGray2:visited,a.cGray2{color:#999}
+.cBlack,.cBlack:visited,a.cBlack{color:#000}
+.cBlue,.cBlue:visited,a.cBlue{color:#3488ad}
+.cRed,.cRed:visited,a.cRed{color:Red}
+.cOrange,.cOrange:visited,a.cOrange{color:#F60}
+.cGreen,a.cGreen:link,a.cGreen:visited{color:#090}
+.cLan,a.cLan:link,a.cLan:visited{color:#1da7ef}
+.cPurple,a.cPurple:link,a.cPurple:visited{color:#ff0bff}
+.cWhite,a.cWhite:link,a.cWhite:visited{color:#fff}
+.c-898989{color:#898989;}
+.c-e7e7eb{ color:#e7e7eb}
+.bg-f5f6fa{background: #f5f6fa;}
+.bg-ebedf1{ background: #ebedf1;}
+.bg-fff{ background: #fff;}
+.bg-dde2e0{ background:#dde2e0}
+.bg-F68300{ background:#F68300}
+.bg-f9f9fa{ background:#f9f9fa;}
+.bg-2dc3e8{ background:#2dc3e8}
+/*------------------边框-----------------------*/
+.gray{ border-bottom: 1px solid #e7eaef;  *vertical-align:middle}
+.bt-efefef{border-top:1px solid #efefef;}
+.border01{border-top:1px solid #e2e1e1}
+.border02{border-top:1px dotted #e2e1e1}
+.bt-dcdddd{border-top: 1px solid #dcdddd;}
+.b-e7eaef {border-bottom: 1px solid #e7eaef;}
+.bb-e7eaef {border-bottom: 1px solid #e7eaef;}
+.b-fbeccb{border: 1px solid #fbeccb;}
+.b-e1e6eb{ border:1px solid #e1e6eb}
+.bl-eee{ border-left:1px solid #eee}
+.bl-e1e6eb{ border-left: 1px solid #E1E6EB;}
+.bl-d2d2d2{ border-left: 1px dashed #d2d2d2;}
+.bl-88B7E0{ border-left: 2px solid #88B7E0;}
+.b-none{ border: none;}
+.br5{ border-radius:5px;}
+.br-e1e6eb{ border-right: 1px solid #E1E6EB;}
+/*-----------------浮动定位--------------------*/
+.fl{float:left}
+.fr{float:right}
+.fb{font-weight:700}
+.normal{font-weight:400}
+.pr { position:relative;}
+.pa { position:absolute;}
+/*-----------------水平垂直对齐--------------------*/
+.tl {text-align: left;}
+.tr {text-align: right;}
+.tc {text-align: center;}
+.tin-2{ text-indent:2em;}
+.vt {vertical-align: top; *vertical-align: -1px;}
+.vm {vertical-align: middle;}
+.vb {vertical-align: bottom;}
+.of-h{overflow: hidden;}
+.cur_po{cursor: pointer;}
+.cur-no {cursor: not-allowed;}
+/*-----------------转换元素--------------------*/
+.dis-n {display: none;}
+.dis-b {display: block;}
+.dis-i {display:inline}
+.dis-t {display:table}
+.dis-ib {display: inline-block;}
+.dis-it {display:inline-table}
+.dis-tc {display:table-cell}
+/*-----------------宽高--------------------*/
+.wb2{width:2%}
+.wb5{width:5%}
+.wb7{width:7%}
+.wb10{width:10%}
+.wb12{width:12%}
+.wb15{width:15%}
+.wb18{width:18%}
+.wb20{width:20%}
+.wb22{width:22%}
+.wb25{width:25%}
+.wb32 {width:32%;}
+.wb33-3{width:33.3%;}
+.wb30-9{width:30.9%;}
+.wb40{width:40%}
+.wb50 {width:50%;}
+.wb49 {width:49%;}
+.wb47 {width:47%;}
+.wb46 {width:46%;}
+.wb60 {width:60%;}
+.wb70 {width:70%;}
+.wb73{width:73%;}
+.wb79{width:79%;}
+.wb80 {width:80%;}
+.wb88 {width:88%;}
+.wb90 {width:90%;}
+.wb96 {width:96%;}
+.wb98 {width:98%;}
+
+.wb99 {width:99%;}
+.wb100{width:100%;}
+.w700{width:700px}
+.w800{width:800px}
+.w500{width:500px}
+.w506{width:506px;}
+.w600{width:600px}
+.w650{width:650px}
+.w450{width:450px}
+.w300{width:300px}
+.w200{width:200px}
+.w100{width:100px}
+.w80{width:80px}
+.w61{*width:61px;}
+.w70{width:70px;}
+.w50{width:50px;}
+.w31{width:31px;}
+.min-width{ min-width:1210px;}
+.min-w1000{ min-width:1000px;}
+.hauto{height:auto;}
+.h290{ height:290px;}
+.h200{ height:200px}
+.h190{ height:190px}
+.h150{ height:150px}
+.h26{height:26px;}
+.h52{ height: 52px;}
+.lh25 { line-height:25px;}
+.lh20{ line-height:20px;}
+.lh22{ line-height:22px;}
+.lh32{ line-height:32px;}
+.lh35{ line-height:35px;}
+.h60{ height:60px}
+.h40{ *height:40px}
+.lh40{ *line-height:40px}
+/*--------------------左右边距-------------------------*/
+.p10{padding:10px}
+.p15{padding:15px}
+.p20{padding:20px}
+.p5{padding:5px}
+.p0-18{ padding:0 18px;}
+.p0-20{ padding:0 20px;}
+.pb1{padding:1%}
+.pt10 { padding-top:10px;}
+.pt12 { padding-top:12px;}
+.pt13 { padding-top:13px;}
+.pt15{padding-top:15px}
+.pt21{ padding-top:21px;}
+.pl10{padding-left:10px}
+.pl20{padding-left:20px}
+.pb10{padding-bottom:10px}
+.pb12{padding-bottom:12px}
+.pb15{padding-bottom:15px}
+.pb20{padding-bottom:20px}
+.plr10{padding-right:10px;padding-left:10px}
+.ptb5{padding-top:5px;padding-bottom:5px}
+.p25-15{padding:25px 15px}
+.p0-15{padding:15px 0}
+.p10-20{ padding:10px 20px;}
+.p0-15{ padding:0 15px;}
+.p0-18{ padding:0 18px;}
+.pbb0-5{padding:0 .5%}
+.mt2{ margin-top: 2px;}
+.mt-5{margin-top:-5px}
+.mt-2{margin-top:-2px}
+.mt5{margin-top:5px}
+.mt8{margin-top:8px}
+.mt10{margin-top:10px}
+.mt15{margin-top:15px}
+.mt16{margin-top:16px}
+.mt20{margin-top:20px}
+.mt25{margin-top:25px}
+.mt-25{*margin-top:-45px;* margin-right:10px;}
+.mt30{ margin-top: 30px;}
+.mt80{ margin-top: 80px;}
+.mt100{ margin-top:100px;}
+.mt200{ margin-top:200px;}
+.mr5{margin-right:5px}
+.mr10{margin-right:10px}
+.mrb10{margin-right:10%}
+.mr16{ margin-right: 16px;}
+.mr20{margin-right:20px}
+.mr30{margin-right:30px}
+.mb0{margin-bottom:0}
+.mb5{margin-bottom:5px}
+.mb10{margin-bottom:10px}
+.mb20{ margin-bottom: 20px;}
+.mb30{ margin-bottom: 30px;}
+.ml10{margin-left:10px}
+.ml20{margin-left:20px}
+.ml15{margin-left:15px}
+.ml5{margin-left:5px}
+.ml16{margin-left:16px}
+.ml25{margin-left:25px}
+.ml104{margin-left:104px}
+.ml110{margin-left:110px}
+.ml114{margin-left:114px}
+.ml130{margin-left:130px}
+.mlb28{margin-left:28%}
+.mrb1{margin-right:1%}
+.mlr15{margin-right:15px;margin-left:15px}
+.mlrauto{margin-right:auto;margin-left:auto}
+.m10-0{ margin: 10px 0;}
+.m0-13{ margin:0 13px;}
+.mb1{ margin:1%}
+.m8{ margin:8px}
+select{background-color:#fff;border:1px solid #ddd;display:inline-block;padding:5px 6px;font-size:12px;line-height:20px;color:#555;margin-top:0;#margin-top:0;#margin-bottom:0;#height:auto}
+.divider { clear:both; display:block; overflow:hidden; text-indent:-1000px; width:auto; height:1px; padding:10px 0 0 0; margin-bottom:10px; border-style:dotted; border-width:0 0 1px 0; border-color:#b8d0d6;}
+button,input{ *vertical-align:middle}

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="/page/style/css/pintuer.css">
+    <link rel="stylesheet" href="/page/style/css/admin.css">
+    <script src="/page/style/scripts/jquery/jquery-1.11.2.js"></script>
+    <script src="/page/style/scripts/jquery/ajaxfileupload.js"></script>
+    <script src="/page/style/scripts/js/global.js"></script>
+    <script src="/page/style/scripts/js/common.js"></script>
+    <script src="/page/style/scripts/layer/layer.js"></script>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        body, button, input, select, textarea {
+            font: 12px/16px Verdana, Helvetica, Arial, sans-serif;
+        }
+    </style>
+<body>
+
+<div class="panel-head"><strong><span class="icon-pencil-square-o"></span> 添加活动</strong></div>
+<div class="body-content">
+    <form method="post" class="form-x" action="/page/admin/activity/doAdd" onsubmit="return checkData()"
+          enctype="multipart/form-data">
+        <!--名称-->
+        <div class="form-group">
+            <div class="label">
+                <label>活动名称：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="activityName" name="activityName" maxlength="127" class="input w50" value=""
+                       data-validate="required:请输入活动名称"/>
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>活动价格：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="activityPrice" name="activityPrice" maxlength="127" class="input w50" value=""
+                       data-validate="required:请输入活动价格"/>
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>购买返还积分：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="itemRebate" name="itemRebate" class="input w50" maxlength="127" value="0"
+                       data-validate="required:商品购买积分" placeholder="商品购买积分,默认为0"/>
+                <div class="tips"></div>
+            </div>
+        </div>
+
+        <!--图片-->
+        <div class="form-group">
+            <div class="label">
+                <label>商品图片：</label>
+            </div>
+            <div class="field">
+                <ul class="addImgs">
+                    <!--上传的图片-->
+                    <li style="position: relative">
+                        <label>
+                            <img src="" id="show" width="200">
+                            <a class="button bg-blue input-file" href="javascript:void(0);">+ 图片上传
+                                <input name="file" data-validate="required:" type="file" onchange="changepic(this)"/>
+                            </a>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!--图片-->
+        <div class="form-group">
+            <div class="label">
+                <label>商品描述：</label>
+            </div>
+            <div class="field">
+                <ul class="addImgs">
+                    <li style="position: relative">
+                        <label>
+                            <img src="" id="show" width="200">
+                            <a class="button bg-blue input-file" href="javascript:void(0);">+ 图片上传
+                                <input name="fileDesc" data-validate="required:" type="file" onchange="changepic(this)"/>
+                            </a>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="label">
+                <label>玩法介绍：</label>
+            </div>
+            <div class="field">
+                <ul class="addImgs">
+                    <!--上传的图片-->
+                    <li style="position: relative">
+                        <label>
+                            <img src="" id="show" width="200">
+                            <a class="button bg-blue input-file" href="javascript:void(0);">+ 图片上传
+                                <input name="gameDesc" data-validate="required:" type="file" onchange="changepic(this)"/>
+                            </a>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!--提交-->
+        <div class="form-group">
+            <div class="label">
+                <label></label>
+            </div>
+            <div class="field">
+                <button id="refer" class="button bg-main icon-check-square-o" type="submit"> 提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+</body>
+<script>
+    $(".del").remove();
+
+    //表单提交时校验
+    function checkData() {
+        var name = $("#activityName").val();
+        var activityPrice = $("#activityPrice").val();
+        var file = $(":file");//file类型
+        if (isEmpty(name)) {
+            failMsg("活动名称不能为空");
+            return false;
+        }
+        if (isEmpty(activityPrice)) {
+            failMsg("商品单价不能为空");
+            return false;
+        }
+        if (file.length < 0) {
+            //只有一个图片上传的按钮
+            failMsg("未上传图片");
+            return false;
+        }
+        return true;
+    }
+
+    function setImg1(obj) {//用于进行图片上传，返回地址
+        var f = $(obj).val();
+        if (f == null || f == undefined || f == '') {
+            return false;
+        }
+//        alert(f) ;
+        if (!/\.(?:png|jpg|bmp|gif|PNG|JPG|BMP|GIF)$/.test(f)) {
+            alert("类型必须是图片(.png|jpg|bmp|gif|PNG|JPG|BMP|GIF)");
+            $(obj).val('');
+            return false;
+        }
+        var data = new FormData();
+        $.each($(obj)[0].files, function (i, file) {
+            data.append('file', file);
+        });
+    }
+
+    //上传图片js
+    function doAdd() {//用于进行图片上传，返回地址
+        var file = new FormData();
+        var data = {
+            name: $("#name").val(),
+            featurs: $("#featurs").val(),
+            preAvg: $("#preAvg").val(),
+            address: $("#address").val(),
+            longitude: $("#longitude").val(),
+            latitude: $("#latitude").val(),
+            file: file
+        };
+        $.ajax({
+            type: "POST",
+            url: "/page/admin/station/insert",
+            data: data,
+            cache: false,
+            contentType: false,    //不可缺
+            processData: false,    //不可缺
+            dataType: "json",
+            success: function (data) {
+                alert(data.message)
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("上传失败，请检查网络后重试");
+                $("#url").val("");
+                $(obj).val('');
+            }
+        });
+    }
+</script>
+</html>

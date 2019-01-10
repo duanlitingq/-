@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.SysRoleMenuMapper" >
+  <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.SysRoleMenu" >
+    <result column="ROLE_ID" property="roleId" jdbcType="BIGINT" />
+    <result column="MENU_ID" property="menuId" jdbcType="BIGINT" />
+    <result column="CHILDS" property="childs" jdbcType="VARCHAR" />
+  </resultMap>
+
+
+  <sql id="Base_Column_List" >
+    ROLE_ID,MENU_ID,CHILDS
+  </sql>
+
+  <sql id="Base_Column_List_M" >
+   r.ROLE_ID,r.MENU_ID,r.CHILDS
+  </sql>
+
+
+  <insert id="save" parameterType="com.yunchao.hsh.model.SysRoleMenu" >
+    insert into sys_role_menu (ROLE_ID,MENU_ID,CHILDS)
+    values (#{roleId,jdbcType=BIGINT}, #{menuId,jdbcType=BIGINT},#{childs,jdbcType=VARCHAR})
+  </insert>
+
+  <delete id="delete" parameterType="java.lang.Long">
+        delete from sys_role_menu
+        where ROLE_ID = #{roleId,jdbcType=BIGINT}
+  </delete>
+  <select id="getRoleMenu" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_role_menu
+    WHERE  ROLE_ID=#{roleId,jdbcType=BIGINT}
+  </select>
+
+</mapper>

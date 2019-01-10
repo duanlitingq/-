@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.WalletMapper" >
+  <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.Wallet" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="CUSTOMER_ID" property="customerId" jdbcType="BIGINT" />
+    <result column="BURSE" property="burse" jdbcType="DOUBLE" />
+    <result column="SCORE" property="score" jdbcType="DOUBLE" />
+    <result column="AMOUNT_IN_BURSE" property="amountInBurse" jdbcType="DOUBLE" />
+    <result column="AMOUNT_IN_SCORE" property="amountInScore" jdbcType="DOUBLE" />
+    <result column="AMOUNT_OUT_BURSE" property="amountOutBurse" jdbcType="DOUBLE" />
+    <result column="AMOUNT_OUT_SCORE" property="amountOutScore" jdbcType="INTEGER" />
+    <result column="COLUMN1" property="column1" jdbcType="VARCHAR" />
+    <result column="COLUMN2" property="column2" jdbcType="INTEGER" />
+    <result column="COLUMN3" property="column3" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, CUSTOMER_ID, BURSE, SCORE, AMOUNT_IN_BURSE, AMOUNT_IN_SCORE, AMOUNT_OUT_BURSE,AMOUNT_OUT_SCORE,COLUMN1, COLUMN2, COLUMN3
+  </sql>
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from hsh_wallet
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="findByCustomerId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from hsh_wallet
+    where CUSTOMER_ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="delete" parameterType="java.lang.Long" >
+    delete from hsh_wallet
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.yunchao.hsh.model.Wallet" >
+    insert into hsh_wallet (ID, CUSTOMER_ID, BURSE, 
+      SCORE,AMOUNT_IN_BURSE, AMOUNT_IN_SCORE, AMOUNT_OUT_BURSE,AMOUNT_OUT_SCORE,
+      COLUMN1, COLUMN2, COLUMN3
+      )
+    values (#{id,jdbcType=BIGINT}, #{customerId,jdbcType=BIGINT}, #{burse,jdbcType=DOUBLE}, 
+      #{score,jdbcType=DOUBLE}, #{amountInBurse}, #{amountInScore,jdbcType=DOUBLE},#{amountOutBurse}, #{amountOutScore},
+      #{column1,jdbcType=VARCHAR}, #{column2,jdbcType=INTEGER}, #{column3,jdbcType=BIGINT}
+      )
+  </insert>
+
+  <update id="update" parameterType="com.yunchao.hsh.model.Wallet" >
+    update hsh_wallet
+    set CUSTOMER_ID = #{customerId,jdbcType=BIGINT},
+      BURSE = #{burse,jdbcType=DOUBLE},
+      SCORE = #{score,jdbcType=DOUBLE},
+      AMOUNT_IN_BURSE = #{amountInBurse,jdbcType=DOUBLE},
+      AMOUNT_IN_SCORE = #{amountInScore,jdbcType=DOUBLE},
+       AMOUNT_OUT_BURSE = #{amountOutBurse,jdbcType=DOUBLE},
+      AMOUNT_OUT_SCORE = #{amountOutScore,jdbcType=INTEGER},
+      COLUMN1 = #{column1,jdbcType=VARCHAR},
+      COLUMN2 = #{column2,jdbcType=INTEGER},
+      COLUMN3 = #{column3,jdbcType=BIGINT}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateByCustomerIdWallet" parameterType="com.yunchao.hsh.model.Wallet">
+    update hsh_wallet
+    set  SCORE = #{score,jdbcType=DOUBLE}
+    where CUSTOMER_ID = #{customerId,jdbcType=BIGINT}
+  </update>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" />
+    FROM hsh_wallet
+    <where>
+      <if test="@Ognl@isNotEmpty(id)">
+        AND ID = #{id}
+      </if>
+      <if test="@Ognl@isNotEmpty(customerId)">
+        AND  CUSTOMER_ID=#{customerId}
+      </if>
+    </where>
+  </select>
+
+  <select id="sumCustomerPrice" resultType="java.lang.Double">
+    SELECT SUM(BURSE) FROM hsh_wallet;
+  </select>
+</mapper>

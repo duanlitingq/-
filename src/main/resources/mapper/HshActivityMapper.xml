@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.HshActivityMapper">
+    <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.HshActivity">
+        <id column="activity_id" property="activityId" jdbcType="BIGINT"/>
+        <result column="activity_name" property="activityName" jdbcType="VARCHAR"/>
+        <result column="activity_price" property="activityPrice" jdbcType="DECIMAL"/>
+        <result column="activity_img" property="activityImg" jdbcType="VARCHAR"/>
+        <result column="activity_item_img" property="activityItemImg" jdbcType="VARCHAR"/>
+        <result column="sell_point" property="sellPoint" jdbcType="VARCHAR"/>
+        <result column="item_num" property="itemNum" jdbcType="BIGINT"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+        <result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP"/>
+        <result column="share_num" property="shareNum" jdbcType="BIGINT"/>
+        <result column="cus_num_5" property="cusNum5" jdbcType="VARCHAR"/>
+        <result column="cus_num_4" property="cusNum4" jdbcType="VARCHAR"/>
+        <result column="item_eval" property="itemEval" jdbcType="VARCHAR"/>
+        <result column="item_rebate" property="itemRebate" jdbcType="BIGINT"/>
+        <result column="cus_num_1" property="cusNum1" jdbcType="VARCHAR"/>
+        <result column="cus_num_3" property="cusNum3" jdbcType="BIGINT"/>
+    </resultMap>
+    <resultMap id="activityResultMap" type="com.yunchao.hsh.dto.resp.ActivityItemResp" extends="BaseResultMap"/>
+
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        <if test="fields == null">
+            activity_id, activity_name, activity_price, activity_img, activity_item_img, sell_point,
+            item_num, status, create_user, create_time, update_time, end_time, share_num, cus_num_5,
+            cus_num_4, item_eval, item_rebate, cus_num_1, cus_num_3
+        </if>
+        <if test="fields != null">
+            ${fields}
+        </if>
+    </sql>
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.yunchao.hsh.model.HshActivityExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from hsh_activity
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+        <if test="startRow != null">
+            limit #{startRow} , #{pageSize}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select 
+    activity_id,activity_name,activity_price,activity_img,activity_item_img,sell_point,item_num,status,create_user,create_time,update_time,end_time,share_num,cus_num_5,cus_num_4,item_eval,item_rebate,cus_num_1,cus_num_3
+    from hsh_activity
+    where activity_id = #{activityId,jdbcType=BIGINT}
+  </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from hsh_activity
+    where activity_id = #{activityId,jdbcType=BIGINT}
+  </delete>
+    <delete id="deleteByExample" parameterType="com.yunchao.hsh.model.HshActivityExample">
+        delete from hsh_activity
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.yunchao.hsh.model.HshActivity">
+    insert into hsh_activity (activity_id, activity_name, activity_price, 
+      activity_img, activity_item_img, sell_point, 
+      item_num, status, create_user, 
+      create_time, update_time, end_time, 
+      share_num, cus_num_5, cus_num_4, 
+      item_eval, item_rebate, cus_num_1, 
+      cus_num_3)
+    values (#{activityId,jdbcType=BIGINT}, #{activityName,jdbcType=VARCHAR}, #{activityPrice,jdbcType=DECIMAL}, 
+      #{activityImg,jdbcType=VARCHAR}, #{activityItemImg,jdbcType=VARCHAR}, #{sellPoint,jdbcType=VARCHAR}, 
+      #{itemNum,jdbcType=BIGINT}, #{status,jdbcType=TINYINT}, #{createUser,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
+      #{shareNum,jdbcType=BIGINT}, #{cusNum5,jdbcType=VARCHAR}, #{cusNum4,jdbcType=VARCHAR}, 
+      #{itemEval,jdbcType=VARCHAR}, #{itemRebate,jdbcType=BIGINT}, #{cusNum1,jdbcType=VARCHAR}, 
+      #{cusNum3,jdbcType=BIGINT})
+  </insert>
+    <insert id="insertSelective" parameterType="com.yunchao.hsh.model.HshActivity">
+        insert into hsh_activity
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="activityId != null">
+                activity_id,
+            </if>
+            <if test="activityName != null">
+                activity_name,
+            </if>
+            <if test="activityPrice != null">
+                activity_price,
+            </if>
+            <if test="activityImg != null">
+                activity_img,
+            </if>
+            <if test="activityItemImg != null">
+                activity_item_img,
+            </if>
+            <if test="sellPoint != null">
+                sell_point,
+            </if>
+            <if test="itemNum != null">
+                item_num,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="createUser != null">
+                create_user,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="shareNum != null">
+                share_num,
+            </if>
+            <if test="cusNum5 != null">
+                cus_num_5,
+            </if>
+            <if test="cusNum4 != null">
+                cus_num_4,
+            </if>
+            <if test="itemEval != null">
+                item_eval,
+            </if>
+            <if test="itemRebate != null">
+                item_rebate,
+            </if>
+            <if test="cusNum1 != null">
+                cus_num_1,
+            </if>
+            <if test="cusNum3 != null">
+                cus_num_3,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="activityId != null">
+                #{activityId,jdbcType=BIGINT},
+            </if>
+            <if test="activityName != null">
+                #{activityName,jdbcType=VARCHAR},
+            </if>
+            <if test="activityPrice != null">
+                #{activityPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="activityImg != null">
+                #{activityImg,jdbcType=VARCHAR},
+            </if>
+            <if test="activityItemImg != null">
+                #{activityItemImg,jdbcType=VARCHAR},
+            </if>
+            <if test="sellPoint != null">
+                #{sellPoint,jdbcType=VARCHAR},
+            </if>
+            <if test="itemNum != null">
+                #{itemNum,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="createUser != null">
+                #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="shareNum != null">
+                #{shareNum,jdbcType=BIGINT},
+            </if>
+            <if test="cusNum5 != null">
+                #{cusNum5,jdbcType=VARCHAR},
+            </if>
+            <if test="cusNum4 != null">
+                #{cusNum4,jdbcType=VARCHAR},
+            </if>
+            <if test="itemEval != null">
+                #{itemEval,jdbcType=VARCHAR},
+            </if>
+            <if test="itemRebate != null">
+                #{itemRebate,jdbcType=BIGINT},
+            </if>
+            <if test="cusNum1 != null">
+                #{cusNum1,jdbcType=VARCHAR},
+            </if>
+            <if test="cusNum3 != null">
+                #{cusNum3,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.yunchao.hsh.model.HshActivityExample" resultType="java.lang.Integer">
+        select count(*) from hsh_activity
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <select id="getByActivityId" resultMap="activityResultMap" parameterType="java.lang.Long">
+        SELECT
+        activity_id,activity_name,activity_price,activity_img,activity_item_img,sell_point,item_num,status,create_user,create_time,update_time,end_time,share_num,cus_num_5,cus_num_4,item_eval,item_rebate,cus_num_1,cus_num_3
+        FROM hsh_activity
+        WHERE
+        activity_id = #{activityId,jdbcType=BIGINT}
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update hsh_activity
+        <set>
+            <if test="record.activityId != null">
+                activity_id = #{record.activityId,jdbcType=BIGINT},
+            </if>
+            <if test="record.activityName != null">
+                activity_name = #{record.activityName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.activityPrice != null">
+                activity_price = #{record.activityPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="record.activityImg != null">
+                activity_img = #{record.activityImg,jdbcType=VARCHAR},
+            </if>
+            <if test="record.activityItemImg != null">
+                activity_item_img = #{record.activityItemImg,jdbcType=VARCHAR},
+            </if>
+            <if test="record.sellPoint != null">
+                sell_point = #{record.sellPoint,jdbcType=VARCHAR},
+            </if>
+            <if test="record.itemNum != null">
+                item_num = #{record.itemNum,jdbcType=BIGINT},
+            </if>
+            <if test="record.status != null">
+                status = #{record.status,jdbcType=TINYINT},
+            </if>
+            <if test="record.createUser != null">
+                create_user = #{record.createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createTime != null">
+                create_time = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.updateTime != null">
+                update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.endTime != null">
+                end_time = #{record.endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.shareNum != null">
+                share_num = #{record.shareNum,jdbcType=BIGINT},
+            </if>
+            <if test="record.cusNum5 != null">
+                cus_num_5 = #{record.cusNum5,jdbcType=VARCHAR},
+            </if>
+            <if test="record.cusNum4 != null">
+                cus_num_4 = #{record.cusNum4,jdbcType=VARCHAR},
+            </if>
+            <if test="record.itemEval != null">
+                item_eval = #{record.itemEval,jdbcType=VARCHAR},
+            </if>
+            <if test="record.itemRebate != null">
+                item_rebate = #{record.itemRebate,jdbcType=BIGINT},
+            </if>
+            <if test="record.cusNum1 != null">
+                cus_num_1 = #{record.cusNum1,jdbcType=VARCHAR},
+            </if>
+            <if test="record.cusNum3 != null">
+                cus_num_3 = #{record.cusNum3,jdbcType=BIGINT},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update hsh_activity
+        set activity_id = #{record.activityId,jdbcType=BIGINT},
+        activity_name = #{record.activityName,jdbcType=VARCHAR},
+        activity_price = #{record.activityPrice,jdbcType=DECIMAL},
+        activity_img = #{record.activityImg,jdbcType=VARCHAR},
+        activity_item_img = #{record.activityItemImg,jdbcType=VARCHAR},
+        sell_point = #{record.sellPoint,jdbcType=VARCHAR},
+        item_num = #{record.itemNum,jdbcType=BIGINT},
+        status = #{record.status,jdbcType=TINYINT},
+        create_user = #{record.createUser,jdbcType=VARCHAR},
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+        end_time = #{record.endTime,jdbcType=TIMESTAMP},
+        share_num = #{record.shareNum,jdbcType=BIGINT},
+        cus_num_5 = #{record.cusNum5,jdbcType=VARCHAR},
+        cus_num_4 = #{record.cusNum4,jdbcType=VARCHAR},
+        item_eval = #{record.itemEval,jdbcType=VARCHAR},
+        item_rebate = #{record.itemRebate,jdbcType=BIGINT},
+        cus_num_1 = #{record.cusNum1,jdbcType=VARCHAR},
+        cus_num_3 = #{record.cusNum3,jdbcType=BIGINT}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.yunchao.hsh.model.HshActivity">
+        update hsh_activity
+        <set>
+            <if test="activityName != null">
+                activity_name = #{activityName,jdbcType=VARCHAR},
+            </if>
+            <if test="activityPrice != null">
+                activity_price = #{activityPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="activityImg != null">
+                activity_img = #{activityImg,jdbcType=VARCHAR},
+            </if>
+            <if test="activityItemImg != null">
+                activity_item_img = #{activityItemImg,jdbcType=VARCHAR},
+            </if>
+            <if test="sellPoint != null">
+                sell_point = #{sellPoint,jdbcType=VARCHAR},
+            </if>
+            <if test="itemNum != null">
+                item_num = #{itemNum,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="shareNum != null">
+                share_num = #{shareNum,jdbcType=BIGINT},
+            </if>
+            <if test="cusNum5 != null">
+                cus_num_5 = #{cusNum5,jdbcType=VARCHAR},
+            </if>
+            <if test="cusNum4 != null">
+                cus_num_4 = #{cusNum4,jdbcType=VARCHAR},
+            </if>
+            <if test="itemEval != null">
+                item_eval = #{itemEval,jdbcType=VARCHAR},
+            </if>
+            <if test="itemRebate != null">
+                item_rebate = #{itemRebate,jdbcType=BIGINT},
+            </if>
+            <if test="cusNum1 != null">
+                cus_num_1 = #{cusNum1,jdbcType=VARCHAR},
+            </if>
+            <if test="cusNum3 != null">
+                cus_num_3 = #{cusNum3,jdbcType=BIGINT},
+            </if>
+        </set>
+        where activity_id = #{activityId,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateByPrimaryKeyPrice" parameterType="com.yunchao.hsh.dto.req.ActivityReqs">
+        update hsh_activity
+        <set>
+            <if test="activityName != null">
+                activity_name = #{activityName,jdbcType=VARCHAR},
+            </if>
+            <if test="activityPrice != null">
+                activity_price = #{activityPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="itemRebate != null">
+                item_rebate = #{itemRebate,jdbcType=BIGINT},
+            </if>
+        </set>
+        where activity_id = #{activityId,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.yunchao.hsh.model.HshActivity">
+    update hsh_activity
+    set activity_name = #{activityName,jdbcType=VARCHAR},
+      activity_price = #{activityPrice,jdbcType=DECIMAL},
+      activity_img = #{activityImg,jdbcType=VARCHAR},
+      activity_item_img = #{activityItemImg,jdbcType=VARCHAR},
+      sell_point = #{sellPoint,jdbcType=VARCHAR},
+      item_num = #{itemNum,jdbcType=BIGINT},
+      status = #{status,jdbcType=TINYINT},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      share_num = #{shareNum,jdbcType=BIGINT},
+      cus_num_5 = #{cusNum5,jdbcType=VARCHAR},
+      cus_num_4 = #{cusNum4,jdbcType=VARCHAR},
+      item_eval = #{itemEval,jdbcType=VARCHAR},
+      item_rebate = #{itemRebate,jdbcType=BIGINT},
+      cus_num_1 = #{cusNum1,jdbcType=VARCHAR},
+      cus_num_3 = #{cusNum3,jdbcType=BIGINT}
+    where activity_id = #{activityId,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateByActivityId" parameterType="long">
+    update hsh_activity
+    set
+      status = 2
+    where activity_id = #{activityId,jdbcType=BIGINT}
+  </update>
+</mapper>

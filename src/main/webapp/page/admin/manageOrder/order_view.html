@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
+    <link  type="text/css"  rel="stylesheet"  href="/page/style/css/bootstrap.css" />
+    <script src="/page/style/scripts/jquery/jquery-1.11.2.js" ></script>
+    <script type="text/javascript" src="/page/style/scripts/js/bootstrap.min.js"></script>
+    <script  src="/page/style/scripts/layer/layer.js" ></script>
+    <style>
+        .box{
+            padding:3% 10% 10% 10%;
+        }
+        .box h3{
+            text-align: center;
+        }
+        .box p{
+            border-bottom: 1px solid #dbdbdb;
+            margin:10px auto;
+            padding: 10px 0;
+        }
+
+    </style>
+</head>
+    <body>
+        <div class="box">
+            <h3>订单详情</h3>
+            <div style="display: flex;justify-content: space-between">
+                <div>
+                    <p><b>购买人:</b><span id="buy_userName" ></span></p>
+                    <p><b>联系电话:</b><span id="user_phone" ></span></p>
+                    <p><b>配送地址:</b><span id="address" ></span></p>
+                    <p><b>订单编号:</b><span id="order_no" ></span></p>
+                    <p><b>商品店铺:</b><span id="goods_supplier" ></span></p>
+                    <p><b>订单金额:</b><span id="order_money" ></span></p>
+                    <p><b>订单商品1:</b>
+                        <span  >
+                            <a  href="Javascript:void(0);"   id="goods_items" title=""  class="goods_title" style="text-decoration: none;width: 170px;overflow: hidden;"></a>
+                        </span>
+                    </p>
+                    <p><b>议价金额:</b><span id="haggle_price" ></span></p>
+                    <p><b>实付金额:</b><span id="act_price" ></span></p>
+                </div>
+                <div>
+                    <p><b>平台收佣:</b><span id="pingtai" ></span></p>
+                    <p><b>积分:</b><span id="integral" ></span></p>
+                    <p><b>下单时间:</b><span id="create_time" ></span></p>
+                    <p><b>接单时间:</b><span id="jiedan_time"></span></p>
+                    <p><b>完成时间:</b><span id="finish_time"></span></p>
+                    <p><b>订单状态:</b><span id="order_status"></span></p>
+                    <p><b>支付状态:</b><span id="pay_status"></span></p>
+                    <p><b>支付类型:</b><span id="pay_type"></span></p>
+                </div>
+
+
+            </div>
+        </div>
+    </body>
+<script>
+
+    $(function(){
+        $("#layui-layer2").css('width', '500px');
+        //加载用户详情信息
+        //获取Location对象的search属性值
+        var searchStr = location.search;
+        //由于searchStr属性值包括“?”，所以除去该字符
+        searchStr = searchStr.substr(1);
+        //将searchStr字符串分割成数组，数组中的每一个元素为一个参数和参数值
+        var searchs = searchStr.split("&");
+        //获得第一个参数和值
+        var id = searchs[0].split("=");
+        loadUser(id[1]);
+    });
+    function loadUser(id){
+        $.ajax({
+            url:"/page/admin/supplierorder/findById",
+            type:"get",
+            data:{id:id},
+            dataType:"json",
+            success:function(result){
+              $("#buy_userName").text(result.buyUserName);
+              $("#user_phone").text(result.buyUserPhone);
+              $("#address").text(result.address);
+              $("#order_no").text(result.orderNo);
+
+              $("#goods_supplier").text(result.supplierName);
+              $("#order_money").text(result.orderMoney);
+              var items = result.items;
+              var goods = "";
+              for(var i=0;i < items.length;i++){
+                  var item = items[i];
+                  var num = item.salesNum;
+                  var name = item.supplierGoodsResp.name;
+                  var unit = item.supplierGoodsResp.unitName;
+                  goods+=name+"x"+num+unit+" -- ";
+              }
+              $("#goods_items").text(goods);
+              $(".goods_title").attr("title",goods)
+              $("#haggle_price").text(result.hagglePrice);
+              $("#act_price").text(result.actPayment);
+              $("#pingtai").text(result.platformRevenue);
+              $("#integral").text(result.integral);
+              $("#create_time").text(result.createTime);
+              $("#jiedan_time").text(result.confirmTime==null?"--":result.confirmTime);
+              $("#finish_time").text(result.finishTime==null?"--":result.finishTime);
+              var orderStatus = result.orderStatus;
+                /**支付状态:1未支付,2已支付*/
+                // private Integer payStatus;
+                /**订单状态：1：未接单2：已接单(已发货)3：已完成4：取消订单，5：已取消 6：商家驳回*/
+                // private Integer orderStatus;
+                /**支付方式 1:微信 2：余额3：积分4：支付宝*/
+                // private Integer payType;
+              var statusName = "";
+              if(orderStatus == 1){
+                  statusName = "未接单";
+              }else if(orderStatus == 2){
+                  statusName = "已接单";
+              }else if(orderStatus == 3){
+                  statusName = "已完成";
+              }else if(orderStatus == 4){
+                  statusName = "取消待确认";
+              }else if(orderStatus == 5){
+                  statusName = "已取消";
+              }else if(orderStatus == 6){
+                  statusName = "已驳回";
+              }
+              $("#order_status").text(statusName);
+              var payName = "未支付"
+              if(result.payStatus == 2){
+                  payName = "支付成功"
+                }
+              $("#pay_status").text(payName);
+              var typeName = "";
+              if(result.payType == 1){
+                  typeName = "微信";
+              }else if(result.payType == 2){
+                  typeName = "余额";
+              }else if(result.payType == 3){
+                  typeName = "积分";
+              }if(result.payType == 4){
+                  typeName = "支付宝";
+              }
+              $("#pay_type").text(typeName);
+            }
+        });
+    }
+</script>
+</html>

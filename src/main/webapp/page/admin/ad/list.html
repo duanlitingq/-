@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit">
+<title></title>
+<link rel="stylesheet" href="/page/style/css/pintuer.css">
+<link rel="stylesheet" href="/page/style/css/admin.css">
+<script src="/page/style/scripts/js/jquery.js"></script>
+  <script src="/page/style/scripts/js/global.js"></script>
+  <script src="/page/style/scripts/js/common.js"></script>
+  <script src="/page/style/scripts/layer/layer.js"></script>
+</head>
+<body>
+<div class="panel admin-panel">
+  <div class="panel-head"><strong class="icon-reorder"> 广告维护</strong></div>
+  <div class="padding border-bottom">
+    <!--添加广告-->
+    <ul class="search" style="padding-left:10px;">
+      <li> <a class="button border-main icon-plus-square-o" href="/page/admin/ad/add.html"> 添加广告</a> </li>
+      <li>搜索：
+        <input type="text" id="keyWord" name="keyWord" placeholder="请输入搜索关键字" class="input" style="width:250px; line-height:17px;display:inline-block" /></li>
+      <li>展示状态：
+        <select id="status" name="status"  class="input" style="width:70px; line-height:17px; display:inline-block">
+          <option value="">请选择</option>
+          <option value="0">隐藏</option>
+          <option value="1">展示</option>
+        </select>
+      </li>
+      <li>
+        <a href="javascript:void(0)" class="button border-main icon-search"  onclick="changesearch()" > 搜索</a></li>
+    </ul>
+
+  </div>
+  <table id="table" class="table table-hover text-center">
+    <tr>
+      <th  width="10%">选择</th>
+      <th width="30%">标题</th>
+      <th width="10%">排序</th>
+      <th width="10%">是否展示</th>
+      <th width="40%">操作</th>
+    </tr>
+    <tr id="pageBar">
+
+    </tr>
+  </table>
+</div>
+
+</body>
+<script>
+  var colspan=2;
+  $(function () {
+    loadAll();
+  })
+
+   function loadAll() {
+     $.post("/page/admin/ad/getPage",{},function (data) {
+         for (var i = 0 ; i < data.list.length ; i ++){
+           $("#pageBar").before('<tr class="content">' +
+                   '<td><input type="checkbox" name="checkname[]" value="'+data.list[i].id+'"  /></td>' +
+                   '<td style="text-align:center;">'+data.list[i].title+'</td>' +
+                   '<td style="text-align:center;">'+data.list[i].sort+'</td>' +
+                   '<td>'+data.list[i].statusName+'</td>' +
+                   '<td><div class="button-group">' +
+                   '<a class="button border-main" href="javascript:void(0)" onclick="updatePre('+data.list[i].id+')"><span class=""></span> 修改</a>' +
+                   '<a class="button border-red" href="javascript:void(0)" onclick="updateStatus('+data.list[i].id+',1)">展示</a>' +
+                   '<a class="button border-red" href="javascript:void(0)" onclick="updateStatus('+data.list[i].id+',0)"> 隐藏</a>' +
+                   '</div></td>' +
+                   '</tr>')
+         }
+       //此处调用分页插件
+       $("#pageBar").html('<td style="text-align:center;padding-left: 30px">' +
+               '<input type="checkbox" class="button border-red" name="all" id="checkall"  value="全选" onclick="checkAll()"/>全选' +
+               '</td>' +
+               '<td colspan="'+colspan+'" class="colspan" style="text-align:left;padding-left:20px;">' +
+               '<a href="javascript:void(0)" class="button border-red " style="padding:5px 15px;" onclick="batchUpdateState(1)"> 批量展示</a> ' +
+               '<a href="javascript:void(0)" style="padding:5px 15px; margin:0 10px;" class="button border-blue" onclick="batchUpdateState(0)"> 批量隐藏</a>' +
+               '</td>' +
+               '<td colspan="'+colspan+'"  class="colspan" style="text-align:center;">' +
+               '<div class="pagelist"> <a  href="#">上一页</a>' +
+               '<a href="#"  class="current">'+1+'</a>' +
+               '<a href="javascript:void(0)" class="disableds disableds2" onclick="changesearch(2,'+data.pageSize+')">2</a>' +
+               '<a href="javascript:void(0)" class="disableds disableds3" onclick="changesearch(3,'+data.pageSize+')">3</a>' +
+               '<a href="javascript:void(0)" class="disableds disabledsNext" onclick="changesearch('+(data.pageNum +1)+','+data.pageSize+')">下一页</a>' +
+               '<a href="javascript:void(0)" class="disableds" onclick="changesearch('+(data.firstPage)+','+data.pageSize+')">首页</a> ' +
+               '<a href="javascript:void(0)" class="disableds" onclick="changesearch('+(data.lastPage)+','+data.pageSize+')">尾页</a> </div>' +
+               '<span>共'+data.total+'条数据</span>' +
+               '</td>')
+       if(data.lastPage == 1){
+         $(".disableds").removeAttr("onclick");
+         $(".disableds3,.disableds2").hide();
+       }else if(data.lastPage < 3){
+         $(".disableds3").hide();
+       }
+     },'json')
+   }
+
+
+
+   //条件搜索
+   function changesearch(pageNum,pageSize) {
+     var keyWord = $("#keyWord").val();
+     var status = $("#status").val() ;
+     $.post("/page/admin/ad/getPage",{
+       "title":keyWord,
+       "status":status,
+       "pageNum":pageNum,
+       "pageSize":pageSize
+     },function (data){
+     $(".content").html('');
+       for (var i = 0 ; i < data.list.length ; i++){
+         $("#pageBar").before('<tr class="content">' +
+                 '<td><input type="checkbox" name="checkname[]" value="'+data.list[i].id+'" /></td>' +
+                 '<td style="text-align:center;">'+data.list[i].title+'</td>' +
+                 '<td style="text-align:center;">'+data.list[i].sort+'</td>' +
+                 '<td>'+data.list[i].statusName+'</td>' +
+                 '<td><div class="button-group">' +
+                 '<a class="button border-main" href="javascript:void(0)" onclick="updatePre('+data.list[i].id+')"><span class=""></span> 修改</a>' +
+                 '<a class="button border-red" href="javascript:void(0)" onclick="updateStatus('+data.list[i].id+',1)">展示</a>' +
+                 '<a class="button border-red" href="javascript:void(0)"onclick="updateStatus('+data.list[i].id+',0)"> 隐藏</a>' +
+                 '</div></td>' +
+                 '</tr>')
+       }
+       //此处调用分页插件
+       var html = "";
+       var falg = false;
+       var boo = false;
+       if(data.pageNum!=1 &&  data.pageNum != data.lastPage){
+         html = '<a href="javascript:void(0)" id="onePrevPage" >'+(data.pageNum - 1)+'</a>'+
+                 '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >'+data.pageNum+'</a>' +
+                 '<a href="javascript:void(0)"  id="threePrevPage" >'+(data.pageNum + 1)+'</a>';
+       }else{
+         html = '<a href="javascript:void(0)" id="onePrevPage" >'+data.pageNum+'</a>'+
+                 '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >'+(data.pageNum + 1)+'</a>' +
+                 '<a href="javascript:void(0)"  id="threePrevPage"  >'+(data.pageNum + 2)+'</a>';
+         falg = true;
+       }
+       if(data.pageNum == data.lastPage){
+         html = '<a href="javascript:void(0)" id="onePrevPage" >'+(data.pageNum - 2)+'</a>'+
+                 '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >'+(data.pageNum  - 1)+'</a>' +
+                 '<a href="javascript:void(0)"  id="threePrevPage"  >'+data.pageNum +'</a>';
+         boo = true;
+       }
+       $("#pageBar").html('<td style="text-align:center;padding-left: 30px">' +
+               '<input type="checkbox" class="button border-red" name="all" id="checkall"  value="全选" onclick="checkAll()"/>全选' +
+               '</td>' +
+               '<td colspan="'+colspan+'"  class="colspan" style="text-align:left;padding-left:20px;">' +
+               '<a href="javascript:void(0)" class="button border-red " style="padding:5px 15px;" onclick="batchUpdateState(1)"> 批量展示</a> ' +
+               '<a href="javascript:void(0)" style="padding:5px 15px; margin:0 10px;" class="button border-blue" onclick="batchUpdateState(0)"> 批量隐藏</a>' +
+               '</td>' +
+               '<td colspan="'+colspan+'"  class="colspan" style="text-align:center;">' +
+               '<div class="pagelist"> <a id="prevPage" href="#">上一页</a>' +
+               html +
+               '<a id="nextPage" href="#" >下一页</a>' +
+               '<a href="javascript:void(0)" onclick="changesearch('+(data.firstPage)+','+data.pageSize+')">首页</a>' +
+               '<a href="javascript:void(0)" onclick="changesearch('+(data.lastPage)+','+data.pageSize+')">尾页</a> </div>' +
+               '<span>共'+data.total+'条数据</span>' +
+               '</td>');
+
+       if($("#onePrevPage").html() < 1){
+         $("#onePrevPage").hide();
+       }
+       if($("#twoPrevPage").html() < 1){
+         $("#twoPrevPage").hide();
+       }
+       if($("#threePrevPage").html() < 1){
+         $("#threePrevPage").hide();
+       }
+       if($("#threePrevPage").html() > data.lastPage){
+         $("#threePrevPage").hide();
+       }
+       if(falg){
+         $("#onePrevPage").addClass("current");
+         $("#onePrevPage").siblings().removeClass("current");
+       }
+       if(boo){
+         $("#threePrevPage").addClass("current");
+         $("#threePrevPage").siblings().removeClass("current");
+       }
+       if(data.lastPage==1){
+         $("#prevPage").unbind("click");
+         $("#nextPage").unbind("click");
+       }else if(data.lastPage==0){
+         $("#onePrevPage,#twoPrevPage,#threePrevPage").hide();
+         $("#pageBar").before('<tr class="content"><td colspan="4" style="color:red"> 没有搜索到数据!</td></tr>')
+       }else{
+         $("#onePrevPage,#twoPrevPage,#threePrevPage").click(function () {
+           changesearch($(this).html(),data.pageSize);
+         })
+       }
+
+       if(data.pageNum > data.firstPage){
+         $("#prevPage").click(function () {
+           changesearch(data.pageNum -1,data.pageSize);
+         })
+       }
+       if(data.pageNum < data.lastPage){
+         $("#nextPage").click(function () {
+           changesearch(data.pageNum +1,data.pageSize);
+         })
+       }
+     },'json')
+   }
+
+
+  function updatePre(id) {
+    window.location.href = "/page/admin/ad/update.html?id="+id;
+  }
+  //更新状态（单个）
+  function updateStatus(id,status) {
+      $.post("/page/admin/ad/updateStatus",{
+          id:id,
+          status:status
+      },function (data) {
+          reloadAfterShowMsg(data.message);
+      },'json')
+  }
+
+  //批量更新状态
+  function batchUpdateState(status){
+    var ids="";
+    $("input[name='checkname[]']").each(function(i,o){
+      if (this.checked==true) {
+        ids += (o.value) + ',';
+      }
+    });
+    if (ids == null || ids == ''){
+      $("#listform").submit();
+      alert("未选择广告！")
+      return ;
+    }
+    $.post("/page/admin/ad/batchUpdateStatus",{
+      "status":status,
+      "ids":ids
+    },function (data) {
+        reloadAfterShowMsg(data.message);
+    },'json');
+
+  }
+</script>
+</html>

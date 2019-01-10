@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.SupplierMapper" >
+  <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.Supplier" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="TOTAL_MONEY" property="totalMoney" jdbcType="DOUBLE" />
+    <result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+    <result column="LINK_MAN" property="linkman" jdbcType="VARCHAR" />
+    <result column="MOBILE" property="mobile" jdbcType="VARCHAR" />
+    <result column="INFO" property="info" jdbcType="VARCHAR" />
+    <result column="IMGS" property="imgs" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="INTEGER" />
+    <result column="BROWS_NUM" property="browsNum" jdbcType="INTEGER" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="COLUMN_1" property="column1" jdbcType="VARCHAR" />
+    <result column="COLUMN_2" property="column2" jdbcType="INTEGER" />
+    <result column="COLUMN_3" property="column3" jdbcType="BIGINT" />
+    <result column="USER_ID" property="userId" jdbcType="BIGINT" />
+    <result column="TYPE_ID" property="typeId" jdbcType="BIGINT" />
+    <result column="PRIORITY" property="priority" javaType="INTEGER"/>
+  </resultMap>
+    <resultMap id="supplierResp" type="com.yunchao.hsh.dto.resp.SupplierResp" extends="BaseResultMap">
+        <result column="TYPE_NAME" property="typeName"></result>
+        <result column="USER_NAME" property="userName"></result>
+    </resultMap>
+
+
+  <sql id="Base_Column_List" >
+    ID,NAME,TOTAL_MONEY,ADDRESS,LINK_MAN,MOBILE,INFO,IMGS,STATUS,BROWS_NUM,CREATE_TIME,UPDATE_TIME,COLUMN_1,
+    COLUMN_2,COLUMN_3,USER_ID,TYPE_ID,PRIORITY
+  </sql>
+
+  <sql id="Base_Column_List_s" >
+    s.ID,s.NAME,s.TOTAL_MONEY,s.ADDRESS,s.LINK_MAN,s.MOBILE,s.INFO,s.IMGS,s.STATUS,s.BROWS_NUM,s.CREATE_TIME,s.UPDATE_TIME,s.COLUMN_1,
+    s.COLUMN_2,s.COLUMN_3,s.USER_ID,s.TYPE_ID,s.PRIORITY
+  </sql>
+
+  <select id="findById" resultMap="supplierResp" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from hsh_supplier
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+
+
+  <select id="findList" resultMap="supplierResp">
+    select
+    <include refid="Base_Column_List" />
+    from hsh_supplier
+  </select>
+
+  <select id="findPage" resultMap="supplierResp" parameterType="java.util.Map">
+    select
+    <include refid="Base_Column_List_s" />,ht.NAME AS TYPE_NAME,su.REAL_NAME AS USER_NAME
+    from hsh_supplier s
+      left join hsh_supplier_type ht on ht.ID = s.TYPE_ID
+      left join sys_user su on su.ID = s.USER_ID
+    <where>
+        1=1
+      <if test="@Ognl@isNotEmpty(id)">
+        and s.ID = #{id}
+      </if>
+      <if test="@Ognl@isNotEmpty(name)">
+        and s.NAME LIKE '%${name}%'
+      </if>
+      <if test="@Ognl@isNotEmpty(status)">
+        and s.STATUS = #{status}
+      </if>
+        <if test="@Ognl@isNotEmpty(typeId)">
+            and TYPE_ID = #{typeId}
+        </if>
+      <if test="@Ognl@isNotEmpty(userId)">
+            and USER_ID = #{userId}
+        </if>
+    </where>
+  </select>
+
+  <insert id="insert" parameterType="com.yunchao.hsh.model.Supplier" >
+    insert into hsh_supplier (
+          ID,NAME,TOTAL_MONEY,ADDRESS,
+          LINK_MAN,MOBILE,INFO,IMGS,
+          STATUS,BROWS_NUM,CREATE_TIME,UPDATE_TIME,COLUMN_1,
+          COLUMN_2,COLUMN_3,USER_ID,TYPE_ID,PRIORITY)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{totalMoney,jdbcType=DOUBLE},
+      #{address,jdbcType=VARCHAR}, #{linkman,jdbcType=VARCHAR},#{mobile,jdbcType=VARCHAR},#{info,jdbcType=VARCHAR},
+      #{imgs,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER},#{browsNum,jdbcType=INTEGER},#{createTime,jdbcType=TIMESTAMP},
+      #{updateTime,jdbcType=TIMESTAMP},
+      #{column1,jdbcType=VARCHAR}, #{column2,jdbcType=INTEGER},#{column3,jdbcType=BIGINT},#{userId,jdbcType=BIGINT},
+      #{typeId,jdbcType=BIGINT},#{priority,jdbcType=INTEGER}
+      )
+  </insert>
+
+
+  <update id="update" parameterType="com.yunchao.hsh.model.Supplier" >
+    update hsh_supplier
+    set NAME = #{name,jdbcType=VARCHAR},
+        ADDRESS=#{address,jdbcType=VARCHAR},
+        LINK_MAN=#{linkman,jdbcType=VARCHAR},
+        MOBILE = #{mobile,jdbcType=VARCHAR},
+        INFO = #{info,jdbcType=VARCHAR},
+        IMGS = #{imgs,jdbcType=VARCHAR},
+        STATUS = #{status,jdbcType=INTEGER},
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+        USER_ID = #{userId,jdbcType=BIGINT},
+        TYPE_ID = #{typeId,jdbcType=BIGINT},
+        PRIORITY = #{priority,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+    <update id="updateStatus" parameterType="com.yunchao.hsh.model.Supplier" >
+    update hsh_supplier
+    set
+        STATUS = #{status,jdbcType=INTEGER},
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateTotalMoney" parameterType="com.yunchao.hsh.model.Supplier">
+    update hsh_supplier
+    set TOTAL_MONEY=#{totalMoney,jdbcType=DOUBLE}
+    WHERE ID =  #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

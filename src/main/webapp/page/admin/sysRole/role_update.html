@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="renderer" content="webkit">
+  <title></title>
+  <link href="/page/style/css/pintuer.css" rel="stylesheet" >
+  <link href="/page/style/css/admin.css" rel="stylesheet" >
+  <script src="/page/style/scripts/jquery/jquery-1.8.2.js" ></script>
+  <script src="/page/style/scripts/layer/layer.js" ></script>
+  <script src="/page/style/scripts/js/common.js"></script>
+  <script src="/page/style/scripts/js/pintuer.js"></script>
+  <script src="/page/style/scripts/js/global.js"></script>
+  <script>
+          $(function () {
+              //获取Location对象的search属性值
+              var searchStr = location.search;
+              //由于searchStr属性值包括“?”，所以除去该字符
+              searchStr = searchStr.substr(1);
+              //将searchStr字符串分割成数组，数组中的每一个元素为一个参数和参数值
+              var searchs = searchStr.split("&");
+              //获得第一个参数和值
+              var id = searchs[0].split("=");
+              selectIdRole(id[1]);
+
+              /**加载一级菜单*/
+              loadFirst();
+              //数据回显
+              setTimeout(function () {
+                  backShow();
+              },1000);
+
+              $("#menu_data").on('click','input', function() {
+                  $(this).next('ul').children().children().prop("checked", $(this).prop('checked'));
+              });
+          });
+
+      //查找用户显示
+      function selectIdRole(id) {
+          $.ajax({
+              url:"/page/admin/sysRole/getById",
+              type:"GET",
+              data:{"id":id},
+              dataType:"json",
+              success:function (result) {
+                  var id = result.id;
+                  var name = result.name;
+                  //将信息设置到指定位置
+                  $("#id").val(id);
+                  $("#name").val(name);
+                  loadMenuIds(id);
+              }
+          });
+      };
+
+      //更新按钮处理
+      function update_role(){
+          //获取表的参数
+          var id = $("#id").val();
+          var name = $("#name").val();
+          if(name==""){
+              $("#realName_error").html("角色名不能为空");
+              return;
+          }
+          var ids = [];
+          var index = 0;
+          $("input[name='checkname[]'][level='1']").each(function(i,o){
+              if (this.checked==true) {
+                  var obj = {};
+                  var pid = o.value;
+                  var cids = new Array();
+                  $(this).next().find("input[name='checkname[]'][level='2']").each(function(i,ob){
+                      if (ob.checked==true) {
+                          var cid = ob.value;
+                          cids.push(cid);
+                      }
+                  })
+                  obj.first_id = pid;
+                  obj.childs = cids.join(",");
+                  ids[index] = obj;
+                  index++;
+              }
+          });
+          $.ajax({
+              url:"/page/admin/sysRole/doUpdate",
+              type:"POST",
+              data:{"id":id,"name":name,"ids":JSON.stringify(ids)},
+              dataType:"json",
+              success:function (result) {
+                  if(result.success){
+                      successMsg(result.message);
+                      setTimeout(function () {
+                          window.location.href="/page/admin/sysRole/sysRole_list.html";
+                      },950);
+                  }else {
+                      failMsg(result.message);
+                  }
+              }
+          });
+      }
+
+          var html = '';
+          var menuArr = new Array();
+          function loadMenuIds(id){
+              $.ajax({
+                  url: '/page/admin/sysRole/getRoleMenuIds',
+                  type: 'get',
+                  data: {
+                      roleId: id
+                  },
+                  dataType: 'json',
+                  success: function (data) {
+                      var len = data.length;
+                      if(len > 0){
+                          for (var i=0;i<len;i++){
+                              var obj = data[i];
+                              var menuId = obj.menuId;
+                              var childs = obj.childs;
+                              menuArr.push(menuId);
+                              var arr = childs.split(",");
+                              if(arr.length > 0){
+                                  for (var j = 0; j < arr.length; j++) {
+                                      menuArr.push(arr[j]);
+                                  }
+                              }
+                          }
+                      }
+                  }
+              });
+          }
+          function loadFirst() {
+              $.ajax({
+                  url: '/page/admin/menu/getList',
+                  type: 'get',
+                  data: {
+                      parentId: 0
+                  },
+                  dataType: 'json',
+                  success: function (data) {
+                      var len = data.length;
+                      if (len > 0) {
+                          for (var i = 0; i < len; i++) {
+                              var name = data[i].name;
+                              var firstId = data[i].id;
+                              html += '<li class="sel"><input type="checkbox" name="checkname[]" level="1" value="' + firstId + '" class="sel li-tree"/>' + name;
+                              loadSecond(firstId);
+                          }
+                          $("#menu_data").append(html);
+                      }
+                  }
+              });
+          }
+
+          function loadSecond(firstId) {
+              $.ajax({
+                  url: '/page/admin/menu/getList',
+                  type: 'get',
+                  data: {
+                      parentId: firstId
+                  },
+                  async: false,
+                  dataType: 'json',
+                  success: function (resp) {
+                      var len = resp.length;
+                      if (len > 0) {
+                          html+='<ul class="sel_con">';
+                          for (var i = 0; i < len; i++) {
+                              var name = resp[i].name;
+                              var id = resp[i].id;
+                              html += '<li><input type="checkbox" name="checkname[]" level="2" value="' + id + '" class="li-tree"/>' + name+'</li>';
+                          }
+                          html+="</ul></li>";
+                      }
+                  }
+              });
+          }
+          function backShow() {
+              var len = menuArr.length;
+              if(len > 0){
+                  for (var i = 0 ; i < len ; i++){
+                      var menuId = menuArr[i];
+                      $("input[name='checkname[]'][value='"+menuId+"']").attr("checked",true);
+                  }
+              }
+          }
+  </script>
+</head>
+<body>
+<!-- /page/admin/sysUser/user_add.html -->
+<div class="panel admin-panel">
+  <div class="panel-head" id="add"><strong><span class="icon-pencil-square-o"></span>修改角色名</strong></div>
+
+  <div class="body-content">
+    <form method="post" class="form-x" action="javascript:void(0);">
+      <input type="hidden" id="id" value="">
+      <!--姓名:角色名-->
+      <div class="form-group">
+        <div class="label">
+          <label>角色名：</label>
+        </div>
+        <div class="field">
+          <input type="text"  name="name" id="name" class="input w50" value=""   placeholder="请输入名称" /><p style="display:inline-block;line-height: 22px; color: red;margin-left: 6px;margin-top: 10px">*</p>
+            <div class="tips" id="realName_error" style="color: red;"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="label">
+          <label>菜单：</label>
+        </div>
+        <ul class="field" id="menu_data">
+
+        </ul>
+      </div>
+      <div class="form-group">
+        <div class="label">
+          <label></label>
+        </div>
+        <div class="field field1">
+          <a class="button bg-main icon-check-square-o" onclick="update_role()" >保存</a>
+          <a class="button bg-main icon-check-square-o" href="/page/admin/sysRole/sysRole_list.html">取消</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

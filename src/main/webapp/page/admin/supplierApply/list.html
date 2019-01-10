@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<body>
+<div class="panel admin-panel">
+  <div class="panel-head"><strong class="icon-reorder">店铺提现记录</strong></div>
+  <div class="padding border-bottom">
+    <ul>
+      <div id="round">
+        <p>&nbsp;&nbsp;&nbsp;当前余额</p>
+        <div class="center1">
+          <h2 id="supplier_money"></h2>
+        </div>
+        <div align="right">
+          <div id="round1">
+            <a href="javascript:void(0)" onclick="outMoney()">去提现</a></p>
+          </div>
+        </div>
+      </div>
+      <div id="roun">
+        <p>&nbsp;&nbsp;&nbsp;已提现金额</p>
+        <div class="center1">
+          <h2 id="out_money"> </h2>
+        </div>
+      </div>
+      <div id="rou">
+        <p>&nbsp;&nbsp;&nbsp;总订单</p>
+        <div class="center1">
+          <h2 id="order_num"></h2>
+        </div>
+      </div>
+    </ul>
+  </div>
+  <table id="table" class="table table-hover text-center">
+    <tr>
+      <th >序列</th>
+      <th >提现申请时间</th>
+      <th >提现金额</th>
+      <th >提现卡号</th>
+      <th >提现状态</th>
+      <th >到账时间</th>
+      <th >操作人</th>
+    </tr>
+    <tr id="pageBar">
+
+    </tr>
+  </table>
+</div>
+
+<div id="light" class="white_content" style="display: none;">
+  <form method="post" id="save_apply">
+    <div  style="width:450px;height: 450px;background: #ffffff;">
+      <p style="font-size:18px;padding-top:20px;">提现申请</p>
+      <div class="content_box" style="display: flex;justify-content: space-around">
+        <p>提现&nbsp;&nbsp;金额</p>
+        <div align="left">
+          <input name="amountOfMoney" id="amountOfMoney" type="text" value="" placeholder="请输入小于当前余额" maxlength="10"/>
+          <input name="supplierId" id="supplierId" type="hidden"/>
+        </div>
+      </div>
+
+
+      <div class="content_box" style="display: flex;justify-content: space-around">
+        <p>收款&nbsp;&nbsp;银行</p>
+        <div align="left">
+          <input name="bankName" id="bankName" type="text" value="" placeholder="请输入" maxlength="100"/>
+        </div>
+      </div>
+      <div class="content_box" style="display: flex;justify-content: space-around">
+        <p>银行&nbsp;&nbsp;支行</p>
+        <div align="left">
+          <input name="branchBankName" id="branchBankName" type="text" value="" placeholder="请输入" maxlength="100"/>
+        </div>
+      </div>
+
+
+      <div class="content_box" style="display: flex;justify-content: space-around">
+        <p>银行&nbsp;&nbsp;卡号</p>
+        <div align="left">
+          <input name="bankCard" id="bankCard" type="text" value="" placeholder="请输入" maxlength="20"/>
+        </div>
+      </div>
+
+
+      <div class="content_box" style="display: flex;justify-content: space-around">
+        <p>确认&nbsp;&nbsp;卡号</p>
+        <div align="left">
+          <input  id="second_card" type="text" value="" placeholder="请再次输入卡号" maxlength="20"/>
+        </div>
+      </div>
+
+      <div class="content_box" style="display: flex;justify-content: space-around">
+        <p>收款人姓名</p>
+        <div align="left">
+          <input name="receiveName" id="receiveName" type="text" value="" placeholder="请输入" maxlength="50"/>
+        </div>
+      </div>
+
+      <div class="content_box" style="display: flex;justify-content: space-around">
+        <p>手机&nbsp;&nbsp;&nbsp;&nbsp;号</p>
+        <div align="left">
+          <input name="phone"  id="phone" type="text" value="" placeholder="请输入" maxlength="11"/>
+        </div>
+      </div>
+
+
+      <a href="javascript:void(0)"  onclick="saveApply(this)" style="display: inline-block;width:100px;height: 30px;line-height: 30px;text-align: center;margin-top:50px;">提交</a>
+      <a href="javascript:void(0)" onclick="closeOutMoney()" style="display: inline-block;width:100px;height: 30px;line-height: 30px;text-align: center;margin-left:50px;margin-top:50px;">取消</a>
+
+    </div>
+</form>
+</div>
+<div id="shadow_div" class="black_overlay" style="display: none"></div>
+<!--临时使用数据隐藏域-->
+<input id="total_money" type="hidden">
+</body>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit">
+<title></title>
+<link rel="stylesheet" href="/page/style/css/pintuer.css">
+<link rel="stylesheet" href="/page/style/css/admin.css">
+<script src="/page/style/scripts/js/jquery.js"></script>
+  <script src="/page/style/scripts/js/global.js"></script>
+  <script src="/page/style/scripts/js/common.js"></script>
+  <script src="/page/style/scripts/layer/layer.js"></script>
+  <style>
+    #table tr td:nth-child(6){
+      width:226px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: inline-block;
+    }
+    #table tr td:nth-child(6):hover{
+      width:100%;
+    }
+    .center1{
+      width:100%;
+      height:60%;
+      display: inline-block;
+      vertical-align: middle;
+      text-align: center;
+    }
+    #round{
+      margin:20px;
+      border:1px solid #f9b479;
+      width:300px;
+      height:200px;
+      -moz-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      float:left;
+    }
+    #roun{
+      margin:20px 20px 20px 60px;
+      border:1px solid #fc707b;
+      width:300px;
+      height:200px;
+      -moz-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      float:left;
+    }
+    #rou{
+      margin:20px 20px 20px 60px;
+      border:1px solid #70a3ff;
+      width:300px;
+      height:200px;
+      -moz-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      float:left;
+    }
+    #round1{
+      background:#679AFF;
+      width:25%;;
+      height:25px;
+      position:inherit;
+      color:#FFFFFF;
+      float:right;
+      -moz-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      text-align: center;
+      cursor:pointer;
+    }
+    #with-drawals{
+      top:250px;
+      left:27px;
+      width:80%;
+      height:50px;
+      position:absolute;
+    }
+    .center{
+      margin:0px auto;
+      text-align:center;
+      float:left;
+      font-size:20px;
+      display:none;
+    }
+    .black_overlay{
+      display:none;
+      position: absolute;
+      top: 0%;
+      left: 0%;
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      z-index:1001;
+      -moz-opacity: 0.8;
+      opacity:.80;
+      filter: alpha(opacity=80);
+    }
+    .white_content {
+      display:none;
+      position: absolute;
+      top: 25%;
+      left: 35%;
+      width: 20%;
+      height: 33%;
+      background-color:#FFFFFF;
+      z-index:1002;
+      text-align:center;
+    }
+
+  </style>
+</head>
+<script>
+  function outMoney() {
+      $("#shadow_div").show();
+      $("#light").slideDown(200);
+  }
+  function closeOutMoney() {
+      $("#amountOfMoney").val("");
+      $("#bankName").val("");
+      $("#bankCard").val("");
+      $("#receiveName").val("");
+      $("#phone").val("");
+      $("#second_card").val("");
+      $("#branchBankName").val("");
+      $("#shadow_div").hide();
+      $("#light").slideUp(200);
+
+  }
+ var colspan=3;
+ var supplierId = getUrlParam("id");
+ $("#supplierId").val(supplierId);
+ $(function () {
+      loadAll();
+     loadSupplier();
+  })
+ function loadSupplier() {
+     $.post("/page/admin/supplier/findById",{id:supplierId},function (data) {
+           var id = data.id;
+           var name = data.name;
+           var totalMoney = data.totalMoney;
+           var orderNum = data.orderNum;
+           var outMoney = data.outMoney;
+           $("#supplier_name").text(name);
+           $("#supplier_money").text("￥"+totalMoney);
+           $("#order_num").text(orderNum);
+           $("#out_money").text(outMoney);
+           $("#total_money").val(totalMoney);
+     });
+ }
+ function saveApply(obj) {
+     $(obj).removeAttr("onclick");
+     var flg = true;
+     var amountOfMoney = $("#amountOfMoney").val();
+     var bankName = $("#bankName").val();
+     var branchBankName = $("#branchBankName").val();
+     var bankCard = $("#bankCard").val();
+     var receiveName = $("#receiveName").val();
+     var phone = $("#phone").val();
+     var totalMoney = $("#total_money").val();
+     var card = $("#second_card").val();
+     if(isEmpty(amountOfMoney)){
+         failMsg("提现金额不能为空");
+         $(obj).attr("onclick","saveApply(this)");
+         return flg = false;
+     }else if(isEmpty(totalMoney)){
+         $(obj).attr("onclick","saveApply(this)");
+         failMsg("余额不足");
+         return flg = false;
+     }else if(isPrice(amountOfMoney)){
+         $(obj).attr("onclick","saveApply(this)");
+         failMsg("余额格式不正确");
+         return flg = false;
+     }else if(parseFloat(amountOfMoney) > parseFloat(totalMoney)){
+         $(obj).attr("onclick","saveApply(this)");
+         failMsg("余额不足");
+         return flg = false;
+     }
+     if(isEmpty(bankName)){
+         failMsg("收款银行不能为空");
+         $(obj).attr("onclick","saveApply(this)");
+         return flg = false;
+     }
+     if(isEmpty(branchBankName)){
+         failMsg("银行支行不能为空");
+         $(obj).attr("onclick","saveApply(this)");
+         return flg = false;
+     }
+     if(isEmpty(bankCard)){
+         failMsg("银行卡号不能为空");
+         $(obj).attr("onclick","saveApply(this)");
+         return flg = false;
+     }
+     if(isEmpty(card)){
+         failMsg("再次输入卡号");
+         $(obj).attr("onclick","saveApply(this)");
+         return flg = false;
+     }
+     if(bankCard != card){
+         failMsg("两次输入卡号不一致");
+         $(obj).attr("onclick","saveApply(this)");
+         return flg = false;
+     }
+     var regx = /^(\d{16}|\d{19})$/;
+     if(!regx.test(bankCard)){
+         failMsg("卡号格式不正确");
+         $(obj).attr("onclick","saveApply(this)");
+         return flg = false;
+     }
+     if(isEmpty(receiveName)){
+         failMsg("收款人姓名不能为空");
+         $(obj).attr("onclick","saveApply(this)");
+         return flg = false;
+     }
+     if(isEmpty(phone)){
+         failMsg("手机号不能为空");
+         $(obj).attr("onclick","saveApply(this)");
+         return flg = false;
+     }else if(isMobile(phone)){
+         failMsg("手机号格式不正确");
+         $(obj).attr("onclick","saveApply(this)");
+         return flg = false;
+     }
+     if(flg){
+        // $("#save_apply").submit();
+         $.ajax({
+             url: "/page/admin/SupplierCashWithdrawalApplication/doAdd",
+             dataType:'json',
+             type:'post',
+             data: $("#save_apply").serialize(),
+             success:function(data){
+                 failMsg("提现申请已提交");
+                 closeOutMoney();
+                 loadAll();
+                 loadSupplier();
+                 $(obj).attr("onclick","saveApply(this)");
+             }
+         })
+     }else{
+         alert("数据不完整");
+         $(obj).attr("onclick","saveApply(this)");
+     }
+ }
+  function loadAll() {
+    $.post("/page/admin/SupplierCashWithdrawalApplication/findPage",{supplierId:supplierId},function (res) {
+      var data = res.data[1];
+      var pageNum = data.pageNum;
+      var pageSize = data.pageSize;
+      var list = data.list;
+      var index = (pageNum-1)*pageSize;
+      var ht = "";
+      for (var i = 0 ; i < list.length ; i++){
+          ht+='<tr class="content">' +
+              '<td>'+(index+1+i)+'</td>' +
+              '<td>'+list[i].createTime+'</td>' +
+              '<td>'+list[i].amountOfMoney+'</td>'+
+              '<td>'+list[i].bankCard+'</td>' ;
+          if(list[i].status == 1){
+              ht+='<td>待审</td>' ;
+          }else if(list[i].status == 2){
+              ht+='<td>通过</td>' ;
+          }else if(list[i].status == 3){
+              ht+='<td>驳回</td>' ;
+          }
+          ht+='<td>'+(list[i].finishTime==null? "--": list[i].finishTime)+'</td>' +
+              '<td>'+(list[i].operationUserName==null?"--":list[i].operationUserName)+'</td>' +
+              '</tr>';
+      }
+      $("#pageBar").before(ht);
+        $("#pageBar").html(
+              '<td colspan="'+colspan+'"  class="colspan" style="text-align:center;">' +
+              '<div class="pagelist"> <a  href="#">上一页</a>' +
+              '<a href="#"  class="current">'+1+'</a>' +
+              '<a href="javascript:void(0)" class="disableds disableds2" onclick="changesearch(2,'+data.pageSize+')">2</a>' +
+              '<a href="javascript:void(0)" class="disableds disableds3" onclick="changesearch(3,'+data.pageSize+')">3</a>' +
+              '<a href="javascript:void(0)" class="disableds disabledsNext" onclick="changesearch('+(data.pageNum +1)+','+data.pageSize+')">下一页</a>' +
+              '<a href="javascript:void(0)" class="disableds" onclick="changesearch('+(data.firstPage)+','+data.pageSize+')">首页</a> ' +
+              '<a href="javascript:void(0)" class="disableds" onclick="changesearch('+(data.lastPage)+','+data.pageSize+')">尾页</a> </div>' +
+              '<span>共'+data.total+'条数据</span>' +
+              '</td>')
+      if(data.lastPage == 1){
+        $(".disableds").removeAttr("onclick");
+        $(".disableds3,.disableds2").hide();
+      }else if(data.lastPage < 3){
+        $(".disableds3").hide();
+      }
+
+    },'json')
+  }
+
+  //条件搜索
+  function changesearch(pageNum,pageSize) {/**/
+    var name = $("#name").val();
+    var status = $("#status").val() ;
+    var level = $("#level").val() ;
+    $.post("/page/admin/SupplierCashWithdrawalApplication/findPage",{
+        "name":name,
+        "status":status,
+        "level":level,
+        "pageNum":pageNum,
+        "pageSize":pageSize,
+        "supplierId":supplierId
+    },function (res) {
+      $(".content").html('');
+    var data = res.data[1];
+    var pageNum = data.pageNum;
+    var pageSize = data.pageSize;
+    var list = data.list;
+    var index = (pageNum-1)*pageSize;
+    var ht = "";
+    for (var i = 0 ; i < list.length ; i++){
+        ht+='<tr class="content">' +
+            '<td>'+(index+1+i)+'</td>' +
+            '<td>'+list[i].createTime+'</td>' +
+            '<td>'+list[i].amountOfMoney+'</td>'+
+            '<td>'+list[i].bankCard+'</td>' ;
+        if(list[i].status == 1){
+           ht+='<td>待审</td>' ;
+        }else if(list[i].status == 2){
+            ht+='<td>通过</td>' ;
+        }else if(list[i].status == 3){
+            ht+='<td>驳回</td>' ;
+        }
+        ht+='<td>'+(list[i].finishTime==null? "--": list[i].finishTime)+'</td>' +
+                '<td>'+(list[i].operationUserName==null?"--":list[i].operationUserName)+'</td>' +
+                '</tr>';
+    }
+    $("#pageBar").before(ht);
+      //此处调用分页插件
+      var html = "";
+      var falg = false;
+      var boo = false;
+      if(data.pageNum!=1 &&  data.pageNum != data.lastPage){
+        html = '<a href="javascript:void(0)" id="onePrevPage" >'+(data.pageNum - 1)+'</a>'+
+                '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >'+data.pageNum+'</a>' +
+                '<a href="javascript:void(0)"  id="threePrevPage" >'+(data.pageNum + 1)+'</a>';
+      }else{
+        html = '<a href="javascript:void(0)" id="onePrevPage" >'+data.pageNum+'</a>'+
+                '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >'+(data.pageNum + 1)+'</a>' +
+                '<a href="javascript:void(0)"  id="threePrevPage"  >'+(data.pageNum + 2)+'</a>';
+        falg = true;
+      }
+      if(data.pageNum == data.lastPage){
+        html = '<a href="javascript:void(0)" id="onePrevPage" >'+(data.pageNum - 2)+'</a>'+
+                '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >'+(data.pageNum  - 1)+'</a>' +
+                '<a href="javascript:void(0)"  id="threePrevPage"  >'+data.pageNum +'</a>';
+        boo = true;
+      }
+      $("#pageBar").html('<td style="text-align:center;padding-left: 30px">' +
+              '<input type="checkbox" class="button border-red" name="all" id="checkall"  value="全选" onclick="checkAll()"/>全选' +
+              '</td>' +
+              '<td colspan="'+colspan+'"  class="colspan" style="text-align:left;padding-left:20px;">' +
+              '<a href="javascript:void(0)" class="button border-red " style="padding:5px 15px;" onclick="batchUpdateState(1)"> 批量展示</a> ' +
+              '<a href="javascript:void(0)" style="padding:5px 15px; margin:0 10px;" class="button border-blue" onclick="batchUpdateState(0)"> 批量隐藏</a>' +
+              '</td>' +
+              '<td colspan="'+colspan+'"  class="colspan" style="text-align:center;">' +
+              '<div class="pagelist"> <a id="prevPage" href="#">上一页</a>' +
+              html +
+              '<a id="nextPage" href="#" >下一页</a>' +
+              '<a href="javascript:void(0)" onclick="changesearch('+(data.firstPage)+','+data.pageSize+')">首页</a>' +
+              '<a href="javascript:void(0)" onclick="changesearch('+(data.lastPage)+','+data.pageSize+')">尾页</a> </div>' +
+              '<span>共'+data.total+'条数据</span>' +
+              '</td>');
+
+      if($("#onePrevPage").html() < 1){
+        $("#onePrevPage").hide();
+      }
+      if($("#twoPrevPage").html() < 1){
+        $("#twoPrevPage").hide();
+      }
+      if($("#threePrevPage").html() < 1){
+        $("#threePrevPage").hide();
+      }
+      if($("#threePrevPage").html() > data.lastPage){
+        $("#threePrevPage").hide();
+      }
+      if(falg){
+        $("#onePrevPage").addClass("current");
+        $("#onePrevPage").siblings().removeClass("current");
+      }
+      if(boo){
+        $("#threePrevPage").addClass("current");
+        $("#threePrevPage").siblings().removeClass("current");
+      }
+      if(data.lastPage==1){
+        $("#prevPage").unbind("click");
+        $("#nextPage").unbind("click");
+      }else if(data.lastPage==0){
+        $("#onePrevPage,#twoPrevPage,#threePrevPage").hide();
+        $("#pageBar").before('<tr class="content"><td colspan="6" style="color:red"> 没有搜索到数据!</td></tr>')
+      }else{
+        $("#onePrevPage,#twoPrevPage,#threePrevPage").click(function () {
+          changesearch($(this).html(),data.pageSize);
+        })
+      }
+
+
+      if(data.pageNum > data.firstPage){
+        $("#prevPage").click(function () {
+          changesearch(data.pageNum -1,data.pageSize);
+        })
+      }
+      if(data.pageNum < data.lastPage){
+        $("#nextPage").click(function () {
+          changesearch(data.pageNum +1,data.pageSize);
+        })
+      }
+    },'json')
+  }
+
+</script>
+</html>

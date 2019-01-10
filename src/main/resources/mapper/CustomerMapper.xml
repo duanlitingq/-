@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.CustomerMapper">
+    <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.Customer">
+        <id column="ID" property="id" jdbcType="BIGINT"/>
+        <result column="OPEN_ID" property="openId" jdbcType="VARCHAR"/>
+        <result column="NICKNAME" property="nickname" jdbcType="VARCHAR"/>
+        <result column="PHONE" property="phone" jdbcType="VARCHAR"/>
+        <result column="ADD_TIME" property="addTime" jdbcType="TIMESTAMP"/>
+        <result column="IMG" property="img" jdbcType="VARCHAR"/>
+        <result column="INVITE_CODE" property="inviteCode" jdbcType="VARCHAR"/>
+        <result column="RECEIVABLES_CODE" property="receivablesCode" jdbcType="VARCHAR"/>
+        <result column="INVITATION_TIME" property="invitationTime" jdbcType="TIMESTAMP"/>
+        <result column="SUPERIOR_ID" property="superiorId" jdbcType="BIGINT"/>
+        <result column="COLUMN2" property="column2" jdbcType="INTEGER"/>
+        <result column="GENDER" property="gender" jdbcType="VARCHAR"/>
+        <result column="AREA" property="area" jdbcType="VARCHAR"/>
+        <result column="AMOUNT_IN_SCORE" property="amountInScore" />
+        <result column="AMOUNT_IN_BURSE" property="amountInBurse" />
+        <result column="AMOUNT_OUT_SCORE" property="amountOutScore" />
+        <result column="AMOUNT_OUT_BURSE" property="amountOutBurse" />
+        <result column="SCORE" property="score" jdbcType="BIGINT"/>
+        <result column="BURSE" property="burse" jdbcType="BIGINT"/>
+
+    </resultMap>
+    <sql id="Base_Column_List">
+    ID, OPEN_ID, NICKNAME, PHONE, ADD_TIME, IMG, INVITE_CODE, RECEIVABLES_CODE, INVITATION_TIME, SUPERIOR_ID,GENDER,AREA,COLUMN2
+  </sql>
+    <sql id="Base_Column_List_c">
+    c.ID, c.OPEN_ID, c.NICKNAME, c.PHONE, c.ADD_TIME, c.IMG, c.INVITE_CODE, c.RECEIVABLES_CODE, c.INVITATION_TIME, c.SUPERIOR_ID,c.GENDER,c.AREA,c.COLUMN2
+  </sql>
+
+
+    <select id="getIdCustomer"  resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select <include refid="Base_Column_List"/> FROM customer where ID = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="getCustomerId"  resultMap="BaseResultMap" parameterType="java.lang.String">
+        select <include refid="Base_Column_List"/> FROM customer where OPEN_ID = #{openId,jdbcType=VARCHAR}
+    </select>
+    <select id="getCount"  resultType="int" parameterType="java.lang.Long">
+        SELECT COUNT(superior_id) FROM customer where superior_id=#{superiorId,jdbcType=BIGINT}
+    </select>
+    <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List_c"/>,w.BURSE, w.SCORE, w.AMOUNT_IN_BURSE ,w.AMOUNT_IN_SCORE,w.AMOUNT_OUT_BURSE ,w.AMOUNT_OUT_SCORE
+        from customer c
+        LEFT JOIN hsh_wallet w ON w.CUSTOMER_ID=c.ID
+        where ID = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="findByCode" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List_c"/>,w.BURSE, w.SCORE, w.AMOUNT_IN_BURSE ,w.AMOUNT_IN_SCORE,w.AMOUNT_OUT_BURSE ,w.AMOUNT_OUT_SCORE
+        from customer c
+        LEFT JOIN hsh_wallet w ON w.CUSTOMER_ID=c.ID
+        where INVITE_CODE = #{inviteCode,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findByOpenID" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List_c"/>,w.BURSE, w.SCORE, w.AMOUNT_IN_BURSE ,w.AMOUNT_IN_SCORE,w.AMOUNT_OUT_BURSE ,w.AMOUNT_OUT_SCORE
+        from customer c
+        LEFT JOIN hsh_wallet w ON w.CUSTOMER_ID=c.ID
+        where OPEN_ID = #{openID,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findByPhone" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List_c"/>,w.BURSE, w.SCORE, w.AMOUNT_IN_BURSE ,w.AMOUNT_IN_SCORE,w.AMOUNT_OUT_BURSE ,w.AMOUNT_OUT_SCORE
+        from customer c
+        LEFT JOIN hsh_wallet w ON w.CUSTOMER_ID=c.ID
+        where PHONE = #{phone,jdbcType=VARCHAR}
+    </select>
+    <delete id="delete" parameterType="java.lang.Long">
+    delete from customer
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.yunchao.hsh.model.Customer">
+    insert into customer (ID, OPEN_ID, NICKNAME, 
+      PHONE, ADD_TIME, IMG, 
+      INVITE_CODE, RECEIVABLES_CODE, INVITATION_TIME,
+      SUPERIOR_ID,GENDER,AREA,COLUMN2)
+    values (#{id,jdbcType=BIGINT}, #{openId,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{addTime,jdbcType=TIMESTAMP}, #{img,jdbcType=VARCHAR},
+      #{inviteCode,jdbcType=VARCHAR}, #{receivablesCode,jdbcType=VARCHAR}, #{invitationTime,jdbcType=TIMESTAMP},
+      #{superiorId,jdbcType=BIGINT},#{gender,jdbcType=VARCHAR},#{area,jdbcType=VARCHAR},#{column2,jdbcType=INTEGER})
+  </insert>
+
+
+    <update id="update" parameterType="com.yunchao.hsh.model.Customer">
+    update customer
+    set OPEN_ID = #{openId,jdbcType=VARCHAR},
+      NICKNAME = #{nickname,jdbcType=VARCHAR},
+      PHONE = #{phone,jdbcType=VARCHAR},
+      ADD_TIME = #{addTime,jdbcType=TIMESTAMP},
+      IMG = #{img,jdbcType=VARCHAR},
+      INVITE_CODE = #{inviteCode,jdbcType=VARCHAR},
+      RECEIVABLES_CODE = #{receivablesCode,jdbcType=VARCHAR},
+      INVITATION_TIME = #{invitationTime,jdbcType=TIMESTAMP},
+      SUPERIOR_ID = #{superiorId,jdbcType=BIGINT},
+      GENDER = #{gender,jdbcType=VARCHAR},
+      AREA = #{area,jdbcType=VARCHAR},
+      COLUMN2=#{column2,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+    <select id="findList" parameterType="map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List_c"/>,w.BURSE, w.SCORE, w.AMOUNT_IN_BURSE ,w.AMOUNT_IN_SCORE,w.AMOUNT_OUT_BURSE ,w.AMOUNT_OUT_SCORE
+        from customer c
+        LEFT JOIN hsh_wallet w ON w.CUSTOMER_ID=c.ID
+        <where>
+            <if test="@Ognl@isNotEmpty(phone)">
+                AND PHONE LIKE '%${phone}%'
+            </if>
+            <if test="@Ognl@isNotEmpty(nickname)">
+                AND NICKNAME LIKE '%${nickname}%'
+            </if>
+        </where>
+    </select>
+
+    <select id="findSuperior"  resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select <include refid="Base_Column_List"/>FROM customer where SUPERIOR_ID= #{superiorId,jdbcType=BIGINT}
+    </select>
+
+    <select id="findPageSuperior"  resultMap="BaseResultMap" parameterType="map">
+        select <include refid="Base_Column_List"/>FROM customer where SUPERIOR_ID= #{superiorId,jdbcType=BIGINT} ORDER BY INVITATION_TIME DESC
+    </select>
+
+</mapper>

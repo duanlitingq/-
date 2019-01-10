@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.SupplierGoodsTypeMapper" >
+    <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.SupplierGoodsType" >
+        <id column="ID" property="id" jdbcType="BIGINT" />
+        <result column="NAME" property="name" jdbcType="VARCHAR" />
+        <result column="PARENT_ID" property="parentId" jdbcType="BIGINT" />
+        <result column="STATUS" property="status" jdbcType="INTEGER" />
+        <result column="HIERARCHY" property="hierarchy" jdbcType="INTEGER" />
+        <result column="PRIORITY" property="priority" jdbcType="INTEGER" />
+        <result column="COLUMN_1" property="column1" jdbcType="VARCHAR" />
+        <result column="COLUMN_2" property="column2" jdbcType="INTEGER" />
+        <result column="COLUMN_3" property="column3" jdbcType="BIGINT" />
+    </resultMap>
+
+
+    <sql id="Base_Column_List" >
+    ID,NAME,PARENT_ID,STATUS,HIERARCHY,PRIORITY,COLUMN_1,COLUMN_2,COLUMN_3
+  </sql>
+
+    <insert id="insert" parameterType="com.yunchao.hsh.model.SupplierGoodsType">
+      insert into hsh_supplier_goods_type (
+        ID,NAME,PARENT_ID,STATUS,HIERARCHY,PRIORITY,COLUMN_1,COLUMN_2,COLUMN_3
+      ) values (
+        #{id},#{name},#{parentId},#{status},
+        #{hierarchy},#{priority},
+        #{column1},#{column2},#{column3}
+      )
+    </insert>
+    <update id="update" parameterType="com.yunchao.hsh.model.SupplierGoodsType">
+      update hsh_supplier_goods_type
+      set
+      `NAME`=#{name},STATUS=#{status},PRIORITY=#{priority}
+        where ID=#{id}
+    </update>
+    <select id="listPage" parameterType="java.util.Map" resultType="com.yunchao.hsh.model.SupplierGoodsType">
+      select
+        <include refid="Base_Column_List" />
+        from hsh_supplier_goods_type
+        <where>
+            1=1
+            <if test="@Ognl@isNotEmpty(status)">
+                and STATUS=#{status}
+            </if>
+            <if test="@Ognl@isNotEmpty(hierarchy)">
+                and HIERARCHY=#{hierarchy}
+            </if>
+            <if test="@Ognl@isNotEmpty(name)">
+                and `NAME` LIKE '%${name}%'
+            </if>
+            <if test="@Ognl@isNotEmpty(parentId)">
+                and PARENT_ID=#{parentId}
+            </if>
+        </where>
+    </select>
+    <update id="updateStatus">
+      update hsh_supplier_goods_type set STATUS=#{status} where ID=#{id}
+    </update>
+    <select id="getSupplierGoodsType" parameterType="java.lang.Long" resultType="com.yunchao.hsh.model.SupplierGoodsType">
+      select <include refid="Base_Column_List"></include>
+        from hsh_supplier_goods_type
+        where ID=#{id}
+    </select>
+    <select id="getBuyName" parameterType="java.util.Map" resultType="com.yunchao.hsh.model.SupplierGoodsType">
+        select
+        <include refid="Base_Column_List"></include>
+        from hsh_supplier_goods_type
+        <where>
+            NAME = #{name}
+            and PARENT_ID = #{parentId}
+            <if test="@Ognl@isNotEmpty(id)">
+                and ID != #{id}
+            </if>
+        </where>
+    </select>
+    <select id="listGoodsType" parameterType="java.util.Map" resultType="com.yunchao.hsh.model.SupplierGoodsType">
+        select
+        <include refid="Base_Column_List"></include>
+        from hsh_supplier_goods_type
+        <where>
+            PARENT_ID = #{parentId}
+            <if test="@Ognl@isNotEmpty(status)">
+                and STATUS=#{status}
+            </if>
+        </where>
+    </select>
+
+</mapper>

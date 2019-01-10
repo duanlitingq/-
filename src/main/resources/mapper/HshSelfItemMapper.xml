@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.HshSelfItemMapper">
+    <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.HshSelfItem">
+        <id column="item_id" property="itemId" jdbcType="BIGINT"/>
+        <result column="item_name" property="itemName" jdbcType="VARCHAR"/>
+        <result column="item_img" property="itemImg" jdbcType="VARCHAR"/>
+        <result column="sell_point" property="sellPoint" jdbcType="VARCHAR"/>
+        <result column="item_price" property="itemPrice" jdbcType="DECIMAL"/>
+        <result column="item_integral" property="itemIntegral" jdbcType="BIGINT"/>
+        <result column="item_unit" property="itemUnit" jdbcType="VARCHAR"/>
+        <result column="post_fee" property="postFee" jdbcType="BIGINT"/>
+        <result column="item_num" property="itemNum" jdbcType="BIGINT"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+        <result column="share_num" property="shareNum" jdbcType="BIGINT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="item_eval" property="itemEval" jdbcType="VARCHAR"/>
+        <result column="item_rebate" property="itemRebate" jdbcType="BIGINT"/>
+        <result column="cus_num_1" property="cusNum1" jdbcType="VARCHAR"/>
+        <result column="cus_num_2" property="cusNum2" jdbcType="VARCHAR"/>
+        <result column="cus_num_3" property="cusNum3" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="itemResp" type="com.yunchao.hsh.dto.resp.ScoreItemResp" extends="BaseResultMap"/>
+
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        <if test="fields == null">
+            item_id, item_name, item_img, sell_point, item_price, item_integral, item_unit, post_fee,
+            item_num, status, share_num, create_time, update_time, item_eval, item_rebate, cus_num_1,
+            cus_num_2, cus_num_3
+        </if>
+        <if test="fields != null">
+            ${fields}
+        </if>
+    </sql>
+
+    <sql id="Base_From_Colum">
+        item_id,item_name,item_img,sell_point,item_price,item_integral,item_unit,post_fee,item_num,status,share_num,create_time,update_time,item_eval,item_rebate,cus_num_1,cus_num_2,cus_num_3
+    </sql>
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.yunchao.hsh.model.HshSelfItemExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from hsh_self_item
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+        <if test="startRow != null">
+            limit #{startRow} , #{pageSize}
+        </if>
+    </select>
+
+    <!--当前积分可换-->
+    <select id="findLessOrEquelsScore" resultMap="itemResp" parameterType="double">
+      select
+        <include refid="Base_From_Colum"/>
+      from
+        hsh_self_item
+      where
+        item_integral <![CDATA[ <= ]]> #{itemIntegral} and status = 1
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select 
+    item_id,item_name,item_img,sell_point,item_price,item_integral,item_unit,post_fee,item_num,status,share_num,create_time,update_time,item_eval,item_rebate,cus_num_1,cus_num_2,cus_num_3
+    from hsh_self_item
+    where item_id = #{itemId,jdbcType=BIGINT}
+  </select>
+
+    <select id="getByItemId" resultMap="itemResp" parameterType="java.lang.Long">
+        select
+        <include refid="Base_From_Colum"/>
+        from hsh_self_item
+        where item_id = #{itemId}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from hsh_self_item
+    where item_id = #{itemId,jdbcType=BIGINT}
+  </delete>
+    <delete id="deleteByExample" parameterType="com.yunchao.hsh.model.HshSelfItemExample">
+        delete from hsh_self_item
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.yunchao.hsh.model.HshSelfItem">
+    insert into hsh_self_item (item_id, item_name, item_img, 
+      sell_point, item_price, item_integral, 
+      item_unit, post_fee, item_num, 
+      status, share_num, create_time, 
+      update_time, item_eval, item_rebate, 
+      cus_num_1, cus_num_2, cus_num_3
+      )
+    values (#{itemId,jdbcType=BIGINT}, #{itemName,jdbcType=VARCHAR}, #{itemImg,jdbcType=VARCHAR}, 
+      #{sellPoint,jdbcType=VARCHAR}, #{itemPrice,jdbcType=DECIMAL}, #{itemIntegral,jdbcType=BIGINT}, 
+      #{itemUnit,jdbcType=VARCHAR}, #{postFee,jdbcType=BIGINT}, #{itemNum,jdbcType=BIGINT}, 
+      #{status,jdbcType=TINYINT}, #{shareNum,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{itemEval,jdbcType=VARCHAR}, #{itemRebate,jdbcType=BIGINT}, 
+      #{cusNum1,jdbcType=VARCHAR}, #{cusNum2,jdbcType=VARCHAR}, #{cusNum3,jdbcType=VARCHAR}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.yunchao.hsh.model.HshSelfItem">
+        insert into hsh_self_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="itemId != null">
+                item_id,
+            </if>
+            <if test="itemName != null">
+                item_name,
+            </if>
+            <if test="itemImg != null">
+                item_img,
+            </if>
+            <if test="sellPoint != null">
+                sell_point,
+            </if>
+            <if test="itemPrice != null">
+                item_price,
+            </if>
+            <if test="itemIntegral != null">
+                item_integral,
+            </if>
+            <if test="itemUnit != null">
+                item_unit,
+            </if>
+            <if test="postFee != null">
+                post_fee,
+            </if>
+            <if test="itemNum != null">
+                item_num,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="shareNum != null">
+                share_num,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="itemEval != null">
+                item_eval,
+            </if>
+            <if test="itemRebate != null">
+                item_rebate,
+            </if>
+            <if test="cusNum1 != null">
+                cus_num_1,
+            </if>
+            <if test="cusNum2 != null">
+                cus_num_2,
+            </if>
+            <if test="cusNum3 != null">
+                cus_num_3,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="itemId != null">
+                #{itemId,jdbcType=BIGINT},
+            </if>
+            <if test="itemName != null">
+                #{itemName,jdbcType=VARCHAR},
+            </if>
+            <if test="itemImg != null">
+                #{itemImg,jdbcType=VARCHAR},
+            </if>
+            <if test="sellPoint != null">
+                #{sellPoint,jdbcType=VARCHAR},
+            </if>
+            <if test="itemPrice != null">
+                #{itemPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="itemIntegral != null">
+                #{itemIntegral,jdbcType=BIGINT},
+            </if>
+            <if test="itemUnit != null">
+                #{itemUnit,jdbcType=VARCHAR},
+            </if>
+            <if test="postFee != null">
+                #{postFee,jdbcType=BIGINT},
+            </if>
+            <if test="itemNum != null">
+                #{itemNum,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="shareNum != null">
+                #{shareNum,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="itemEval != null">
+                #{itemEval,jdbcType=VARCHAR},
+            </if>
+            <if test="itemRebate != null">
+                #{itemRebate,jdbcType=BIGINT},
+            </if>
+            <if test="cusNum1 != null">
+                #{cusNum1,jdbcType=VARCHAR},
+            </if>
+            <if test="cusNum2 != null">
+                #{cusNum2,jdbcType=VARCHAR},
+            </if>
+            <if test="cusNum3 != null">
+                #{cusNum3,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.yunchao.hsh.model.HshSelfItemExample" resultType="java.lang.Integer">
+        select count(*) from hsh_self_item
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <select id="selectByExampleScoreResp" resultMap="itemResp" parameterType="com.yunchao.hsh.model.HshSelfItemExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from hsh_self_item
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+        <if test="startRow != null">
+            limit #{startRow} , #{pageSize}
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update hsh_self_item
+        <set>
+            <if test="record.itemId != null">
+                item_id = #{record.itemId,jdbcType=BIGINT},
+            </if>
+            <if test="record.itemName != null">
+                item_name = #{record.itemName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.itemImg != null">
+                item_img = #{record.itemImg,jdbcType=VARCHAR},
+            </if>
+            <if test="record.sellPoint != null">
+                sell_point = #{record.sellPoint,jdbcType=VARCHAR},
+            </if>
+            <if test="record.itemPrice != null">
+                item_price = #{record.itemPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="record.itemIntegral != null">
+                item_integral = #{record.itemIntegral,jdbcType=BIGINT},
+            </if>
+            <if test="record.itemUnit != null">
+                item_unit = #{record.itemUnit,jdbcType=VARCHAR},
+            </if>
+            <if test="record.postFee != null">
+                post_fee = #{record.postFee,jdbcType=BIGINT},
+            </if>
+            <if test="record.itemNum != null">
+                item_num = #{record.itemNum,jdbcType=BIGINT},
+            </if>
+            <if test="record.status != null">
+                status = #{record.status,jdbcType=TINYINT},
+            </if>
+            <if test="record.shareNum != null">
+                share_num = #{record.shareNum,jdbcType=BIGINT},
+            </if>
+            <if test="record.createTime != null">
+                create_time = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.updateTime != null">
+                update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.itemEval != null">
+                item_eval = #{record.itemEval,jdbcType=VARCHAR},
+            </if>
+            <if test="record.itemRebate != null">
+                item_rebate = #{record.itemRebate,jdbcType=BIGINT},
+            </if>
+            <if test="record.cusNum1 != null">
+                cus_num_1 = #{record.cusNum1,jdbcType=VARCHAR},
+            </if>
+            <if test="record.cusNum2 != null">
+                cus_num_2 = #{record.cusNum2,jdbcType=VARCHAR},
+            </if>
+            <if test="record.cusNum3 != null">
+                cus_num_3 = #{record.cusNum3,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update hsh_self_item
+        set item_id = #{record.itemId,jdbcType=BIGINT},
+        item_name = #{record.itemName,jdbcType=VARCHAR},
+        item_img = #{record.itemImg,jdbcType=VARCHAR},
+        sell_point = #{record.sellPoint,jdbcType=VARCHAR},
+        item_price = #{record.itemPrice,jdbcType=DECIMAL},
+        item_integral = #{record.itemIntegral,jdbcType=BIGINT},
+        item_unit = #{record.itemUnit,jdbcType=VARCHAR},
+        post_fee = #{record.postFee,jdbcType=BIGINT},
+        item_num = #{record.itemNum,jdbcType=BIGINT},
+        status = #{record.status,jdbcType=TINYINT},
+        share_num = #{record.shareNum,jdbcType=BIGINT},
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+        item_eval = #{record.itemEval,jdbcType=VARCHAR},
+        item_rebate = #{record.itemRebate,jdbcType=BIGINT},
+        cus_num_1 = #{record.cusNum1,jdbcType=VARCHAR},
+        cus_num_2 = #{record.cusNum2,jdbcType=VARCHAR},
+        cus_num_3 = #{record.cusNum3,jdbcType=VARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.yunchao.hsh.model.HshSelfItem">
+        update hsh_self_item
+        <set>
+            <if test="itemName != null">
+                item_name = #{itemName,jdbcType=VARCHAR},
+            </if>
+            <if test="itemImg != null">
+                item_img = #{itemImg,jdbcType=VARCHAR},
+            </if>
+            <if test="sellPoint != null">
+                sell_point = #{sellPoint,jdbcType=VARCHAR},
+            </if>
+            <if test="itemPrice != null">
+                item_price = #{itemPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="itemIntegral != null">
+                item_integral = #{itemIntegral,jdbcType=BIGINT},
+            </if>
+            <if test="itemUnit != null">
+                item_unit = #{itemUnit,jdbcType=VARCHAR},
+            </if>
+            <if test="postFee != null">
+                post_fee = #{postFee,jdbcType=BIGINT},
+            </if>
+            <if test="itemNum != null">
+                item_num = #{itemNum,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="shareNum != null">
+                share_num = #{shareNum,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="itemEval != null">
+                item_eval = #{itemEval,jdbcType=VARCHAR},
+            </if>
+            <if test="itemRebate != null">
+                item_rebate = #{itemRebate,jdbcType=BIGINT},
+            </if>
+            <if test="cusNum1 != null">
+                cus_num_1 = #{cusNum1,jdbcType=VARCHAR},
+            </if>
+            <if test="cusNum2 != null">
+                cus_num_2 = #{cusNum2,jdbcType=VARCHAR},
+            </if>
+            <if test="cusNum3 != null">
+                cus_num_3 = #{cusNum3,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where item_id = #{itemId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.yunchao.hsh.model.HshSelfItem">
+    update hsh_self_item
+    set item_name = #{itemName,jdbcType=VARCHAR},
+      item_img = #{itemImg,jdbcType=VARCHAR},
+      sell_point = #{sellPoint,jdbcType=VARCHAR},
+      item_price = #{itemPrice,jdbcType=DECIMAL},
+      item_integral = #{itemIntegral,jdbcType=BIGINT},
+      item_unit = #{itemUnit,jdbcType=VARCHAR},
+      post_fee = #{postFee,jdbcType=BIGINT},
+      item_num = #{itemNum,jdbcType=BIGINT},
+      status = #{status,jdbcType=TINYINT},
+      share_num = #{shareNum,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      item_eval = #{itemEval,jdbcType=VARCHAR},
+      item_rebate = #{itemRebate,jdbcType=BIGINT},
+      cus_num_1 = #{cusNum1,jdbcType=VARCHAR},
+      cus_num_2 = #{cusNum2,jdbcType=VARCHAR},
+      cus_num_3 = #{cusNum3,jdbcType=VARCHAR}
+    where item_id = #{itemId,jdbcType=BIGINT}
+  </update>
+</mapper>

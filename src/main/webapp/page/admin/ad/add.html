@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="/page/style/css/pintuer.css">
+    <link rel="stylesheet" href="/page/style/css/admin.css">
+    <script src="/page/style/scripts/jquery/jquery-1.11.2.js"></script>
+    <script src="/page/style/scripts/jquery/ajaxfileupload.js"></script>
+    <script src="/page/style/scripts/js/global.js"></script>
+    <script src="/page/style/scripts/js/common.js"></script>
+    <script src="/page/style/scripts/layer/layer.js"></script>
+    <style>
+        .addImgs li{
+            display: inline-block;
+            margin: 20px;
+        }
+
+    </style>
+<body>
+
+<div class="panel-head"><strong><span class="icon-pencil-square-o"></span> 添加广告</strong></div>
+<div class="body-content">
+    <form method="post" class="form-x" action="/page/admin/ad/doAdd"  onsubmit="return checkData()" enctype="multipart/form-data">
+        <!--名称-->
+        <div class="form-group">
+            <div class="label">
+                <label>标题：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="title" name="title" maxlength="127" class="input w50" value=""  data-validate="required:请输入标题" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>排序：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="sort" name="sort" maxlength="11" class="input w50" value=""  data-validate="required:请输入排序" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--链接-->
+        <div class="form-group">
+            <div class="label">
+                <label>链接：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="link" name="link" class="input w50"  maxlength="127"  value="" data-validate="required:请输入链接" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--图片-->
+        <div class="form-group">
+            <div class="label">
+                <label>图片：</label>
+            </div>
+
+            <div class="field">
+                <ul class="addImgs">
+                    <!--上传的图片-->
+                    <li style="position: relative">
+                        <label>
+                            <img src="" id="show"  width="200">
+                            <a class="button bg-blue input-file"  href="javascript:void(0);">+ 图片上传
+                                <input  name="file" data-validate="required:" type="file" onchange="changepic(this)"/>
+                            </a>
+                        </label>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+
+        <!--是否展示-->
+        <div class="form-group">
+            <div class="label">
+                <label>展示状态：</label>
+            </div>
+            <div class="field">
+                <select name="status"  id="status" class="input" style="width:25%; line-height:17px; display:inline-block">
+                    <option value="">选择</option>
+                    <option value="1">是</option>
+                    <option value="0">否</option>
+                </select>
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--简介-->
+        <div class="form-group">
+            <div class="label">
+                <label>简介：</label>
+            </div>
+            <div class="field">
+                <textarea name="info" id="info" style="margin: 0px;width: 900px;height: 300px;"></textarea>
+            </div>
+        </div>
+        <!--提交-->
+        <div class="form-group">
+            <div class="label">
+                <label></label>
+            </div>
+            <div class="field">
+                <button id="refer" class="button bg-main icon-check-square-o" type="submit"> 提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+</body>
+<script>
+    $(".del").remove();
+    //表单提交时校验
+    function checkData() {
+        var title = $("#title").val();
+        var link = $("#link").val();
+        var file=   $(":file");//file类型
+        var status = $("#status").val();
+        var info = $("#info").val();
+        var sort = $("#sort").val();
+        if(isEmpty(title)){
+            failMsg("名称不能为空");
+            return false;
+        }
+        if(isEmpty(sort)){
+            failMsg("排序数字不能为空");
+            return false;
+        }else if(isIntNum(sort)){
+            failMsg("请输入数字");
+            return false;
+        }
+        if(isEmpty(link)){
+            failMsg("链接不能为空");
+            return false;
+        }
+        if(file.length<2){
+            //只有一个图片上传的按钮
+            failMsg("请上传图片");
+            return false;
+        }
+        if(isEmpty(status)){
+            failMsg("请选择展示状态");
+            return false;
+        }
+        if(isEmpty(info)){
+            failMsg("请输入简介信息");
+            return false;
+        }
+        return true;
+
+    }
+    function setImg1(obj){//用于进行图片上传，返回地址
+        var f=$(obj).val();
+        if(f == null || f ==undefined || f == ''){
+            return false;
+        }
+        if(!/\.(?:png|jpg|bmp|gif|PNG|JPG|BMP|GIF)$/.test(f))
+        {
+            alert("类型必须是图片(.png|jpg|bmp|gif|PNG|JPG|BMP|GIF)");
+            $(obj).val('');
+            return false;
+        }
+        var data = new FormData();
+        $.each($(obj)[0].files,function(i,file){
+            data.append('file', file);
+        });
+    }
+    //上传图片js
+    function doAdd(){//用于进行图片上传，返回地址
+        var file = new FormData();
+        var data = {
+            name:$("#name").val(),
+            link:$("#link").val(),
+            status:$("#status").val(),
+            info:$("#info").val(),
+            sort:$("#sort").val(),
+            file: file
+        };
+        $.ajax({
+            type: "POST",
+            url: "/page/admin/ad/doAdd",
+            data: data,
+            cache: false,
+            contentType: false,    //不可缺
+            processData: false,    //不可缺
+            dataType:"json",
+            success: function(data) {
+                alert(123)
+                if(data.success == "true"){
+                    window.location.href="/page/admin/ad/list.html";
+                }else{
+                    alert(data.message);
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("上传失败，请检查网络后重试");
+                $("#url").val("");
+                $(obj).val('');
+            }
+        });
+    }
+</script>
+</html>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.MenuMapper" >
+  <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.Menu" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="PARENT_ID" property="parentId" jdbcType="BIGINT" />
+    <result column="STATUS" property="status" jdbcType="INTEGER" />
+    <result column="PAGE_URL" property="pageUrl" jdbcType="VARCHAR" />
+    <result column="LEVEL" property="level" jdbcType="INTEGER" />
+    <result column="SORT" property="sort" jdbcType="INTEGER" />
+  </resultMap>
+
+  <resultMap id="MenuResp" type="com.yunchao.hsh.dto.resp.MenuResp" extends="BaseResultMap">
+
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    ID, NAME, PARENT_ID, STATUS, PAGE_URL,LEVEL,SORT
+  </sql>
+
+  <sql id="Base_Column_List_M" >
+    m.ID, m.NAME, m.PARENT_ID, m.STATUS, m.PAGE_URL,m.LEVEL,m.SORT
+  </sql>
+
+  <select id="findById" resultMap="MenuResp" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from menu
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="findByIds" resultMap="MenuResp" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from menu
+    where ID IN
+    <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
+
+  <select id="findList" resultMap="MenuResp">
+    select
+    <include refid="Base_Column_List" />
+    from menu
+  </select>
+
+  <select id="findPage" resultMap="MenuResp" parameterType="java.util.Map">
+    select
+    <include refid="Base_Column_List" />
+    from menu
+    <where>
+      <if test="@Ognl@isNotEmpty(id)">
+        ID = #{id}
+      </if>
+      <if test="@Ognl@isNotEmpty(name)">
+        and NAME LIKE '%${name}%'
+      </if>
+      <if test="@Ognl@isNotEmpty(parentId)">
+        and PARENT_ID = #{parentId}
+      </if>
+      <if test="@Ognl@isNotEmpty(status)">
+        and STATUS = #{status}
+      </if>
+      <if test="@Ognl@isNotEmpty(pageUrl)">
+        and PAGE_URL = #{pageUrl}
+      </if>
+      <if test="@Ognl@isNotEmpty(level)">
+        and LEVEL = #{level}
+      </if>
+      <if test="@Ognl@isNotEmpty(sort)">
+        and SORT = #{sort}
+      </if>
+    </where>
+  </select>
+
+  <insert id="insert" parameterType="com.yunchao.hsh.model.Menu" >
+    insert into menu (ID, NAME, PARENT_ID, 
+      STATUS, PAGE_URL,LEVEL,SORT)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{parentId,jdbcType=BIGINT}, 
+      #{status,jdbcType=INTEGER}, #{pageUrl,jdbcType=VARCHAR},#{level,jdbcType=INTEGER},#{sort})
+  </insert>
+
+
+  <update id="update" parameterType="com.yunchao.hsh.model.Menu" >
+    update menu
+    set NAME = #{name,jdbcType=VARCHAR},
+      PARENT_ID = #{parentId,jdbcType=BIGINT},
+      STATUS = #{status,jdbcType=INTEGER},
+      PAGE_URL = #{pageUrl,jdbcType=VARCHAR},
+      LEVEL = #{level,jdbcType=INTEGER},
+      SORT=#{sort}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

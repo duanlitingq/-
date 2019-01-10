@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.HshPayQrCodeMapper" >
+  <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.HshPayQrCode" >
+    <id column="code_id" property="codeId" jdbcType="BIGINT" />
+    <result column="code_address" property="codeAddress" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="user_mobile" property="userMobile" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="cus_num_1" property="cusNum1" jdbcType="VARCHAR" />
+    <result column="cus_num_2" property="cusNum2" jdbcType="VARCHAR" />
+    <result column="cus_num_3" property="cusNum3" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      code_id, code_address, user_id, user_mobile, create_time, cus_num_1, cus_num_2, cus_num_3
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.yunchao.hsh.model.HshPayQrCodeExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hsh_pay_qr_code
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    code_id,code_address,user_id,user_mobile,create_time,cus_num_1,cus_num_2,cus_num_3
+    from hsh_pay_qr_code
+    where code_id = #{codeId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from hsh_pay_qr_code
+    where code_id = #{codeId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.yunchao.hsh.model.HshPayQrCodeExample" >
+    delete from hsh_pay_qr_code
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.yunchao.hsh.model.HshPayQrCode" >
+    insert into hsh_pay_qr_code (code_id, code_address, user_id, 
+      user_mobile, create_time, cus_num_1, 
+      cus_num_2, cus_num_3)
+    values (#{codeId,jdbcType=BIGINT}, #{codeAddress,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, 
+      #{userMobile,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{cusNum1,jdbcType=VARCHAR}, 
+      #{cusNum2,jdbcType=VARCHAR}, #{cusNum3,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yunchao.hsh.model.HshPayQrCode" >
+    insert into hsh_pay_qr_code
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="codeId != null" >
+        code_id,
+      </if>
+      <if test="codeAddress != null" >
+        code_address,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="userMobile != null" >
+        user_mobile,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="cusNum1 != null" >
+        cus_num_1,
+      </if>
+      <if test="cusNum2 != null" >
+        cus_num_2,
+      </if>
+      <if test="cusNum3 != null" >
+        cus_num_3,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="codeId != null" >
+        #{codeId,jdbcType=BIGINT},
+      </if>
+      <if test="codeAddress != null" >
+        #{codeAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userMobile != null" >
+        #{userMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cusNum1 != null" >
+        #{cusNum1,jdbcType=VARCHAR},
+      </if>
+      <if test="cusNum2 != null" >
+        #{cusNum2,jdbcType=VARCHAR},
+      </if>
+      <if test="cusNum3 != null" >
+        #{cusNum3,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.yunchao.hsh.model.HshPayQrCodeExample" resultType="java.lang.Integer" >
+    select count(*) from hsh_pay_qr_code
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update hsh_pay_qr_code
+    <set >
+      <if test="record.codeId != null" >
+        code_id = #{record.codeId,jdbcType=BIGINT},
+      </if>
+      <if test="record.codeAddress != null" >
+        code_address = #{record.codeAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userId != null" >
+        user_id = #{record.userId,jdbcType=BIGINT},
+      </if>
+      <if test="record.userMobile != null" >
+        user_mobile = #{record.userMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.cusNum1 != null" >
+        cus_num_1 = #{record.cusNum1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cusNum2 != null" >
+        cus_num_2 = #{record.cusNum2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cusNum3 != null" >
+        cus_num_3 = #{record.cusNum3,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update hsh_pay_qr_code
+    set code_id = #{record.codeId,jdbcType=BIGINT},
+      code_address = #{record.codeAddress,jdbcType=VARCHAR},
+      user_id = #{record.userId,jdbcType=BIGINT},
+      user_mobile = #{record.userMobile,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      cus_num_1 = #{record.cusNum1,jdbcType=VARCHAR},
+      cus_num_2 = #{record.cusNum2,jdbcType=VARCHAR},
+      cus_num_3 = #{record.cusNum3,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yunchao.hsh.model.HshPayQrCode" >
+    update hsh_pay_qr_code
+    <set >
+      <if test="codeAddress != null" >
+        code_address = #{codeAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userMobile != null" >
+        user_mobile = #{userMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cusNum1 != null" >
+        cus_num_1 = #{cusNum1,jdbcType=VARCHAR},
+      </if>
+      <if test="cusNum2 != null" >
+        cus_num_2 = #{cusNum2,jdbcType=VARCHAR},
+      </if>
+      <if test="cusNum3 != null" >
+        cus_num_3 = #{cusNum3,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where code_id = #{codeId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yunchao.hsh.model.HshPayQrCode" >
+    update hsh_pay_qr_code
+    set code_address = #{codeAddress,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      user_mobile = #{userMobile,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      cus_num_1 = #{cusNum1,jdbcType=VARCHAR},
+      cus_num_2 = #{cusNum2,jdbcType=VARCHAR},
+      cus_num_3 = #{cusNum3,jdbcType=VARCHAR}
+    where code_id = #{codeId,jdbcType=BIGINT}
+  </update>
+</mapper>

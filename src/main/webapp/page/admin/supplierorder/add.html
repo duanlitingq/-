@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="/page/style/css/pintuer.css">
+    <link rel="stylesheet" href="/page/style/css/admin.css">
+    <script src="/page/style/scripts/jquery/jquery-1.11.2.js"></script>
+    <script src="/page/style/scripts/jquery/ajaxfileupload.js"></script>
+    <script src="/page/style/scripts/js/global.js"></script>
+    <script src="/page/style/scripts/js/common.js"></script>
+    <script src="/page/style/scripts/layer/layer.js"></script>
+<body>
+
+<div class="panel-head"><strong><span class="icon-pencil-square-o"></span> 增加一级菜单</strong></div>
+<div class="body-content">
+    <form class="form-x">
+        <input name="level" id="level" value="1" type="hidden">
+        <input name="parentId" id="parentId" value="0" type="hidden">
+        <!--名称-->
+        <div class="form-group">
+            <div class="label">
+                <label>名称：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="name" name="name" class="input w50" value="" name="title" data-validate="required:请输入菜单名称" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--是否展示-->
+        <div class="form-group">
+            <div class="label">
+                <label>展示状态：</label>
+            </div>
+            <div class="field">
+                <select name="status" id="status" class="input" style="width:25%; line-height:17px; display:inline-block">
+                    <option value="">选择</option>
+                    <option value="1">是</option>
+                    <option value="0">否</option>
+                </select>
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>页面链接：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="pageUrl" name="pageUrl" class="input w50" value="" name="title" data-validate="required:菜单链接" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>排序：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="sort" name="sort" class="input w50" value="" name="title" data-validate="required:排序" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--提交-->
+        <div class="form-group">
+            <div class="label">
+                <label></label>
+            </div>
+            <div class="field">
+                <button id="refer" class="button bg-main icon-check-square-o" type="button" onclick="doAdd()"> 提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+<script>
+    //上传图片js
+    function doAdd(){
+        var name = $("#name").val();//菜单名称
+        var status = $("#status").val();//状态
+        var pageUrl = $("#pageUrl").val();//页面链接
+        if(isEmpty(name)){
+            failMsg("菜单名称不能为空");
+            return;
+        }
+        if(isEmpty(status)){
+            failMsg("状态不能为空");
+            return;
+        }
+        if(isEmpty(pageUrl)){
+            failMsg("页面链接不能为空");
+            return;
+        }
+        var data = {
+            name:$("#name").val(),
+            parentId:$("#parentId").val(),
+            status:$("#status").val(),
+            pageUrl:$("#pageUrl").val(),
+            level:$("#level").val(),
+            sort:$("#sort").val()
+        }
+        $.ajax({
+            type: "POST",
+            url: "/page/admin/menu/doAdd",
+            data: data,
+            dataType:"json",
+            success: function(data) {
+                goToAfterShowMsg(data.message,"/page/admin/menu/list.html");
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("上传失败，请检查网络后重试");
+            }
+        });
+    }
+</script>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="/page/style/css/pintuer.css">
+    <link rel="stylesheet" href="/page/style/css/admin.css">
+    <script src="/page/style/scripts/js/jquery.js"></script>
+    <script src="/page/style/scripts/js/global.js"></script>
+    <script src="/page/style/scripts/js/common.js"></script>
+    <script src="/page/style/scripts/layer/layer.js"></script>
+    <style>
+        #table tr td:nth-child(6){
+            width:226px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: inline-block;
+        }
+        #table tr td:nth-child(6):hover{
+            width:100%;
+        }
+    </style>
+</head>
+<body>
+<div class="panel admin-panel">
+    <div class="panel-head"><strong class="icon-reorder">用户信息</strong></div>
+    <table id="table" class="table table-hover text-center">
+        <tr>
+            <th >收件人姓名</th>
+            <th >电话</th>
+            <th >收件人地址</th>
+            <!--<th>邮政编码</th>-->
+            <th >是否默认</th>
+        </tr>
+        <tr id="pageBar">
+        </tr>
+    </table>
+</div>
+
+</body>
+<script>
+    var colspan=3;
+    $(function () {
+        loadAll();
+    })
+    function loadAll() {
+        var id = getUrlParam("parentId");
+        $.post("/page/admin/hshLogistics/getPage",{
+            customerId:id
+        },function (data) {
+         var html = "";
+            for (var i = 0 ; i < data.data.list.length; i++){
+                if(data.data.list[i].level == 1){
+                    html+='<tr class="content">' +
+                        '<td>'+data.data.list[i].realName+'</td>' +
+                        '<td>'+data.data.list[i].phone+'</td>' +
+                        '<td>'+data.data.list[i].address+'</td>' ;
+                      /*  '<td>'+data.data.list[i].postCode+'</td>';*/
+                    if (data.data.list[i].isDefault==0){
+                        html+='<td><div class="button-group"><span>否</span></div></td>';
+                    } else  if (data.data.list[i].isDefault==1){
+                        html+='<td><div class="button-group"><span>是</span></div></td>';
+
+                    }
+                        '</tr>';
+                }else {
+                    html+='<tr class="content">' +
+                        '<td>'+data.data.list[i].realName+'</td>' +
+                        '<td>'+data.data.list[i].phone+'</td>' +
+                        '<td>'+data.data.list[i].address+'</td>' ;
+                       /* '<td>'+data.data.list[i].postCode+'</td>';*/
+                    if (data.data.list[i].isDefault==0){
+                        html+='<td><div class="button-group"><span>否</span></div></td>';
+                    } else  if (data.data.list[i].isDefault==1){
+                        html+='<td><div class="button-group"><span>是</span></div></td>';
+
+                    }
+                    '</tr>';
+                }
+            }
+            $("#pageBar").before(html);
+            $("#pageBar").html('<td style="text-align:center;padding-left: 30px">' +
+                '<td colspan="'+colspan+'"  class="colspan" style="text-align:center;">' +
+                '<div class="pagelist"> <a  href="#">上一页</a>' +
+                '<a href="#"  class="current">'+1+'</a>' +
+                '<a href="javascript:void(0)" class="disableds disableds2" onclick="changesearch(2,'+data.data.pageSize+')">2</a>' +
+                '<a href="javascript:void(0)" class="disableds disableds3" onclick="changesearch(3,'+data.data.pageSize+')">3</a>' +
+                '<a href="javascript:void(0)" class="disableds disabledsNext" onclick="changesearch('+(data.data.pageNum +1)+','+data.data.pageSize+')">下一页</a>' +
+                '<a href="javascript:void(0)" class="disableds" onclick="changesearch('+(data.firstPage)+','+data.data.pageSize+')">首页</a> ' +
+                '<a href="javascript:void(0)" class="disableds" onclick="changesearch('+(data.lastPage)+','+data.data.pageSize+')">尾页</a> </div>' +
+                '<span>共'+data.data.total+'条数据</span>' +
+                '</td>')
+            if(data.data.lastPage == 0){
+                $(".disableds").removeAttr("onclick");
+                $(".disableds3,.disableds2").hide();
+            }else if(data.data.lastPage < 3){
+                $(".disableds3").hide();
+            }
+
+        },'json')
+    }
+
+    //条件搜索
+    function changesearch(pageNum,pageSize) {
+        var nickname = $("#nickname").val();
+        var phone= $("#phone").val() ;
+        $.post("/page/admin/hshLogistics//getPage",{
+            "nickname":nickname,
+            "phone":phone,
+            "pageNum":pageNum,
+            "pageSize":pageSize
+        },function (data) {
+            var html = "";
+            //$(".content").html('');
+            for (var i = 0 ; i < data.data.list.length ; i++) {
+                if(data.data.list[i].level == 1 ){
+                    html+='<tr class="content">' +
+                        '<td>'+data.data.list[i].realName+'</td>' +
+                        '<td>'+data.data.list[i].phone+'</td>' +
+                        '<td>'+data.data.list[i].address+'</td>' ;
+                        /*'<td>'+data.data.list[i].postCode+'</td>';*/
+                    if (data.data.list[i].isDefault==0){
+                        html+='<td><div class="button-group"><span>否</span></div></td>';
+                    } else  if (data.data.list[i].isDefault==1){
+                        html+='<td><div class="button-group"><span>是</span></div></td>';
+
+                    }
+                    '</tr>';
+                }else{
+                    html+='<tr class="content">' +
+                        '<td>'+data.data.list[i].realName+'</td>' +
+                        '<td>'+data.data.list[i].phone+'</td>' +
+                        '<td>'+data.data.list[i].address+'</td>' ;
+                       /* '<td>'+data.data.list[i].postCode+'</td>';*/
+                    if (data.data.list[i].isDefault==0){
+                        html+='<td><div class="button-group"><span>否</span></div></td>';
+                    } else  if (data.data.list[i].isDefault==1){
+                        html+='<td><div class="button-group"><span>是</span></div></td>';
+
+                    }
+                    '</tr>';
+                }
+            }
+            $("#pageBar").before(html);
+            //此处调用分页插件
+            var html = "";
+            var falg = false;
+            var boo = false;
+            if(data.data.pageNum!=1 &&  data.data.pageNum != data.data.lastPage){
+                html = '<a href="javascript:void(0)" id="onePrevPage" >'+(data.data.pageNum - 1)+'</a>'+
+                    '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >'+data.data.pageNum+'</a>' +
+                    '<a href="javascript:void(0)"  id="threePrevPage" >'+(data.data.pageNum + 1)+'</a>';
+            }else{
+                html = '<a href="javascript:void(0)" id="onePrevPage" >'+data.data.pageNum+'</a>'+
+                    '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >'+(data.data.pageNum + 1)+'</a>' +
+                    '<a href="javascript:void(0)"  id="threePrevPage"  >'+(data.data.pageNum + 2)+'</a>';
+                falg = true;
+            }
+            if(data.data.pageNum == data.data.lastPage){
+                html = '<a href="javascript:void(0)" id="onePrevPage" >'+(data.data.pageNum - 2)+'</a>'+
+                    '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >'+(data.data.pageNum  - 1)+'</a>' +
+                    '<a href="javascript:void(0)"  id="threePrevPage"  >'+data.data.pageNum +'</a>';
+                boo = true;
+            }
+            $("#pageBar").html('<td style="text-align:center;padding-left: 30px">' +
+                /*'<input type="checkbox" class="button border-red" name="all" id="checkall"  value="全选" onclick="checkAll()"/>全选' +
+                '</td>' +
+                '<td colspan="'+colspan+'"  class="colspan" style="text-align:left;padding-left:20px;">' +
+                '<a href="javascript:void(0)" class="button border-red " style="padding:5px 15px;" onclick="batchUpdateState(1)"> 批量展示</a> ' +
+                '<a href="javascript:void(0)" style="padding:5px 15px; margin:0 10px;" class="button border-blue" onclick="batchUpdateState(0)"> 批量隐藏</a>' +
+                '</td>' +*/
+                '<td colspan="'+colspan+'"  class="colspan" style="text-align:center;">' +
+                '<div class="pagelist"> <a id="prevPage" href="#">上一页</a>' +
+                html +
+                '<a id="nextPage" href="#" >下一页</a>' +
+                '<a href="javascript:void(0)" onclick="changesearch('+(data.data.firstPage)+','+data.data.pageSize+')">首页</a>' +
+                '<a href="javascript:void(0)" onclick="changesearch('+(data.data.lastPage)+','+data.data.pageSize+')">尾页</a> </div>' +
+                '<span>共'+data.data.total+'条数据</span>' +
+                '</td>');
+
+            if($("#onePrevPage").html() < 1){
+                $("#onePrevPage").hide();
+            }
+            if($("#twoPrevPage").html() < 1){
+                $("#twoPrevPage").hide();
+            }
+            if($("#threePrevPage").html() < 1){
+                $("#threePrevPage").hide();
+            }
+            if($("#threePrevPage").html() > data.data.lastPage){
+                $("#threePrevPage").hide();
+            }
+            if(falg){
+                $("#onePrevPage").addClass("current");
+                $("#onePrevPage").siblings().removeClass("current");
+            }
+            if(boo){
+                $("#threePrevPage").addClass("current");
+                $("#threePrevPage").siblings().removeClass("current");
+            }
+            if(data.data.lastPage==1){
+                $("#prevPage").unbind("click");
+                $("#nextPage").unbind("click");
+            }else if(data.data.lastPage==0){
+                $("#onePrevPage,#twoPrevPage,#threePrevPage").hide();
+                $("#pageBar").before('<tr class="content"><td colspan="6" style="color:red"> 没有搜索到数据!</td></tr>')
+            }else{
+                $("#onePrevPage,#twoPrevPage,#threePrevPage").click(function () {
+                    changesearch($(this).html(),data.data.pageSize);
+                })
+            }
+
+
+            if(data.data.pageNum > data.data.firstPage){
+                $("#prevPage").click(function () {
+                    changesearch(data.data.pageNum -1,data.data.pageSize);
+                })
+            }
+            if(data.data.pageNum < data.data.lastPage){
+                $("#nextPage").click(function () {
+                    changesearch(data.data.pageNum +1,data.data.pageSize);
+                })
+            }
+        },'json')
+    }
+
+    function updatePre(id) {
+        window.location.href = "/page/admin/menu/update.html?id="+id;
+    }
+    //添加子菜单
+    function relationMenuPre(id) {
+        window.location.href = "/page/admin/menu/addSubMenu.html?parentId="+id;
+    }
+
+    //批量更新状态
+    function batchUpdateState(status){
+        var ids="";
+        $("input[name='checkname[]']").each(function(i,o){
+            if (this.checked==true) {
+                ids += (o.value) + ',';
+            }
+        });
+        if (ids == null || ids == ''){
+            $("#listform").submit();
+            alert("未选择菜单！");
+            return ;
+        }
+        $.post("/page/admin/menu/batchUpdateState",{
+            "status":status,
+            "ids":ids
+        },function (data) {
+            reloadAfterShowMsg(data.message);
+        },'json');
+
+    }
+
+
+</script>
+</html>

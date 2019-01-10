@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunchao.hsh.dao.CustomerWalletLogMapper">
+    <resultMap id="BaseResultMap" type="com.yunchao.hsh.model.CustomerWalletLog">
+        <id column="ID" property="id" jdbcType="BIGINT"/>
+        <result column="amount" property="amount" jdbcType="DOUBLE"/>
+        <result column="pay_mode" property="payMode" jdbcType="INTEGER"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="CUSTOMER_ID" property="customerId" jdbcType="BIGINT"/>
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="current_balance" property="currentBalance" jdbcType="DOUBLE"/>
+        <result column="uuid" property="uuid" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="operation_id" property="operationId" jdbcType="BIGINT"/>
+        <result column="trade_no" property="tradeNo" jdbcType="VARCHAR"/>
+        <result column="COLUMN1" property="column1" jdbcType="VARCHAR"/>
+        <result column="COLUMN2" property="column2" jdbcType="INTEGER"/>
+        <result column="COLUMN3" property="column3" jdbcType="BIGINT"/>
+    </resultMap>
+    <resultMap id="Base_Result_Map" type="com.yunchao.hsh.dto.resp.WalletLogResp" extends="BaseResultMap"/>
+
+    <sql id="Base_Column_List">
+    Id, amount, pay_mode, type, customer_id, create_date, status, current_balance, uuid, 
+    remark, operation_id, trade_no, COLUMN1, COLUMN2, COLUMN3
+  </sql>
+    <sql id="Base_Column_List_cc">
+    cc.Id, cc.amount, cc.pay_mode, cc.type, cc.customer_id, cc.create_date, cc.status, cc.current_balance, cc.uuid,
+    cc.remark, cc.operation_id, cc.trade_no, cc.COLUMN1, cc.COLUMN2, cc.COLUMN3
+  </sql>
+    <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT<include refid="Base_Column_List_cc"/>,c.NICKNAME,c.PHONE,su.USER_NAME FROM hsh_customer_wallet_log cc
+        LEFT JOIN customer c ON c.id=cc.customer_id left join SYS_USER su on su.id=cc.operation_id
+        where Id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="findByCustomerId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT<include refid="Base_Column_List_cc"/>,c.NICKNAME,c.PHONE,su.USER_NAME FROM hsh_customer_wallet_log cc
+        LEFT JOIN customer c ON c.id=cc.customer_id left join SYS_USER su on su.id=cc.operation_id
+        where CUSTOMER_ID = #{id,jdbcType=BIGINT}
+    </select>
+
+    <delete id="delete" parameterType="java.lang.Long">
+    delete from hsh_customer_wallet_log
+    where Id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.yunchao.hsh.model.CustomerWalletLog">
+    insert into hsh_customer_wallet_log (Id, amount, pay_mode, 
+      type, customer_id, create_date, 
+      status, current_balance, uuid, 
+      remark, operation_id, trade_no, 
+      COLUMN1, COLUMN2, COLUMN3
+      )
+    values (#{id,jdbcType=BIGINT}, #{amount,jdbcType=DOUBLE}, #{payMode,jdbcType=INTEGER}, 
+      #{type,jdbcType=INTEGER}, #{customerId,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=INTEGER}, #{currentBalance,jdbcType=DOUBLE}, #{uuid,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{operationId,jdbcType=BIGINT}, #{tradeNo,jdbcType=VARCHAR}, 
+      #{column1,jdbcType=VARCHAR}, #{column2,jdbcType=INTEGER}, #{column3,jdbcType=BIGINT}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.yunchao.hsh.model.CustomerWalletLog">
+        insert into hsh_customer_wallet_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="amount != null">
+                amount,
+            </if>
+            <if test="payMode != null">
+                pay_mode,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="customerId != null">
+                CUSTOMER_ID,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="currentBalance != null">
+                current_balance,
+            </if>
+            <if test="uuid != null">
+                uuid,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="operationId != null">
+                operation_id,
+            </if>
+            <if test="tradeNo != null">
+                trade_no,
+            </if>
+            <if test="column1 != null">
+                COLUMN1,
+            </if>
+            <if test="column2 != null">
+                COLUMN2,
+            </if>
+            <if test="column3 != null">
+                COLUMN3,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != nul">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="amount != nul">
+                #{amount,jdbcType=DOUBLE},
+            </if>
+            <if test="payMode != nul">
+                #{payMode,jdbcType=INTEGER},
+            </if>
+            <if test="type != nul">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="customerId != nul">
+                #{customerId,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != nul">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != nul">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="currentBalance != nul">
+                #{currentBalance,jdbcType=DOUBLE},
+            </if>
+            <if test="uuid != nul">
+                #{uuid,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != nul">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="operationId != nul">
+                #{operationId,jdbcType=BIGINT},
+            </if>
+            <if test="tradeNo != nul">
+                #{tradeNo,jdbcType=VARCHAR},
+            </if>
+            <if test="column1 != nul">
+                #{column1,jdbcType=VARCHAR},
+            </if>
+            <if test="column2 != nul">
+                #{column2,jdbcType=INTEGER},
+            </if>
+            <if test="column3 != nul">
+                #{column3,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="update" parameterType="com.yunchao.hsh.model.CustomerWalletLog">
+    update hsh_customer_wallet_log
+    set amount = #{amount,jdbcType=DOUBLE},
+      pay_mode = #{payMode,jdbcType=INTEGER},
+      type = #{type,jdbcType=INTEGER},
+      customer_id = #{customerId,jdbcType=BIGINT},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      current_balance = #{currentBalance,jdbcType=DOUBLE},
+      uuid = #{uuid,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      operation_id = #{operationId,jdbcType=BIGINT},
+      trade_no = #{tradeNo,jdbcType=VARCHAR},
+      COLUMN1 = #{column1,jdbcType=VARCHAR},
+      COLUMN2 = #{column2,jdbcType=INTEGER},
+      COLUMN3 = #{column3,jdbcType=BIGINT}
+    where Id = #{id,jdbcType=BIGINT}
+  </update>
+
+    <select id="findList" parameterType="map" resultMap="BaseResultMap">
+        SELECT<include refid="Base_Column_List_cc"/>,c.NICKNAME,c.PHONE,su.USER_NAME FROM hsh_customer_wallet_log cc
+        LEFT JOIN customer c ON c.id=cc.customer_id left join SYS_USER su on su.id=cc.operation_id
+        <where>
+            <if test="@Ognl@isNotEmpty(payMode)">
+                AND cc.pay_mode = #{payMode}
+            </if>
+            <if test="@Ognl@isNotEmpty(type)">
+                AND cc.type = #{type}
+            </if>
+            <if test="@Ognl@isNotEmpty(customerId)">
+                AND cc.customer_id = #{customerId}
+            </if>
+            <if test="@Ognl@isNotEmpty(createDate)">
+                AND cc.create_date = #{createDate}
+            </if>
+            <if test="@Ognl@isNotEmpty(status)">
+                AND cc.status = #{status}
+            </if>
+            <if test="@Ognl@isNotEmpty(currentBalance)">
+                AND cc.current_balance = #{currentBalance}
+            </if>
+            <if test="@Ognl@isNotEmpty(uuid)">
+                AND cc.UUID LIKE '%${uuid}%'
+            </if>
+            <if test="@Ognl@isNotEmpty(remark)">
+                AND cc.remark = #{remark}
+            </if>
+            <if test="@Ognl@isNotEmpty(operationId)">
+                AND cc.operation_id = #{operationId}
+            </if>
+
+            <if test="@Ognl@isNotEmpty(tradeNo)">
+                AND cc.TRADE_NO LIKE '%${tradeNo}%'
+            </if>
+
+            <if test="@Ognl@isNotEmpty(customerName)">
+                AND <![CDATA[(c.NICKNAME LIKE '%${customerName}%']]>
+            </if>
+
+            <if test="@Ognl@isNotEmpty(customerPhone)">
+                AND <![CDATA[(c.PHONE LIKE '%${customerPhone}%']]>
+            </if>
+
+            <if test="@Ognl@isNotEmpty(createDateStart)">
+                AND <![CDATA[(cc.create_date >= '${createDateStart}')]]>
+            </if>
+            <if test="@Ognl@isNotEmpty(createDateEnd)">
+                AND <![CDATA[(cc.create_date <= '${createDateEnd}')]]>
+            </if>
+
+        </where>
+    </select>
+
+    <select id="getByCustomerIdScoreDetailList" resultMap="Base_Result_Map" parameterType="java.lang.Long">
+        SELECT
+          ID,amount,pay_mode,type,CUSTOMER_ID,create_date,status,current_balance,uuid,remark,operation_id,trade_no,COLUMN1,COLUMN2,COLUMN3
+        FROM
+          hsh_customer_wallet_log
+        WHERE
+          CUSTOMER_ID = #{customerId}
+        AND pay_mode = 3 order by create_date desc;
+
+    </select>
+
+    <select id="getByCustomerIdBalanceList" resultMap="Base_Result_Map" parameterType="java.lang.Long">
+        SELECT
+          ID,amount,pay_mode,type,CUSTOMER_ID,create_date,status,current_balance,uuid,remark,operation_id,trade_no,COLUMN1,COLUMN2,COLUMN3
+        FROM
+          hsh_customer_wallet_log
+        WHERE
+          CUSTOMER_ID = #{customerId}
+        AND pay_mode = 1 order by create_date desc
+
+    </select>
+
+</mapper>

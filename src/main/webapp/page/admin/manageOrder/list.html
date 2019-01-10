@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit">
+<title></title>
+<link rel="stylesheet" href="/page/style/css/pintuer.css">
+<link rel="stylesheet" href="/page/style/css/admin.css">
+<script src="/page/style/scripts/js/jquery.js"></script>
+  <script src="/page/style/scripts/js/global.js"></script>
+  <script src="/page/style/scripts/js/common.js"></script>
+  <script src="/page/style/scripts/layer/layer.js"></script>
+  <style>
+    #table tr td:nth-child(6){
+      width:226px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: inline-block;
+    }
+    #table tr td:nth-child(6):hover{
+      width:100%;
+    }
+  </style>
+</head>
+<body>
+<div class="panel admin-panel">
+  <div class="panel-head"><strong class="icon-reorder">店铺订单</strong></div>
+  <div class="padding border-bottom">
+    <ul class="search" style="padding-left:10px;">
+      <li>展示状态：
+        <!--/**订单状态：1：未接单2：已接单(已发货)3：已完成4：取消订单，5：已取消 6：商家驳回（待定）*/-->
+        <select id="orderStatus" name="orderStatus"  class="input" style="width:60px; line-height:17px; display:inline-block">
+          <option value="">选择</option>
+          <option value="1">未接单</option>
+          <option value="2">已接单</option>
+          <option value="3">已完成</option>
+          <option value="4">取消订单</option>
+          <option value="5">已取消</option>
+          <option value="6">已驳回</option>
+        </select>
+      </li>
+      <li>
+        <a href="javascript:void(0)" class="button border-main icon-search"  onclick="changesearch()" > 搜索</a></li>
+    </ul>
+
+  </div>
+  <table id="table" class="table table-hover text-center">
+    <tr>
+      <th >序列</th>
+      <th >订单号</th>
+      <th >商品信息</th>
+      <th >收货人信息</th>
+      <th >收货地址</th>
+      <th >订单金额</th>
+      <th>议价</th>
+      <th>积分</th>
+      <th>实付金额</th>
+      <th >下单时间</th>
+      <th >接单时间</th>
+      <th >完成时间</th>
+      <th >订单状态</th>
+      <th >支付状态</th>
+    </tr>
+    <tr id="pageBar">
+
+    </tr>
+  </table>
+</div>
+<input id="pageNum" type="hidden" value="1">
+<input id="pageSize" type="hidden" value="20">
+</body>
+<script>
+ var colspan=3;
+  $(function () {
+    loadAll();
+  })
+  function loadAll() {
+    $.post("/page/admin/supplierorder/getPage",{supplierId:0},function (data) {
+        console.log(data,"订单数据")
+      var html ='';
+        var pageNum = data.pageNum;
+        var pageSize = data.pageSize;
+        var index = (pageNum-1)*pageSize;
+      for (var i = 0 ; i < data.list.length ; i++){
+          html+='<tr class="content">' +
+              '<td>'+(index+i+1)+'</td>' +
+              '<td><a href="javascript:void(0)" onclick="show_detail('+data.list[i].id+')">'+data.list[i].orderNo+'</a></td>';
+          var items =  data.list[i].items;
+          var goods = "";
+          for (var j = 0;j < items.length;j++){
+              var goodsName = items[j].supplierGoodsResp.name;
+              var goodsNum = items[j].salesNum;
+              var unit = items[j].supplierGoodsResp.unitName;
+              goods+=goodsName+goodsNum+unit+"<br/>"
+          }
+          html+='<td>'+goods+'</td>' +
+              '<td>'+data.list[i].buyUserName+
+              '</br>'+data.list[i].buyUserPhone+'</td>' +
+              '<td>'+data.list[i].address+'</td>' +
+              '<td>'+data.list[i].orderMoney+'</td>' +
+              '<td>'+data.list[i].hagglePrice+'</td>' +
+              '<td>'+data.list[i].integral+'</td>' +
+              '<td>'+data.list[i].actPayment+'</td>' +
+              '<td>'+data.list[i].createTime+'</td>' ;
+          if(!isEmpty(data.list[i].confirmTime)){
+              html+= '<td>'+data.list[i].confirmTime+'</td>' ;
+          }else{
+              html+= '<td>暂无</td>' ;
+          }
+          if(data.list[i].orderStatus == 3){
+              html+='<td>'+data.list[i].finishTime+'</td>';
+          }else{
+              html+= '<td>暂无</td>' ;
+          }
+          ///**订单状态：1：未接单2：已接单(已发货)3：已完成4：取消订单，5：已取消*/
+          if(data.list[i].orderStatus == 1){
+              html+='<td>未接单</td>'
+          }else if(data.list[i].orderStatus == 2){
+              html+='<td>已接单</td>'
+          }else if(data.list[i].orderStatus == 3){
+              html+='<td>已完成</td>'
+          }else if(data.list[i].orderStatus == 4){
+              html+='<td>订单取消，待确认</td>'
+          }else if(data.list[i].orderStatus == 5){
+              html+='<td>订单已取消</td>'
+          }else if(data.list[i].orderStatus == 6){
+              html+='<td>订单已驳回</td>'
+          }
+          if(data.list[i].payStatus == 2){
+              html+='<td>已支付</td>';
+          }else{
+              html+='<td>未支付</td>';
+          }
+          html+= '</tr>';
+      }
+      $("#pageBar").before(html);
+      $("#pageBar").html('<td style="text-align:center;padding-left: 30px">' +
+              '<input type="checkbox" class="button border-red" name="all" id="checkall"  value="全选" onclick="checkAll()"/>全选' +
+              '</td>' +
+              '<td colspan="'+colspan+'" class="colspan" style="text-align:left;padding-left:20px;">' +
+              '<a href="javascript:void(0)" class="button border-red " style="padding:5px 15px;" onclick="batchUpdateState(1)"> 批量展示</a> ' +
+              '<a href="javascript:void(0)" style="padding:5px 15px; margin:0 10px;" class="button border-blue" onclick="batchUpdateState(0)"> 批量隐藏</a>' +
+              '</td>' +
+              '<td colspan="'+colspan+'"  class="colspan" style="text-align:center;">' +
+              '<div class="pagelist"> <a  href="#">上一页</a>' +
+              '<a href="#"  class="current">'+1+'</a>' +
+              '<a href="javascript:void(0)" class="disableds disableds2" onclick="changesearch(2,'+data.pageSize+')">2</a>' +
+              '<a href="javascript:void(0)" class="disableds disableds3" onclick="changesearch(3,'+data.pageSize+')">3</a>' +
+              '<a href="javascript:void(0)" class="disableds disabledsNext" onclick="changesearch('+(data.pageNum +1)+','+data.pageSize+')">下一页</a>' +
+              '<a href="javascript:void(0)" class="disableds" onclick="changesearch('+(data.firstPage)+','+data.pageSize+')">首页</a> ' +
+              '<a href="javascript:void(0)" class="disableds" onclick="changesearch('+(data.lastPage)+','+data.pageSize+')">尾页</a> </div>' +
+              '<span>共'+data.total+'条数据</span>' +
+              '</td>')
+      if(data.lastPage == 1){
+        $(".disableds").removeAttr("onclick");
+        $(".disableds3,.disableds2").hide();
+      }else if(data.lastPage < 3){
+        $(".disableds3").hide();
+      }
+
+    },'json')
+  }
+
+  //条件搜索
+  function changesearch(pageNum,pageSize) {/**/
+      $("#pageNum").val(pageNum);
+    var orderStatus = $("#orderStatus").val() ;
+    $.post("/page/admin/supplierorder/getPage",{
+        "orderStatus":orderStatus,
+        "supplierId":0,
+        "pageNum":pageNum,
+        "pageSize":pageSize,
+        "supplierId":0
+    },function (data) {
+      $(".content").html('');
+    for (var i = 0 ; i < data.list.length ; i++){
+        var html ='';
+        var pageNum = data.pageNum;
+        var pageSize = data.pageSize;
+        var index = (pageNum-1)*pageSize;
+        for (var i = 0 ; i < data.list.length ; i++){
+            html+='<tr class="content">' +
+                '<td>'+(index+i+1)+'</td>' +
+                '<td><a href="javascript:void(0)" onclick="show_detail('+data.list[i].id+')">'+data.list[i].orderNo+'</a></td>';
+            var items =  data.list[i].items;
+            var goods = "";
+            for (var j = 0;j < items.length;j++){
+                var goodsName = items[j].supplierGoodsResp.name;
+                var goodsNum = items[j].salesNum;
+                var unit = items[j].supplierGoodsResp.unitName;
+                goods+=goodsName+goodsNum+unit+"<br/>"
+            }
+            html+='<td>'+goods+'</td>' +
+                '<td>'+data.list[i].buyUserName+
+                '</br>'+data.list[i].buyUserPhone+'</td>' +
+                '<td>'+data.list[i].address+'</td>' +
+                '<td>'+data.list[i].orderMoney+'</td>' +
+                '<td>'+data.list[i].hagglePrice+'</td>' +
+                '<td>'+data.list[i].integral+'</td>' +
+                '<td>'+data.list[i].actPayment+'</td>' +
+                '<td>'+data.list[i].createTime+'</td>' ;
+            if(!isEmpty(data.list[i].confirmTime)){
+                html+= '<td>'+data.list[i].confirmTime+'</td>' ;
+            }else{
+                html+= '<td>暂无</td>' ;
+            }
+            if(data.list[i].orderStatus == 3){
+                html+='<td>'+data.list[i].finishTime+'</td>';
+            }else{
+                html+= '<td>暂无</td>' ;
+            }
+            ///**订单状态：1：未接单2：已接单(已发货)3：已完成4：取消订单，5：已取消*/
+            if(data.list[i].orderStatus == 1){
+                html+='<td>未接单</td>'
+            }else if(data.list[i].orderStatus == 2){
+                html+='<td>已接单</td>'
+            }else if(data.list[i].orderStatus == 3){
+                html+='<td>已完成</td>'
+            }else if(data.list[i].orderStatus == 4){
+                html+='<td>订单取消，待确认</td>'
+            }else if(data.list[i].orderStatus == 5){
+                html+='<td>订单已取消</td>'
+            }else if(data.list[i].orderStatus == 6){
+                html+='<td>订单已驳回</td>'
+            }
+            if(data.list[i].payStatus == 2){
+                html+='<td>已支付</td>';
+            }else{
+                html+='<td>未支付</td>';
+            }
+            html+= '</tr>';
+        }
+        $("#pageBar").before(html);
+    }
+      //此处调用分页插件
+      var html = "";
+      var falg = false;
+      var boo = false;
+      if(data.pageNum!=1 &&  data.pageNum != data.lastPage){
+        html = '<a href="javascript:void(0)" id="onePrevPage" >'+(data.pageNum - 1)+'</a>'+
+                '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >'+data.pageNum+'</a>' +
+                '<a href="javascript:void(0)"  id="threePrevPage" >'+(data.pageNum + 1)+'</a>';
+      }else{
+        html = '<a href="javascript:void(0)" id="onePrevPage" >'+data.pageNum+'</a>'+
+                '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >'+(data.pageNum + 1)+'</a>' +
+                '<a href="javascript:void(0)"  id="threePrevPage"  >'+(data.pageNum + 2)+'</a>';
+        falg = true;
+      }
+      if(data.pageNum == data.lastPage){
+        html = '<a href="javascript:void(0)" id="onePrevPage" >'+(data.pageNum - 2)+'</a>'+
+                '<a class="current" id="twoPrevPage"  href="javascript:void(0)" >'+(data.pageNum  - 1)+'</a>' +
+                '<a href="javascript:void(0)"  id="threePrevPage"  >'+data.pageNum +'</a>';
+        boo = true;
+      }
+      $("#pageBar").html('<td style="text-align:center;padding-left: 30px">' +
+              '<input type="checkbox" class="button border-red" name="all" id="checkall"  value="全选" onclick="checkAll()"/>全选' +
+              '</td>' +
+              '<td colspan="'+colspan+'"  class="colspan" style="text-align:left;padding-left:20px;">' +
+              '<a href="javascript:void(0)" class="button border-red " style="padding:5px 15px;" onclick="batchUpdateState(1)"> 批量展示</a> ' +
+              '<a href="javascript:void(0)" style="padding:5px 15px; margin:0 10px;" class="button border-blue" onclick="batchUpdateState(0)"> 批量隐藏</a>' +
+              '</td>' +
+              '<td colspan="'+colspan+'"  class="colspan" style="text-align:center;">' +
+              '<div class="pagelist"> <a id="prevPage" href="#">上一页</a>' +
+              html +
+              '<a id="nextPage" href="#" >下一页</a>' +
+              '<a href="javascript:void(0)" onclick="changesearch('+(data.firstPage)+','+data.pageSize+')">首页</a>' +
+              '<a href="javascript:void(0)" onclick="changesearch('+(data.lastPage)+','+data.pageSize+')">尾页</a> </div>' +
+              '<span>共'+data.total+'条数据</span>' +
+              '</td>');
+
+      if($("#onePrevPage").html() < 1){
+        $("#onePrevPage").hide();
+      }
+      if($("#twoPrevPage").html() < 1){
+        $("#twoPrevPage").hide();
+      }
+      if($("#threePrevPage").html() < 1){
+        $("#threePrevPage").hide();
+      }
+      if($("#threePrevPage").html() > data.lastPage){
+        $("#threePrevPage").hide();
+      }
+      if(falg){
+        $("#onePrevPage").addClass("current");
+        $("#onePrevPage").siblings().removeClass("current");
+      }
+      if(boo){
+        $("#threePrevPage").addClass("current");
+        $("#threePrevPage").siblings().removeClass("current");
+      }
+      if(data.lastPage==1){
+        $("#prevPage").unbind("click");
+        $("#nextPage").unbind("click");
+      }else if(data.lastPage==0){
+        $("#onePrevPage,#twoPrevPage,#threePrevPage").hide();
+        $("#pageBar").before('<tr class="content"><td colspan="6" style="color:red"> 没有搜索到数据!</td></tr>')
+      }else{
+        $("#onePrevPage,#twoPrevPage,#threePrevPage").click(function () {
+          changesearch($(this).html(),data.pageSize);
+        })
+      }
+
+
+      if(data.pageNum > data.firstPage){
+        $("#prevPage").click(function () {
+          changesearch(data.pageNum -1,data.pageSize);
+        })
+      }
+      if(data.pageNum < data.lastPage){
+        $("#nextPage").click(function () {
+          changesearch(data.pageNum +1,data.pageSize);
+        })
+      }
+    },'json')
+  }
+  //取消订单
+function cancelOrder(id) {
+    $.ajax({
+        url:'/page/admin/supplierorder/cancelOrder',
+        type:'post',
+        dataType:'json',
+        data:{
+            id:id
+        },
+        success:function(data){
+            if(data.success){
+                var pageNum = $("#pageNum").val();
+                var pageSize = $("#pageSize").val();
+                changesearch(pageNum,pageSize);
+                //window.location.reload(true);
+            }
+        }
+    });
+}
+//接单确认
+function sureOrder(id) {
+    $.ajax({
+        url:'/page/admin/supplierorder/confirmOrder',
+        type:'post',
+        dataType:'json',
+        data:{
+            id:id
+        },
+        success:function(data){
+            if(data.success){
+                var pageNum = $("#pageNum").val();
+                var pageSize = $("#pageSize").val();
+                changesearch(pageNum,pageSize);
+            }
+        }
+    });
+}
+
+
+ //弹出用户详情
+ function show_detail(id){
+     layer.open({
+         type: 2,
+         title: false,
+         //closeBtn: 1, //不显示关闭按钮
+         shade: [0],
+         area: ['750px', '550px'],
+         //time: 2000, //2秒后自动关闭
+         anim: 2,
+         content: ['order_view.html?id='+id, 'no']
+     });
+ };
+</script>
+</html>

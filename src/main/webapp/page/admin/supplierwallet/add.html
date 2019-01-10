@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="/page/style/css/pintuer.css">
+    <link rel="stylesheet" href="/page/style/css/admin.css">
+    <script src="/page/style/scripts/jquery/jquery-1.11.2.js"></script>
+    <script src="/page/style/scripts/jquery/ajaxfileupload.js"></script>
+    <script src="/page/style/scripts/js/global.js"></script>
+    <script src="/page/style/scripts/js/common.js"></script>
+    <script src="/page/style/scripts/layer/layer.js"></script>
+    <style>
+        .addImgs li{
+            display: inline-block;
+            margin: 20px;
+        }
+
+    </style>
+<body>
+
+<div class="panel-head"><strong><span class="icon-pencil-square-o"></span> 添加店铺</strong></div>
+<div class="body-content">
+    <form method="post" class="form-x" action="/page/admin/supplier/doAdd"  onsubmit="return checkData()" enctype="multipart/form-data">
+        <!--名称-->
+        <div class="form-group">
+            <div class="label">
+                <label>店铺名称：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="name" name="name" maxlength="127" class="input w50" value=""  data-validate="required:请输入标题" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>排序：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="priority" name="priority" maxlength="11" class="input w50" value=""  data-validate="required:请输入排序" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--链接-->
+        <div class="form-group">
+            <div class="label">
+                <label>联系人：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="linkman" name="linkman" class="input w50"  maxlength="127"  value="" data-validate="required:请输入链接" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>联系人手机号：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="mobile" name="mobile" class="input w50"  maxlength="11"  value="" data-validate="required:请输入链接" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>地址：</label>
+            </div>
+            <div class="field">
+                <input type="text" id="address" name="address" class="input w50"  maxlength="127"  value="" data-validate="required:请输入链接" />
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--图片-->
+        <div class="form-group">
+            <div class="label">
+                <label>图片：</label>
+            </div>
+
+            <div class="field">
+                <ul class="addImgs">
+                    <!--上传的图片-->
+                    <li style="position: relative">
+                        <label>
+                            <img src="" id="show"  width="200">
+                            <a class="button bg-blue input-file"  href="javascript:void(0);">+ 图片上传
+                                <input  name="file" data-validate="required:" type="file" onchange="changepic(this)"/>
+                            </a>
+                        </label>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+
+        <!--是否展示-->
+        <div class="form-group">
+            <div class="label">
+                <label>所属类别：</label>
+            </div>
+            <div class="field">
+                <select name="typeId"  id="typeId" class="input" style="width:25%; line-height:17px; display:inline-block">
+                    <option value="">选择</option>
+                </select>
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>管理人：</label>
+            </div>
+            <div class="field">
+                <select name="userId"  id="userId" class="input" style="width:25%; line-height:17px; display:inline-block">
+                    <option value="">选择</option>
+                </select>
+                <div class="tips"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="label">
+                <label>展示状态：</label>
+            </div>
+            <div class="field">
+                <select name="status"  id="status" class="input" style="width:25%; line-height:17px; display:inline-block">
+                    <option value="">选择</option>
+                    <option value="1">是</option>
+                    <option value="0">否</option>
+                </select>
+                <div class="tips"></div>
+            </div>
+        </div>
+        <!--简介-->
+        <div class="form-group">
+            <div class="label">
+                <label>简介：</label>
+            </div>
+            <div class="field">
+                <textarea name="info" id="info" style="margin: 0px;width: 900px;height: 300px;"></textarea>
+            </div>
+        </div>
+        <!--提交-->
+        <div class="form-group">
+            <div class="label">
+                <label></label>
+            </div>
+            <div class="field">
+                <button id="refer" class="button bg-main icon-check-square-o" type="submit"> 提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+</body>
+<script>
+    $(function () {
+        loadType();
+        loadUser();
+    });
+    function loadType(){
+        $.ajax({
+            url:'/page/admin/suppliertype/findList',
+            type:'get',
+            dataType:'json',
+            data:{status:1},
+            success:function(data){
+                if(data != null && typeof data != "undefined"){
+                    var html = '';
+                    var len = data.length;
+                    if(len > 0){
+                        for (var i = 0; i < len; i++) {
+                            var obj = data[i];
+                            var id = obj.id;
+                            var name = obj.name;
+                            html+='<option value="'+id+'">'+name+'</option>';
+                        }
+                    }
+                    $("#typeId").append(html);
+                }
+            }
+        })
+    }
+    function loadUser(){
+        $.ajax({
+            url:'/page/admin/sysUser/userGetAll',
+            type:'get',
+            dataType:'json',
+            success:function(data){
+                if(data != null && typeof data != "undefined"){
+                    var html = '';
+                    var len = data.length;
+                    if(len > 0){
+                        for (var i = 0; i < len; i++) {
+                            var obj = data[i];
+                            var id = obj.id;
+                            var name = obj.realName;
+                            html+='<option value="'+id+'">'+name+'</option>';
+                        }
+                    }
+                    $("#userId").append(html);
+                }
+            }
+        })
+    }
+
+    $(".del").remove();
+    //表单提交时校验
+    function checkData() {
+        var name = $("#name").val();
+        var priority = $("#priority").val();
+        var linkman = $("#linkman").val();
+        var mobile = $("#mobile").val();
+        var address = $("#address").val();
+        var file=   $(":file");//file类型
+        var typeId = $("#typeId").val();
+        var userId = $("#userId").val();
+        var status = $("#status").val();
+        var info = $("#info").val();
+        if(isEmpty(name)){
+            failMsg("名称不能为空");
+            return false;
+        }
+        if(isEmpty(priority)){
+            failMsg("排序数字不能为空");
+            return false;
+        }else if(isIntNum(priority)){
+            failMsg("请输入排序数字");
+            return false;
+        }
+        if(isEmpty(linkman)){
+            failMsg("请输入联系人");
+            return false;
+        }
+        if(isEmpty(mobile)){
+            failMsg("请输入联系人手机号");
+            return false;
+        }else if(isMobile(mobile)){
+            failMsg("联系手机号格式不正确");
+            return false;
+        }
+        if(isEmpty(address)){
+            failMsg("请输入地址");
+            return false;
+        }
+        if(file.length<2){
+            //只有一个图片上传的按钮
+            failMsg("请上传图片");
+            return false;
+        }
+        if(isEmpty(typeId)){
+            failMsg("请选择所属类别");
+            return false;
+        }
+        if(isEmpty(userId)){
+            failMsg("请选择管理人");
+            return false;
+        }
+        if(isEmpty(status)){
+            failMsg("请选择展示状态");
+            return false;
+        }
+        if(isEmpty(info)){
+            failMsg("请输入简介信息");
+            return false;
+        }
+        return true;
+
+    }
+    function setImg1(obj){//用于进行图片上传，返回地址
+        var f=$(obj).val();
+        if(f == null || f ==undefined || f == ''){
+            return false;
+        }
+        if(!/\.(?:png|jpg|bmp|gif|PNG|JPG|BMP|GIF)$/.test(f))
+        {
+            alert("类型必须是图片(.png|jpg|bmp|gif|PNG|JPG|BMP|GIF)");
+            $(obj).val('');
+            return false;
+        }
+        var data = new FormData();
+        $.each($(obj)[0].files,function(i,file){
+            data.append('file', file);
+        });
+    }
+    //上传图片js
+    function doAdd(){//用于进行图片上传，返回地址
+        var file = new FormData();
+        var data = {
+            name:$("#name").val(),
+            priority:$("#priority").val(),
+            linkman:$("#linkman").val(),
+            mobile:$("#mobile").val(),
+            address:$("#address").val(),
+            typeId:$("#typeId").val(),
+            userId:$("#userId").val(),
+            status:$("#status").val(),
+            info:$("#info").val(),
+            file: file
+        };
+        $.ajax({
+            type: "POST",
+            url: "/page/admin/supplier/doAdd",
+            data: data,
+            cache: false,
+            contentType: false,    //不可缺
+            processData: false,    //不可缺
+            dataType:"json",
+            success: function(data) {
+                if(data.success){
+                    window.location.href="/page/admin/supplier/list.html";
+                }else{
+                    alert(data.message);
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("上传失败，请检查网络后重试");
+                $("#url").val("");
+                $(obj).val('');
+            }
+        });
+    }
+</script>
+</html>
